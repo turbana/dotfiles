@@ -1,0 +1,20 @@
+startup_message off
+nethack on
+silencewait 15
+
+#escape ^xx
+escape ^qq
+
+term screen-256color
+
+
+#hardstatus alwayslastline "%{Gk}%-w%{Wk}%n %t%{-b Gk}%+w %{Wk}%=%D %d %M - %c "
+hardstatus alwayslastline "%{= ..}%{G}%-w%{kW}%n %t%{dG}%+w"
+
+# termcapinfo xterm 'hs:ts=\E]2;:fs=\007:ds=\E]2;screen\007'
+
+
+# the following three lines let screen use 256 colors
+#attrcolor b ".I"
+#termcapinfo xterm 'Co#256:AB=\E[48;5;%dm:AF=\E[38;5;%dm'
+#defbce "on"

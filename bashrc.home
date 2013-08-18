@@ -1,0 +1,4 @@
+#!/bin/bash
+
+ps1_host=$green
+export MAIL=$HOME/.mail/gmail

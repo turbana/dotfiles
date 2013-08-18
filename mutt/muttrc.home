@@ -1,0 +1,30 @@
+# muttrc.home
+#
+
+set my_tmpsecret=`gpg --use-agent --batch --quiet -o ~/.mutt/.gmail.tmp -d ~/.mutt/.gmail.gpg`
+set my_pass=`cat ~/.mutt/.gmail.tmp`
+set my_del=`rm -f ~/.mutt/.gmail.tmp`
+
+# Change the following six lines to match your Gmail account details
+#set imap_user = "turbanatest@gmail.com"
+#set imap_pass = $my_pass
+set smtp_url = "smtp://turbanatest@smtp.gmail.com:587/"
+set smtp_pass = $my_pass
+set from = "turbanatest@gmail.com"
+set realname = "Ian Clark"
+
+set spoolfile = "+gmail/INBOX"
+set mbox      = "+gmail/archive"
+set postponed = "+gmail/drafts"
+
+# Don't move read messages into archive as gmail does that automatically
+unset move
+
+macro index gi "<change-folder>+gmail/INBOX<enter>"		"Go to inbox"
+macro index ga "<change-folder>+gmail/archive<enter>"	"Go to archive"
+macro index gd "<change-folder>+gmail/drafts<enter>"	"Go to drafts"
+macro index gs "<change-folder>+gmail/sent<enter>"		"Go to sent"
+macro index gf "<change-folder>+gmail/flagged<enter>"	"Go to flagged"
+
+macro	index	a	"<delete-message><sync-mailbox>"
+macro	pager	a	"<delete-message><sync-mailbox>"
