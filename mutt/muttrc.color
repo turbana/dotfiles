@@ -21,6 +21,7 @@ color body			color107		color233	"mailto:[-a-z_0-9.]+@[-a-z_0-9.]+"
 
 color header		color6			color234	"^from:"
 color header		color178		color234	"^to:"
+color header		color178		color234	"^cc:"
 color header		color107		color234	"^date:"
 color header		brightcolor255	color234	"^subject:"
 

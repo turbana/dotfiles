@@ -26,6 +26,7 @@ def handle_headers(lines):
 	def replace(line):
 		line = line.replace("From:", "From:   ") \
 				   .replace("To:",   "To:     ") \
+				   .replace("CC:",   "Cc:     ") \
 				   .replace("Date:", "Date:   ")
 		return line
 	return map(replace, lines)
