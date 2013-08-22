@@ -32,15 +32,19 @@ def handle_headers(lines):
 	return map(replace, lines)
 
 def handle_body(lines):
-	attach1 = re.compile(r'^.*\[-- Attachment #[0-9]*:? ([^ ]+)? ?--\]$')
+	attach1 = re.compile(r'^.*\[-- Attachment #[0-9]*:? (.+)? ?--\]$')
 	attach2 = re.compile(r'^.*\[-- Type: (.*), Encoding: .*, Size: (.*) --\]$')
-	skip    = re.compile(r'^.*\[-- .* is unsupported \(use \'v\' to view this part\) --\]$')
+	skip1   = re.compile(r'^.*\[-- .* is unsupported \(use \'v\' to view this part\) --\]$')
+	skip2   = re.compile(r'^.*\[-- Autoview using .* --\]$')
 	output = []
 	attachments = []
 	i = 0
 	while i < len(lines):
-		if skip.match(lines[i]):
+		if skip1.match(lines[i]):
 			i += 2
+			continue
+		if skip2.match(lines[i]):
+			i += 1
 			continue
 		m1 = attach1.match(lines[i])
 		if m1:
