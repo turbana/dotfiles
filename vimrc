@@ -139,6 +139,10 @@ function SetupSpellCheck()
 endfunction
 
 
+
+
+
+
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " Custom file types """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
@@ -230,19 +234,46 @@ function FiletypeForth()
 	set filetype=forth
 endfunction
 
+
 function FiletypeEmail()
 	call FiletypeText()
 
-	setlocal fo+=aw
+	" Use LDAP lookup for completing email addresses
+	function! LdapComplete(findstart, base)
+		if a:findstart
+			let line = getline('.')
+			let start = col('.') - 1
+			while start > 0 && line[start - 1] =~ '\a'
+				let start -= 1
+			endwhile
+			return start
+		else
+			let output = system('/home/iclark/ldap-search.py ' . a:base)
+			return split(output, '\n')
+		endif
+	endfunction
+	setlocal completefunc=LdapComplete
 
-	" go to the first emtpy line
-	/^$/
-	" insert a blank line above it
-	normal O
-	" and below it
-	normal o
-	" and start in insert mode
-	startinsert
+	" Use tab for completion, but only on certain header lines
+	function! SmartTab()
+		if match(getline('.'), '^\(To\|Cc\|Bcc\):') >= 0
+			return "\<C-X>\<C-U>"
+		else
+			return "\<tab>"
+		endif
+	endfunction
+	inoremap <tab> <c-r>=SmartTab()<CR>
+
+	" If the To: line is populated start on the first blank line
+	if match(getline(2), '^To:.\{2,\}$') >= 0
+		/^$/
+		normal O
+		normal o
+	" otherwise start on the To: line
+	else
+		normal 2G
+	endif
+	startinsert!
 endfunction
 
 
