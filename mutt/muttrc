@@ -2,9 +2,6 @@
 #
 
 
-# in vim config: setlocal fo+=aw
-
-
 # sync mailbox when entering pager
 # this will move messages from /new to /cur supporting my email notifications
 macro pager ~2 "<enter-command>macro pager ~~ ~1\n"
@@ -38,6 +35,7 @@ set thorough_search      # strip headers and eval mimes before searching
 # jump straight into composing
 set fast_reply = yes
 set include = yes
+set autoedit
 
 set edit_headers = yes
 set forward_format = "Fwd: %s"
@@ -48,18 +46,13 @@ set text_flowed = yes
 set menu_scroll = yes
 
 set pager_context = 5
-set pager_index_lines = 8
+set pager_index_lines = 0
 set pager_stop = yes
 
-#set sort = threads
 set sort = reverse-date
-set sort_aux = reverse-date
 
 set status_on_top = yes
-
 set wrapmargin = 1
-
-#set abort_nosubject = no
 
 # Header Options -------------------------------------
 ignore *                                # ignore all headers
@@ -68,12 +61,13 @@ unhdr_order *                           # some distros order things by default
 hdr_order from: to: cc: date: subject:  # and in this order
 
 
-# Account Settings -----------------------------------
-
 set display_filter = "~/.etc/bin/mutt-message-filter"
 
 
 # keybindings
+bind	editor	<Tab>	complete-query
+bind	editor	^T		complete
+
 bind	index	r	group-reply
 bind	pager	r	group-reply
 bind	index	R	reply
@@ -89,6 +83,12 @@ bind	pager	k	previous-line
 
 bind	index	n	mail
 bind	pager	n	mail
+
+set xterm_set_titles
+
+# mime types
+auto_view text/html
+alternative_order text/plain text/enriched text/html
 
 
 
