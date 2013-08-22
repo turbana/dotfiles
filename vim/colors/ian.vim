@@ -10,7 +10,6 @@
 	" in your vimrc
 "
 
-"let &t_Co = 256 "XXX
 let g:colors_nIntme = "ian"
 
 "  t_Co=256 is set - check 
@@ -52,10 +51,10 @@ let s:colors256 = [
             \ ["Cursor",        "NONE", "255",   "33"   ],
             \ ["CursorLine",    "NONE", "NONE",  "233"  ],
             \ ["CursorColumn",  "NONE", "NONE",  "233"  ],
-            \ ["Incsearch",     "BOLD", "195",   "124"  ],
+            \ ["Incsearch",     "BOLD", "11",    "238"  ],
             \ ["Search",        "BOLD", "11",    "NONE" ],
 			\
-            \ ["ErrorMsg",      "BOLD", "9",     "NONE" ],
+            \ ["ErrorMsg",      "BOLD", "160",   "232"  ],
             \ ["WarningMsg",    "BOLD", "11",    "NONE" ],
             \ ["ModeMsg",       "BOLD", "15",    "NONE" ],
             \ ["MoreMsg",       "BOLD", "16",    "154"  ],
@@ -67,7 +66,7 @@ let s:colors256 = [
             \ ["VertSplit",     "NONE", "7",     "7"    ],
             \ ["WildMenu",      "BOLD", "87",    "35"   ],
 			\
-            \ ["DiffText",      "NONE", "16",    "33"  ],
+            \ ["DiffText",      "NONE", "16",    "33"   ],
             \ ["DiffChange",    "NONE", "236",   "37"   ],
             \ ["DiffDelete",    "NONE", "247",   "88"   ],
             \ ["DiffAdd",       "NONE", "236",   "78"   ],
@@ -93,8 +92,8 @@ let s:colors256 = [
             \ ["Ignore",        "NONE", "NONE",  "NONE" ],
             \ ["Number",        "NONE", "77",    "NONE" ],
             \ ["PreProc",       "NONE", "178",   "NONE" ],
-            \ ["Special",       "NONE", "159",   "NONE" ],
-            \ ["SpecialChar",   "NONE", "159",   "NONE" ],
+            \ ["Special",       "NONE", "117",   "NONE" ],
+            \ ["SpecialChar",   "NONE", "117",   "NONE" ],
             \ ["Todo",          "BOLD", "6",     "NONE" ],
             \ ["Type",          "NONE", "107",   "NONE" ],
             \ ["Underlined",    "BOLD", "77",    "NONE" ],
@@ -102,8 +101,8 @@ let s:colors256 = [
 
 
 let s:colorvim7 = [
-            \ ["Pmenu",         "NONE", "228",  "236"   ],
-            \ ["PmenuSel",      "BOLD", "226",  "232"   ],
+            \ ["Pmenu",         "NONE", "42",   "234"   ],
+            \ ["PmenuSel",      "BOLD", "87",   "236"   ],
             \ ["PmenuSbar",     "NONE", "119",  "16"    ],
             \ ["PmenuThumb",    "NONE", "11",   "16"    ],
             \ ["SpellBad",      "NONE", "46",   "233"   ],
