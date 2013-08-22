@@ -4,6 +4,7 @@ import os
 import os.path
 import datetime
 import subprocess
+import dbus
 
 DELAY        = 2.0
 SHOW_TOTAL   = False
@@ -26,16 +27,17 @@ WEATHER_UPDATE  = 60 * 60
 _WEATHER_TICKS = int(WEATHER_UPDATE / float(DELAY))
 current_temp = [0]
 
+# for checking pidgin IMs
+bus = dbus.SessionBus()
+obj = bus.get_object("im.pidgin.purple.PurpleService", "/im/pidgin/purple/PurpleObject")
+purple = dbus.Interface(obj, "im.pidgin.purple.PurpleInterface")
+
 def main(args):
 	try:
 		weather_ticks = _WEATHER_TICKS
 		prev_stats = list(cpu_stats())
 		time.sleep(DELAY / 10.0)
 		while True:
-			weather_ticks += 1
-			stats = list(cpu_stats())
-			usages = map(usage, zip(stats, prev_stats))
-
 			# check for mail
 			if have_mail():
 				color(COLOR_URGENT)
@@ -44,10 +46,11 @@ def main(args):
 				pad(SPACE_DEFAULT)
 
 			# check for IMs
-			#color(COLOR_URGENT)
-			#xbm("info_02.xbm")
-			#color(COLOR_NORMAL)
-			#pad(SPACE_DEFAULT)
+			if have_im():
+				color(COLOR_URGENT)
+				xbm("info_02.xbm")
+				color(COLOR_NORMAL)
+				pad(SPACE_DEFAULT)
 
 			# show cpu usages
 			pad(SPACE_DEFAULT * 4)
@@ -55,6 +58,8 @@ def main(args):
 			xbm("cpu.xbm")
 			color(COLOR_NORMAL)
 			pad(SPACE_DEFAULT)
+			stats = list(cpu_stats())
+			usages = map(usage, zip(stats, prev_stats))
 			map(show_graph, usages)
 
 			# show memory usages
@@ -66,6 +71,7 @@ def main(args):
 			map(show_graph, memory_usages())
 
 			# show weather
+			weather_ticks += 1
 			if weather_ticks >= _WEATHER_TICKS:
 				weather_ticks = 0
 				update_weather()
@@ -106,7 +112,7 @@ def cpu_stats():
 def usage(((total, idle), (prev_total, prev_idle)), _x=[0.0]):
 	d_total = float(total - prev_total)
 	d_idle  = float(idle  - prev_idle)
-	return (d_total - d_idle) / d_total
+	return (d_total - d_idle) / d_total if d_total else 0.0
 
 def memory_usages():
 	with open("/proc/meminfo") as proc:
@@ -148,6 +154,23 @@ def update_weather():
 
 def have_mail():
 	return len(os.listdir(os.path.expanduser(INBOX))) > 0
+
+def have_im():
+	im = purple.PurplePrefsGetBool("/plugins/dbus/docklet/blink/im")
+	chat = purple.PurplePrefsGetBool("/plugins/dbus/docklet/blink/chat")
+	if im and chat:
+		convs = purple.PurpleGetConversations()
+	elif im:
+		convs = purple.PurpleGetIms()
+	elif chat:
+		convs = purple.PurpleGetChats()
+	else:
+		convs = None
+	for conv in convs:
+		count = purple.PurpleConversationGetData(conv, "unseen-count")
+		if count and count > 0:
+			return True
+	return False
 
 def pad(pixels):
 	sys.stdout.write("^p(%d)" % pixels)
