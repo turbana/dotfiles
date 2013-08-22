@@ -8,7 +8,7 @@ import subprocess
 DELAY        = 2.0
 SHOW_TOTAL   = False
 XBM_DIR      = "~/.xmonad/dzen2"
-INBOX        = "~/.mail/gmail/INBOX/new"
+INBOX        = "~/.mail/eastern/INBOX/new"
 
 GRAPH_HEIGHT  = 16
 GRAPH_WIDTH   = 8
