@@ -70,6 +70,7 @@ hdr_order from: to: cc: date: subject:  # and in this order
 
 # Account Settings -----------------------------------
 
+set display_filter = "~/.etc/bin/mutt-message-filter"
 
 
 # keybindings

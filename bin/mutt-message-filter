@@ -1,0 +1,74 @@
+#!/usr/bin/python
+
+import sys
+import re
+
+INLINE_TYPES = ("text/plain", )
+
+def main(args):
+	in_header = True
+	headers = []
+	body = []
+	for line in sys.stdin:
+		if in_header:
+			if line == "\n":
+				in_header = False
+			else:
+				headers.append(line)
+		else:
+			body.append(line)
+	emit_lines(handle_headers(headers))
+	emit("\n")
+	emit_lines(handle_body(body))
+
+
+def handle_headers(lines):
+	def replace(line):
+		line = line.replace("From:", "From:   ") \
+				   .replace("To:",   "To:     ") \
+				   .replace("Date:", "Date:   ")
+		return line
+	return map(replace, lines)
+
+def handle_body(lines):
+	attach1 = re.compile(r'^.*\[-- Attachment #[0-9]*:? ([^ ]+)? ?--\]$')
+	attach2 = re.compile(r'^.*\[-- Type: (.*), Encoding: .*, Size: (.*) --\]$')
+	skip    = re.compile(r'^.*\[-- .* is unsupported \(use \'v\' to view this part\) --\]$')
+	output = []
+	attachments = []
+	i = 0
+	while i < len(lines):
+		if skip.match(lines[i]):
+			i += 2
+			continue
+		m1 = attach1.match(lines[i])
+		if m1:
+			m2 = attach2.match(lines[i+1])
+			filename = m1.group(1)
+			filetype, filesize = m2.groups()
+			if filename:
+				if filetype in INLINE_TYPES:
+					# inline types are expanded by mutt, but it adds an extra line that I don't want
+					i += 3
+					continue
+				attachments.append("%s (%s)" % (filename, filesize))
+			i += 2
+			continue
+		output.append(lines[i])
+		i += 1
+	if len(attachments) == 1:
+		line = "[-- Attachment: %s --]\n" % attachments[0]
+		output.insert(0, line)
+	elif len(attachments) > 1:
+		line = "[-- %d Attachments: %s --]\n" % (len(attachments), ", ".join(attachments))
+		output.insert(0, line)
+	return output
+
+def emit_lines(lines):
+	map(emit, lines)
+
+def emit(msg):
+	sys.stdout.write(msg)
+
+if __name__ == "__main__":
+	sys.exit(main(sys.argv[1:]))
