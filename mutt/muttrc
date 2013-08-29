@@ -2,13 +2,6 @@
 #
 
 
-# sync mailbox when entering pager
-# this will move messages from /new to /cur supporting my email notifications
-macro pager ~2 "<enter-command>macro pager ~~ ~1\n"
-macro pager ~1 "<enter-command>macro pager ~~ ~2\n<sync-mailbox>"
-macro pager ~~ ~1
-message-hook ~A 'push ~~'
-
 
 # Paths ----------------------------------------------
 set folder           = ~/.mail               # mailbox location
@@ -92,8 +85,8 @@ alternative_order text/plain text/enriched text/html
 
 
 
-# load config for home/work
-source `$ETC/mutt/local-config.sh`
-
 # load colors
 source `$ETC/mutt/maybe-source.sh $HOME/.mutt/muttrc.color`
+
+# load config for home/work
+source `$ETC/mutt/local-config.sh`
