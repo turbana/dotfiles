@@ -18,6 +18,9 @@ elif [ -f /etc/DIR_COLORS ]; then
 	eval `dircolors -b /etc/DIR_COLORS`
 fi
 
+# enable tab completion
+[[ -f /etc/bash_completion ]] && . /etc/bash_completion
+
 # update terminal title
 case ${TERM} in
 	xterm*|rxvt*|Eterm|aterm|kterm|gnome)
@@ -39,7 +42,7 @@ shopt -s histappend
 
 
 # some aliases
-_LS_OPTS='--color=auto -h --time-style="+%Y-%m-%d %H:%M"'
+_LS_OPTS='--color=yes -h --time-style="+%Y-%m-%d %H:%M"'
 alias ls="ls $_LS_OPTS"
 alias ll='ls -l'
 alias la='ls -lA'
@@ -76,20 +79,23 @@ b_white="$e[01;37m\\]"
 normal="$e[00;00m\\]"
 
 
-# add to the path
+# setup PATH
+export PATH=/bin
 add_path $HOME/bin
-add_path /bin
+add_path /opt/java/bin
+add_path /usr/local/bin
 add_path /sbin
 add_path /usr/bin
 add_path /usr/sbin
-add_path /usr/local/bin
-add_path /opt/java/bin
+
+export JAVA_HOME=/opt/java
 
 mutt() {
 	imap_pid=$HOME/.offlineimap/pid
 
 	if ! ([ -f $imap_pid ] && ps h $(cat $imap_pid) > /dev/null); then
 		nohup offlineimap > $HOME/.offlineimap/stdout.log &
+		#nohup python $HOME/.offlineimap/code/offlineimap.py > $HOME/.offlineimap/stdout.log &
 	fi
 
 	if ps aux | grep $(which mutt) | grep -qv grep; then
@@ -99,9 +105,15 @@ mutt() {
 	fi
 }
 
+# setup todo.txt
+if which todo.sh > /dev/null; then
+	alias t='todo.sh -d $HOME/.todo/config'
+	complete -F _todo t
+	export TODOTXT_DEFAULT_ACTION=ls
+fi
 
 # some general environment variables
-export LESS="-S"
+export LESS="-SR"
 export EDITOR=vi
 export TERM=xterm-256color
 

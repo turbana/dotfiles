@@ -1,35 +1,57 @@
 # .mutt.color
 
 
-color normal 		color252 		color233
+color normal 		color252 		color234
 color indicator		color255		color238
 color status 		brightcolor255 	color237
-color tree	 		color252 		color233
-color message 		color77 		color233
-color markers		color166		color233
-color error 		brightcolor9	color233
-color hdrdefault	color71			color233
-color signature		color148		color233
-color quoted		color6			color233
-color quoted1		color75			color233
+color tree	 		color252 		color234
+color message 		color77 		color234
+color markers		color166		color234
+color error 		brightcolor9	color234
+color hdrdefault	color71			color234
+color signature		color148		color234
+#color quoted		color248		color234
+#color quoted1		color252		color234
+#color quoted2		color248		color234
+#color quoted		color75			color234
+#color quoted1		color41			color234
+#color quoted2		color142		color234
+color quoted		color75			color234
+#color quoted1		color113			color234
+color quoted1		color252		color234
+color tilde			color248		color232
 
-color attachment	color148		color233
-color body			color148		color233	"^[[]-- .* --[]]$"
+color attachment	color148		color234
+color body			color148		color234	"^[[]-- .* --[]]$"
 
-color body			color107		color233	"(https?|s?ftp|git)://[^ \"\t\r\n]*"
-color body			color107		color233	"mailto:[-a-z_0-9.]+@[-a-z_0-9.]+"
+color body			color107		color234	"(https?|s?ftp|git)://[^ \"\t\r\n]*"
+color body			color107		color234	"(mailto:)?[-a-z_0-9.]+@[-a-z_0-9.]+"
+color body			color107		color234	"[0-9x]{1,3}\\.[0-9x]{1,3}\\.[0-9x]{1,3}\\.[0-9x]{1,3}(/[0-9x]{1,3})?"
 
-color header		color6			color234	"^from:"
-color header		color178		color234	"^to:"
-color header		color178		color234	"^cc:"
-color header		color107		color234	"^date:"
-color header		brightcolor255	color234	"^subject:"
+color header		brightcolor6	color235	"^from:"
+color body			brightcolor6	color235	"^>+ from:.*"
+color header		color178		color235	"^to:"
+color body			color178		color235	"^>+ to:.*"
+color header		color178		color235	"^cc:"
+color body			color178		color235	"^>+ cc:.*"
+color header		color107		color235	"^date:"
+color body			color107		color235	"^>+ (date|sent):.*"
+color header		brightcolor255	color235	"^subject:"
+color body			brightcolor255	color235	"^>+ subject:.*"
+color body			brightcolor255	color235	"^(>+ )?On .* wrote:$"
 
-color index 		brightcolor251	color233	"~U"		# unread
-color index			color143		color233	"! ~p"		# not to me
-color index			brightcolor143	color233	"! ~p ~U"	# unread and not to me
-color index			color77			color233	"~P"		# from me
-color index			brightcolor77	color233	"~P ~U"		# unread and from me
-color index			color75			color233	"~T"		# tagged
+color index 		brightcolor251	color234	"~U"		# unread
+color index			color143		color234	"! ~p"		# not to me
+color index			brightcolor143	color234	"! ~p ~U"	# unread and not to me
+color index			color77			color234	"~P"		# from me
+color index			brightcolor77	color234	"~P ~U"		# unread and from me
+color index			color75			color234	"~T"		# tagged
 
-#color index color77 color233 "~U"
+# gpg colors
+color body			brightcolor208	color235	'^gpg: WARNING.*'
+color body			brightcolor208	color235	'^gpg:          There is no indication that the signature belongs to the owner.'
+color body			brightcolor70	color234	'^gpg: Good signature.*'
+color body			color247		color234	'^Primary key fingerprint.*'
+color body			color247		color234	'^gpg: Signature made.*'
+
+#color index color77 color234 "~U"

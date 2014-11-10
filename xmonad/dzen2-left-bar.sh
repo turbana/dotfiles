@@ -11,4 +11,4 @@ bg="#222222"
 sed -ue 's/|[^|]*|/|/' | \
 # start with a space
 sed -ue 's/^/ /' | \
-dzen2 -y -1 -x 0 -w 600 -ta l -fg $fg -bg $bg -fn "$font" -xs 1
+dzen2 -y -1 -x 0 -w 800 -ta l -h 20 -fg $fg -bg $bg -fn "$font" -xs 1 -e 'onstart=lower'

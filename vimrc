@@ -32,6 +32,7 @@ set undolevels=200				" Ensure 200 levels of undo
 set showcmd						" Show the last command in the bottom right.
                                 " (shows amount highlighted in visual mode)
 set magic						" Use extended regular expressions
+set nojoinspaces				" Do not place multiple spaces after a . when joining
 set t_ut=
 
 " By default '<reg> moves to the line that <reg> is marked at and `<reg> moves
@@ -39,10 +40,12 @@ set t_ut=
 nnoremap ' `
 nnoremap ` '
 
+nnoremap <C-j> <C-f>
+nnoremap <C-k> <C-b>
+
 " Ignore the following wildcards when completing file/directoy names
 set wildignore=*.o,*~
 
-set nojoinspaces				" Do not place multiple spaces after a . when joining
 
 " Turn on filetype specific files
 filetype plugin indent on
@@ -51,8 +54,8 @@ let mapleader=","
 
 " Keep backups/swapfiles/infofile in one location to remove cluter
 set backup
-set backupdir=~/.vim/backups,.
-set directory=~/.vim/swap//,.,~/tmp,/var/tmp,/tmp
+set backupdir=~/.vim/backups,.,/tmp
+set directory=~/.vim/swap,.,/tmp
 set viminfo='20,\"50,n~/.vim/viminfo.dat
 
 " Restore cursor to last known position when reopening a file
@@ -71,8 +74,7 @@ let g:netrw_timefmt="%a %d %b %Y %T"
 let g:netrw_liststyle=1
 
 " Make :help split the window horizontally
-autocmd FileType help wincmd L
-
+"autocmd FileType help wincmd L
 
 set tags=./tags;../../../../
 
@@ -139,6 +141,9 @@ function SetupSpellCheck()
 endfunction
 
 
+
+autocmd BufReadCmd *.trz call tar#Browse(expand("<afile>"))
+autocmd BufReadCmd *.war,*.ear call zip#Load(expand("<amatch>"))
 
 
 
@@ -234,6 +239,12 @@ function FiletypeForth()
 	set filetype=forth
 endfunction
 
+function FiletypeTCL()
+	"set tabstop=8
+	"set shiftwidth=8
+	"set textwidth=0
+endfunction
+
 
 function FiletypeEmail()
 	call FiletypeText()
@@ -276,8 +287,9 @@ function FiletypeEmail()
 	startinsert!
 endfunction
 
+"autocmd BufReadCmd *.trz call zip#Browse(expand("<amatch>"))
 
-autocmd BufEnter,BufNew ~/.mutt/tmp/*		call FiletypeEmail()
+autocmd BufEnter,BufNew ~/.mutt/tmp/mutt-*		call FiletypeEmail()
 
 autocmd BufEnter,BufNew *.py		call FiletypePython()
 autocmd BufEnter,BufNew *.hs		call FiletypeHaskell()
@@ -289,4 +301,5 @@ autocmd BufEnter,BufNew *.*tex		call FiletypeTex()
 autocmd BufEnter,BufNew *.lisp,*.cl	call FiletypeLisp()
 autocmd BufEnter,BufNew *.asm		call FiletypeAssembler()
 autocmd BufEnter,BufNew *.f			call FiletypeForth()
+autocmd BufEnter,BufNew *.tcl		call FiletypeTCL()
 autocmd	BufEnter *					call ShowErrors()

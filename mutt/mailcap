@@ -1,1 +1,10 @@
+text/html; web %s; needsterminal
 text/html; w3m -I %{charset} -T text/html; copiousoutput;
+
+image/*; web %s
+
+application/pdf; mutt_bgrun xpdf %s
+application/msword; mutt_bgrun libreoffice %s
+application/vnd.openxmlformats-officedocument.wordprocessingml.document; mutt_bgrun libreoffice %s
+
+application/x-zip-compressed; vi %s

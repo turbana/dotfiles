@@ -37,9 +37,10 @@ TERM screen
 TERM screen-bce
 TERM screen-w
 TERM screen.linux
+TERM screen-256color
 TERM vt100
 TERM xterm
-#TERM xterm-256color
+TERM xterm-256color
 TERM xterm-color
 TERM xterm-debian
 
@@ -53,7 +54,8 @@ TERM xterm-debian
 # 40=black 41=red 42=green 43=yellow 44=blue 45=magenta 46=cyan 47=white
 NORMAL 00           # global default, although everything should be something.
 FILE 00             # normal file
-DIR 01;34           # directory
+#DIR 01;34           # directory
+DIR 01;38;5;75           # directory
 LINK 01;36          # symbolic link.  (If you set this to 'target' instead of a
                     # numerical value, the color will match the file pointed to)
 FIFO 40;33          # pipe
@@ -61,107 +63,64 @@ SOCK 01;35          # socket
 DOOR 01;35          # door
 BLK 40;33;01        # block device driver
 CHR 40;33;01        # character device driver
-ORPHAN 01;05;37;41  # orphaned syminks
-MISSING 01;05;37;41 # ... and the files they point to
+#ORPHAN 01;05;37;41  # orphaned syminks
+#MISSING 01;05;37;41 # ... and the files they point to
+
+ORPHAN 01;38;5;9
+MISSING 01;05;37;41
 
 # This is for files with execute permission:
-EXEC 01;32
+#EXEC 01;32
+EXEC 01;38;5;47
 
 # List any file extensions like '.gz' or '.tar' that you would like ls
 # to colorize below. Put the extension, a space, and the color init string.
 # (and any comments you want to add after a '#')
 
-.cmd 01;32 # executables (bright green)
-.exe 01;32
-.com 01;32
-.btm 01;32
-.bat 01;32
-.sh  01;32
-.csh 01;32
+# archives
+.tar    00;38;5;148
+.tar.gz 00;38;5;148
+.tar.bz 00;38;5;148
+.tgz    00;38;5;148
+.tbz    00;38;5;148
+.zip    00;38;5;148
+.7z     00;38;5;148
+.z      00;38;5;148
+.Z      00;38;5;148
+.bz     00;38;5;148
+.bz2    00;38;5;148
+.rar    00;38;5;148
+.jar    00;38;5;148
+.war    00;38;5;148
 
-.tar 00;31 # archives / compressed (bright red)
-.tgz 00;31
-.arj 00;31
-.taz 00;31
-.lzh 00;31
-.zip 00;31
-.z   00;31
-.Z   00;31
-.gz  00;31
-.bz2 00;31
-.bz  00;31
-.tbz2 00;31
-.tz  00;31
-.deb 00;31
-.rpm 00;31
-.rar 00;31		# app-arch/rar
-.ace 00;31		# app-arch/unace
-.zoo 00;31		# app-arch/zoo
-.cpio 00;31		# app-arch/cpio
-.7z  00;31		# app-arch/p7zip
-.rz  00;31		# app-arch/rzip
+# source code
+.sh   00;38;5;37
+.bash 00;38;5;37
+.py   00;38;5;37
+.c    00;38;5;37
+.h    00;38;5;37
+.cpp  00;38;5;37
+.rb   00;38;5;37
+.java 00;38;5;37
+.asm  00;38;5;37
+.S    00;38;5;37
+.js   00;38;5;37
+.css  00;38;5;37
+.htm  00;38;5;37
+.html 00;38;5;37
+.xml  00;38;5;37
+.vim  00;38;5;37
+.sql  00;38;5;37
 
-.jpg 00;35 # image formats
-.jpeg 00;35
-.gif 00;35
-.bmp 00;35
-.ppm 00;35
-.tga 00;35
-.xbm 00;35
-.xpm 00;35
-.tif 00;35
-.tiff 00;35
-.png 00;35
-.mng 00;35
-.xcf 00;35
-.pcx 00;35
-.mpg 00;35
-.mpeg 00;35
-.m2v 00;35  # MPEG-2 Video only
-.avi 00;35
-.mkv 00;35  # Matroska (http://matroska.org/)
-.ogm 00;35  # Ogg Media File
-.mp4 00;35  # "Offical" container for MPEG-4
-.m4v 00;35  # MPEG-4 Video only
-.mp4v 00;35 # MPEG-4 Video only
-.mov 00;35  # Quicktime (http://developer.apple.com/qa/qtw/qtw99.html)
-.qt 00;35   # Quicktime (http://developer.apple.com/qa/qtw/qtw99.html)
-.wmv 00;35  # Windows Media Video
-.asf 00;35  # Advanced Systems Format (contains Windows Media Video)
-.rm 00;35   # Real Media
-.rmvb 00;35 # Real Media Variable Bitrate
-.flc 00;35  # AutoDesk Animator
-.fli 00;35  # AutoDesk Animator
-.gl 00;35
-.dl 00;35
-
-.pdf 00;32 # Document files
-.ps 00;32
-.txt 00;32
-.patch 00;32
-.diff 00;32
-.log 00;32
-.tex 00;32
-.doc 00;32
-
-.mp3 00;36 # Audio files
-.wav 00;36
-.mid 00;36
-.midi 00;36
-.au 00;36
-.ogg 00;36
-.flac 00;36
-.aac 00;36
-
-# start additions
-.php	00;36
-.c	00;36
-.cpp	00;36
-.h	00;36
-.rb	00;36
-.py	00;36
-.java	00;36
-.asm	00;36
-.js	00;36
-.css	00;36
-.sql	00;36
+# unimportant files
+.log   00;38;5;248
+.bak   00;38;5;248
+.out   00;38;5;248
+.old   00;38;5;248
+*~     00;38;5;248
+.swp   00;38;5;248
+.tmp   00;38;5;248
+.temp  00;38;5;248
+.o     00;38;5;248
+.class 00;38;5;248
+.pyc   00;38;5;248
