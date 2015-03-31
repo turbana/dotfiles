@@ -6,17 +6,18 @@ import os.path
 import subprocess
 import sys
 import time
+import collections
 
 
 DELAY          = 2.0
 SHOW_CPU_TOTAL = False
 
-XBM_DIR      = "~/.xmonad/dzen2"
-INBOX        = "~/.mail/eastern/INBOX/new"
-EVENTS       = "~/.cal"
-IMAP_LOG     = "~/.offlineimap/stdout.log"
+XBM_DIR      = os.path.expanduser("~/.xmonad/dzen2")
+INBOX        = os.path.expanduser("~/.mail/eastern/INBOX/new")
+EVENTS       = os.path.expanduser("~/.cal")
+IMAP_LOG     = os.path.expanduser("~/.offlineimap/stdout.log")
 
-TIME_CHECK_LOG    = "~/.hours-worked"
+TIME_CHECK_LOG    = os.path.expanduser("~/.hours-worked")
 TIME_CHECK_TARGET = 7.5
 TIME_CHECK_START  = datetime.time(hour=16, minute=0)
 TIME_CHECK_STALE  = 12
@@ -28,6 +29,7 @@ POPUP_ROWS       = 16
 POPUP_COLUMNS    = 62
 CALENDAR_COLUMNS = 31
 EVENTS_COLUMNS   = 31
+ROOM_COLUMNS     = 19
 
 COLOR_NORMAL    = "#cccccc"
 COLOR_HIGHLIGHT = "#999933"
@@ -55,26 +57,23 @@ EVENT_TIME   = "^fg(#33ff33)"
 EVENT_DATE   = "^fg(#999933)"
 
 WEATHER_STATION = "KGEG"
-WEATHER_UPDATE  = 30 * 60
-CALENDAR_UPDATE = 15 * 60
+WEATHER_UPDATE  = 15 * 60
 
 _WEATHER_TICKS = int(WEATHER_UPDATE / float(DELAY))
-_CALENDAR_TICKS = int(CALENDAR_UPDATE / float(DELAY))
 current_temp = [0]
 have_event_today = [False]
+file_changes = collections.defaultdict(int)
+
 
 def main(args):
 	try:
 		weather_ticks = _WEATHER_TICKS
-		calendar_ticks = _CALENDAR_TICKS
 		prev_stats = list(cpu_stats())
 		time.sleep(DELAY / 10.0)
 
 		while True:
 			# draw slave window
-			calendar_ticks += 1
-			if calendar_ticks >= _CALENDAR_TICKS:
-				calendar_ticks = 0
+			if file_changed(EVENTS):
 				today = datetime.date.today()
 				sys.stdout.write("^cs()\n")
 				events = parse_events(EVENTS)
@@ -83,8 +82,6 @@ def main(args):
 				sys.stdout.write(combine(event_str, cal_str, POPUP_COLUMNS))
 
 			sys.stdout.write("^tw()")
-
-			icon_check(outlook_failure, COLOR_FAILURE, "bug_01.xbm")
 
 			# show alert icons
 			icon_check(need_time_tracking, COLOR_URGENT,  "clock.xbm")
@@ -146,6 +143,7 @@ def main(args):
 	except KeyboardInterrupt, e:
 		pass
 
+
 def icon_check(check, color_, icon):
 	if check():
 		color(color_)
@@ -153,20 +151,21 @@ def icon_check(check, color_, icon):
 		color(COLOR_NORMAL)
 		pad(SPACE_DEFAULT)
 
+
 def need_time_tracking():
 	try:
 		now = datetime.datetime.now()
 		if TIME_CHECK_START < now.time():
-			filename = os.path.expanduser(TIME_CHECK_LOG)
-			mtime = os.path.getmtime(filename)
+			mtime = os.path.getmtime(TIME_CHECK_LOG)
 			modified = datetime.datetime.fromtimestamp(mtime)
 			stale = (TIME_CHECK_STALE * 60 * 60) < (now - modified).total_seconds()
-			hours = open(filename).read()
+			hours = open(TIME_CHECK_LOG).read().strip()
 			hours = float(hours) if hours else 0.0
 			return stale or hours < TIME_CHECK_TARGET
 	except IOError:
 		return True
 	return False
+
 
 def build_events(today, events):
 	locals = ["\n", "", 0]
@@ -197,12 +196,17 @@ def build_events(today, events):
 		show_fmt(format + EVENT_DATE)
 		show(date)
 		show_fmt(format)
+		if len(room) > ROOM_COLUMNS - 1:
+			room = room[:ROOM_COLUMNS-2] + ">"
 		show(room)
 		end_line()
 		show_fmt(format)
-		show(" %s " % desc)
+		if len(desc) > EVENTS_COLUMNS - 1:
+			desc = desc[:EVENTS_COLUMNS-2] + ">"
+		show(" %s" % desc)
 		end_line()
 	return locals[0]
+
 
 def build_calendar(today, events):
 	buffer = [""]
@@ -263,6 +267,7 @@ def build_calendar(today, events):
 		lines += 1
 	return buffer[0]
 
+
 def cpu_stats():
 	with open("/proc/stat") as proc:
 		for line in proc:
@@ -274,10 +279,12 @@ def cpu_stats():
 				total = sum(map(int, columns[1:]))
 				yield total, idle
 
+
 def usage(((total, idle), (prev_total, prev_idle)), _x=[0.0]):
 	d_total = float(total - prev_total)
 	d_idle  = float(idle  - prev_idle)
 	return (d_total - d_idle) / d_total if d_total else 0.0
+
 
 def memory_usages():
 	with open("/proc/meminfo") as proc:
@@ -293,6 +300,7 @@ def memory_usages():
 	#mem_usage = (mem_total - mem_free - mem_buffers - mem_cached) / float(mem_total)
 	swap_usage = (swap_total - swap_free) / float(swap_total)
 	return ((mem_total, mem_free, mem_buffers, mem_cached), swap_usage)
+
 
 def show_ram((total, free, buffers, cached)):
 	w = GRAPH_WIDTH
@@ -315,6 +323,7 @@ def show_ram((total, free, buffers, cached)):
 	sys.stdout.write("^ib(0)^fg()")
 	pad(SPACE_DEFAULT)
 
+
 def show_graph(load):
 	w = GRAPH_WIDTH
 	h = GRAPH_HEIGHT
@@ -326,6 +335,7 @@ def show_graph(load):
 	sys.stdout.write("^ib(0)^fg()")
 	pad(SPACE_DEFAULT)
 
+
 def show_clock():
 	clock = datetime.datetime.now()
 	color(COLOR_HIGHLIGHT)
@@ -335,6 +345,7 @@ def show_clock():
 	color(COLOR_CLOCK)
 	sys.stdout.write(clock.strftime("%H:%M"))
 
+
 def update_weather():
 	try:
 		proc = subprocess.Popen("weather -q %s | grep '^Temp'" % WEATHER_STATION, shell=True, stdout=subprocess.PIPE)
@@ -343,14 +354,6 @@ def update_weather():
 	except Exception, e:
 		current_temp[0] = -100.0
 
-def outlook_failure():
-	try:
-		proc = subprocess.Popen("tail -n 10 %s | grep -ci '\(error\|Exception\)'" % "/home/iclark/work/outlook/outlook.log",
-						  		shell=True, stdout=subprocess.PIPE)
-		stdout, stderr = proc.communicate()
-		return int(stdout) > 0
-	except Exception, e:
-		return True
 
 def mail_failure():
 	try:
@@ -362,8 +365,10 @@ def mail_failure():
 	except Exception, e:
 		return True
 
+
 def have_mail():
-	return len(os.listdir(os.path.expanduser(INBOX))) > 0
+	return len(os.listdir(INBOX)) > 0
+
 
 def have_im():
 	try:
@@ -389,18 +394,23 @@ def have_im():
 		pass
 	return False
 
+
 def have_event():
 	return have_event_today[0]
+
 
 def pad(pixels):
 	sys.stdout.write("^p(%d)" % pixels)
 
+
 def color(c):
 	sys.stdout.write("^fg(%s)" % c)
 
+
 def xbm(name):
-	path = os.path.join(os.path.expanduser(XBM_DIR), name)
+	path = os.path.join(XBM_DIR, name)
 	sys.stdout.write("^i(%s)" % path)
+
 
 def iterdays(year, month):
 	# previous month
@@ -439,9 +449,10 @@ def iterdays(year, month):
 	for i in range(last[3]+2, 7):
 		yield year, nextmonth, 0, (6+i)%7
 
+
 def parse_events(events_filename):
 	events = []
-	for line in open(os.path.expanduser(events_filename)):
+	for line in open(events_filename):
 		line = line.strip()
 		if not line or line[0] == "#": continue
 		tmp = [s.strip() for s in line.split("-")]
@@ -470,35 +481,6 @@ def parse_events(events_filename):
 	events.sort(key=lambda t: (t[0], t[1]))
 	return [e for e in events if e[0] >= today]
 
-def parse_events_old(events_filename):
-	def bite(str, c):
-		i = str.find(c)
-		if i < 0:
-			return str, None
-		return str[i+1:].strip(), str[:i].strip()
-	events = []
-	for line in open(os.path.expanduser(EVENTS)):
-		line = line.strip()
-		if line[0] == "#": continue
-		desc, times = bite(line, "-")
-		times, date = bite(times, " ")
-		room, time = bite(times, " ")
-		if time is None:
-			swp = time
-			time = room
-			room = swp
-		print "desc", desc
-		print "date", date
-		print "room", room
-		print "time", time
-		return []
-		date = parse_date(date)
-		time = time.zfill(5)
-		events.append((date, time, room, desc))
-	today = datetime.date.today()
-	events.sort(key=lambda t: t[1])
-	events.sort(key=lambda t: t[0])
-	return [e for e in events if e[0] >= today]
 
 def parse_date(date_str):
 	for fmt in ("%m/%d/%y", "%m/%d/%Y", "%m/%d"):
@@ -510,6 +492,7 @@ def parse_date(date_str):
 		except ValueError:
 			pass
 
+
 def combine(left, right, cols):
 	left_lines = left.split("\n")
 	right_lines = right.split("\n")
@@ -519,6 +502,13 @@ def combine(left, right, cols):
 		right = right_lines.pop(0) if right_lines else ""
 		s += left + right + "\n"
 	return s
+
+
+def file_changed(filename):
+	mtime = os.path.getmtime(filename)
+	changed = file_changes[filename] != mtime
+	file_changes[filename] = mtime
+	return changed
 
 
 if __name__ == "__main__":
