@@ -114,8 +114,12 @@ fi
 
 # some general environment variables
 export LESS="-SR"
-export EDITOR=vi
 export TERM=xterm-256color
+
+# use emacs as editor
+export EDITOR=emacsclient
+export ALTERNATE_EDITOR=
+alias emacs='emacsclient -c -a ""'
 
 # colorize grep's matches
 export GREP_COLOR='1;32'
