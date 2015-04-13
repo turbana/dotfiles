@@ -23,6 +23,10 @@
   (require 'use-package))
 
 
+;; prompt before closing emacs with C-x C-c
+(setq confirm-kill-emacs 'yes-or-no-p)
+
+
 ;;; theme
 ;; solarized
 (load-theme 'solarized-light t)
