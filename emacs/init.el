@@ -2,7 +2,7 @@
 
 ;;; packages
 (setq required-packages
-      '(use-package cl multi-term discover org-page hydra))
+      '(use-package cl multi-term discover org-page hydra solarized-theme))
 
 ;; init packages
 (require 'package)
@@ -23,18 +23,9 @@
   (require 'use-package))
 
 
-
 ;;; theme
 ;; solarized
-(add-to-list 'custom-theme-load-path "~/.emacs.d/themes/emacs-color-theme-solarized")
-(add-hook 'after-make-frame-functions
-          (lambda (frame)
-            (set-frame-parameter frame
-                                 'background-mode
-                                 (if (display-graphic-p frame) 'light 'dark))
-            (enable-theme 'solarized)))
-(load-theme 'solarized t)
-;; smaller font size
+(load-theme 'solarized-light t)
 (set-face-attribute 'default nil :height 100)
 
 
