@@ -2,7 +2,7 @@
 
 ;;; packages
 (setq required-packages
-      '(use-package cl multi-term discover org-page hydra solarized-theme))
+      '(use-package cl multi-term discover org-page hydra solarized-theme haskell-mode))
 
 ;; init packages
 (require 'package)
@@ -13,10 +13,15 @@
 (package-initialize)
 
 ;; install packages
-(mapc (lambda (p)
-	(unless (package-installed-p p)
-	  (package-install p)))
-      required-packages)
+(let ((refreshed-packages nil))
+  (dolist (pkg required-packages)
+    (when (not (package-installed-p pkg))
+      (when (not refreshed-packages)
+	(message "Refreshing packages")
+	(package-refresh-contents)
+	(setq refreshed-packages t))
+      (package-install pkg))))
+
 
 ;; setup use-package
 (eval-when-compile
