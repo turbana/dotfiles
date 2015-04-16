@@ -62,6 +62,7 @@ myKeys conf@(XConfig {modMask = modm}) =
   , ((mod1Mask,              xK_period), sendMessage (IncMasterN 1))
   , ((0       ,               xK_Pause), spawn "calc")
   , ((mod1Mask,               xK_p    ), spawn "dmenu_run -m 0 -b -nb '#555555' -nf '#eeeeee' -sb '#003399' -sf '#ffffff' -p '>'")
+  , ((mod1Mask .|. controlMask, xK_e  ), spawn "emacsclient -c -a ''")
   , ((mod1Mask,               xK_F2   ), spawn "/home/iclark/src/ewu/whd/update-timetracking.sh")
   , ((mod1Mask .|. controlMask, xK_q  ), spawn "if type xmonad; then xmonad --recompile && xmonad --restart; else xmessage xmonad not in \\$PATH: \"$PATH\"; fi")
   , ((mod1Mask,               xK_a    ), scratchPad)
