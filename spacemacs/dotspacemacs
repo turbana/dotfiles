@@ -130,6 +130,8 @@ before layers configuration."
    dotspacemacs-default-package-repository nil
    )
   ;; User initialization goes here
+  ;; use X11 primary to copy/paste
+  (setq x-select-enable-primary t)
   )
 
 (defun dotspacemacs/config ()

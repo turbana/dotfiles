@@ -17,7 +17,7 @@
 
     ;;; appearance
     (setq org-hide-leading-stars t)
-    (setq org-odd-levels-only t)
+    (setq org-odd-levels-only nil)
     (setq org-completion-use-ido t)
     (setq org-return-follows-link t)
     (setq org-blank-before-new-entry nil)
@@ -36,7 +36,7 @@
     (setq org-tag-alist
           '(("WORK" . ?w)
             ("HOME" . ?h)))
-    (setq org-tags-column -80)
+    (setq org-tags-column -120)
 
 
     ;;; logging
