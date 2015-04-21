@@ -1,7 +1,11 @@
 (defvar ian-packages
-  '(org))
+  '(org noflet))
 
 (defvar ian-excluded-packages '())
+
+
+(defun ian/init-noflet ()
+  (use-package noflet))
 
 
 (defun ian/init-org ()
@@ -35,7 +39,8 @@
     ;;; tags
     (setq org-tag-alist
           '(("WORK" . ?w)
-            ("HOME" . ?h)))
+            ("HOME" . ?h)
+            ("488"  . ?s)))
     (setq org-tags-column -120)
 
 
@@ -71,7 +76,27 @@
 
 
     ;;; agenda
-    ;; TODO
+    ;; don't show completed DEADLINE and SCHEDULED in agenda
+    (setq org-agenda-skip-deadline-if-done t)
+    (setq org-agenda-skip-scheduled-if-done t)
+    ;; first day in agenda should be today
+    (setq org-agenda-start-on-weekday nil)
+    ;; compact agenda views
+    ;(setq org-agenda-compact-blocks t)
+    ;; show daily agenda by default
+    (setq org-agenda-span 'day)
+    ;; custom agenda views
+    (setq org-agenda-custom-commands
+          '((" " "Agenda"
+             ((agenda "" nil)
+              (tags "REFILE"
+                    ((org-agenda-overriding-header "Refile tasks:")
+                     (org-tags-match-list-sublevels nil)))
+              (tags "-REFILE/"
+                      ((org-agenda-overriding-header "Archive tasks:")
+                       (org-agenda-skip-function 'bh/skip-non-archivable-tasks)
+                       (org-tags-match-list-sublevels nil))))
+               nil)))
 
 
     ;;; clocking
@@ -95,6 +120,11 @@
     (setq spacemacs-mode-line-org-clock-current-taskp t)
     ;; only show today's clock in the modeline
     (setq org-clock-mode-line-total 'today)
+
+
+    ;;; archiving
+    ;; don't modify the task state when archiving
+    (setq org-archive-mark-done nil)
 
 
     :config
