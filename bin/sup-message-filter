@@ -1,0 +1,315 @@
+#!/usr/bin/python
+
+import sys
+import re
+
+INLINE_TYPES = ("text/plain", )
+#GOOD_USERS = ("cturnbull@ewu.edu", )
+GOOD_USERS = ()
+SHOW_SIGNATURES = False
+SIGNATURES = (
+	"--$",
+	"Description:",
+	"cid:image",
+	"Lesli Younger '06", # Lesli
+	"Secretary  cid:image", # Ashley
+	"Eastern Washington University: start something$", # John Mix
+	"Eastern Washington University: start   Dr.", # Gary
+	"ewu                            Shannon Flynn",
+)
+
+WHD_SECTION = "---------------------------------------\n"
+
+class globals(object):
+	headers = []
+	iphone = False
+
+def main(args):
+	"""
+	in_header = True
+	headers = []
+	body = []
+	for line in sys.stdin:
+		if in_header:
+			if line == "\n":
+				in_header = False
+			else:
+				headers.append(line)
+		else:
+			body.append(line)
+	emit_lines(handle_headers(headers))
+	emit("\n")
+	emit_lines(handle_body(body))
+	"""
+	body = sys.stdin.readlines()
+	open("/home/iclark/mail-rewrite.log", "w").writelines(body)
+	lines = handle_body(body)
+	#open("/home/iclark/mail-rewrite-body.log", "w").writelines(lines)
+	emit_lines(lines)
+
+
+def handle_headers(lines):
+	def replace(line):
+		line = line.replace("From:", "From:   ") \
+				   .replace("To:",   "To:     ") \
+				   .replace("CC:",   "Cc:     ") \
+				   .replace("Date:", "Date:   ")
+		return line
+	lines = map(replace, lines)
+	lines = collapse_headers(lines)
+	globals.headers = lines
+	return lines
+
+def handle_body(lines):
+	lines = strip_lines(lines)
+	lines = handle_iphone(lines)
+	lines = handle_attachments(lines)
+	lines = strip_quotes(lines)
+	lines = collapse_lines(lines)
+	if header("from", "oithelpdesk@ewu.edu"):
+		lines = handle_whd(iter(lines))
+		lines = handle_replies(lines)
+	else:
+		lines = handle_replies(lines)
+		lines = strip_signatures(lines)
+	return lines
+
+def header(name, value):
+	regex = re.compile(value)
+	for line in globals.headers:
+		hname, hvalue = line.split(":", 1)
+		if hname.lower() == name.lower():
+			return regex.search(hvalue)
+	return False
+
+def collapse_headers(lines):
+	output = []
+	for line in lines:
+		if line[0] in " \t":
+			output[-1] = output[-1].rstrip() + line.lstrip()
+		else:
+			output.append(line)
+	return output
+
+def handle_attachments(lines):
+	attach1 = re.compile(r'^.*\[-- Attachment #[0-9]*:? (.+)? ?--\]$')
+	attach2 = re.compile(r'^.*\[-- Type: (.*), Encoding: .*, Size: (.*) --\]$')
+	skip1   = re.compile(r'^.*\[-- .* is unsupported \(use \'v\' to view this part\) --\]$')
+	skip2   = re.compile(r'^.*\[-- Autoview using .* --\]$')
+	output = []
+	attachments = []
+	i = 0
+	lines = list(lines)
+	while i < len(lines):
+		if skip1.match(lines[i]):
+			i += 2
+			continue
+		if skip2.match(lines[i]):
+			i += 1
+			continue
+		m1 = attach1.match(lines[i])
+		if m1:
+			m2 = attach2.match(lines[i+1])
+			filename = m1.group(1)
+			filetype, filesize = m2.groups()
+			if filename:
+				if filetype in INLINE_TYPES:
+					# inline types are expanded by mutt, but it adds an extra line that I don't want
+					i += 3
+					continue
+				attachments.append("%s (%s)" % (filename, filesize))
+			i += 2
+			continue
+		output.append(lines[i])
+		i += 1
+	if len(attachments) == 1:
+		line = "[-- Attachment: %s --]\n" % attachments[0]
+		output.insert(0, line)
+	elif len(attachments) > 1:
+		line = "[-- %d Attachments: %s --]\n" % (len(attachments), ", ".join(attachments))
+		output.insert(0, line)
+	return output
+
+def handle_replies(lines):
+	if good_user():
+		for line in lines:
+			yield line
+	from_line = re.compile(r'^(>+ *)?((\*?From:\*?)|(On.*wrote:))')
+	ignore = re.compile(r'^.*\[-- .* --\].*$')
+	prepend = ""
+	for line in lines:
+		if from_line.match(line):
+			quote = from_line.match(line).group(1)
+			#if quote:
+			#	prepend = quote
+			#yield "[" + quote + "]\n"
+			if not prepend and not quote:
+				prepend = " "
+			prepend = ">" + prepend
+			#yield "[" + prepend + "]\n"
+		if ignore.match(line):
+			yield line
+		else:
+			yield prepend + line
+
+def collapse_lines(lines):
+	suppress = False
+	for line in lines:
+		if is_blank(line):
+			if not suppress:
+				yield line
+				suppress = True
+		else:
+			yield line
+			suppress = False
+
+def strip_lines(lines):
+	for line in lines:
+		yield line.strip() + "\n"
+
+def strip_quotes(lines):
+	quote = re.compile(r'^([> ]*)(.*)$')
+	for line in lines:
+		if quote.match(line):
+			line = quote.match(line).group(2) + "\n"
+		yield line
+
+def strip_signatures(lines):
+	#sig = re.compile(r'^[> ]*-- *$')
+	#sig = re.compile(r'(^--$)|( --$)')
+	#sig = re.compile(r'^[> ]*--$')
+	#sig = re.compile(r'^[> ]*(--$|Description:)')
+	sig = re.compile(r'^[> ]*(%s)' % "|".join(SIGNATURES))
+	suppress = False
+	quote = ""
+	level = None
+	for line in lines:
+		if sig.match(line):
+			level = quote_level(line)
+			suppress = True
+		if suppress:
+			if quote_level(line) == level:
+				if SHOW_SIGNATURES:
+					yield "!" + line
+				continue
+			else:
+				suppress = False
+		#yield  "[" + line.replace(" ", ".") + "]"
+		#yield line.replace(" ", ".").replace("\t", "t")
+		yield line
+
+def handle_iphone(lines):
+	iphone = re.compile(r'^Sent from my iPhone$')
+	for line in lines:
+		if iphone.match(line):
+			globals.iphone = True
+		else:
+			yield line
+
+def quote_level(line):
+	quote = re.compile(r'^([> ]*)')
+	match = quote.match(line)
+	if match:
+		return match.group(1).count(">")
+	return 0
+
+def is_blank(line):
+	#return line.strip().replace(">", "") == ""
+	return line.strip() == ""
+	#return "" == line.replace(" ", "").replace("\t", "").replace("\n", "")
+
+def good_user():
+	for line in globals.headers:
+		if line.startswith("From:"):
+			sender = line.split()[-1].strip("<>")
+	return sender in GOOD_USERS and not globals.iphone
+
+def handle_whd(lines):
+	attrs = None
+	notes = None
+	whd_dump_section(lines)
+	while True:
+		try:
+			section = lines.next().strip()
+		except StopIteration:
+			print "ERROR"
+			break
+		if not section:
+			break
+		elif section == "CLIENT INFO":
+			attrs = whd_parse_block(lines)
+		elif section == "TICKET INFO":
+			attrs = dict(attrs.items() + whd_parse_block(lines).items())
+		elif section == "ATTACHMENTS":
+			whd_dump_section(lines)
+		elif section == "NOTES":
+			notes = whd_parse_notes(lines)
+	output = []
+	def emit(line):
+		lines = line.split("\n")
+		output.extend(line + "\n" for line in line.split("\n"))
+	emit("TYPE:     %s" % attrs["request_type"])
+	emit("STATUS:   [%s] %s" % (attrs["priority"], attrs["status"]))
+	emit("CLIENT:   %s" % attrs["name"])
+	emit("ASSIGNED: %s" % attrs["tech"])
+	emit("TICKET:   %s" % attrs["ticket_no"])
+	emit("")
+	emit("")
+
+	for date, note in notes:
+		emit(date)
+		emit(note)
+		emit("")
+		emit("")
+
+	emit("")
+	emit("-" * 80)
+	emit("")
+	emit("")
+	emit(attrs["request_detail"])
+
+	return output
+
+def whd_dump_section(lines):
+	for line in lines:
+		if line == WHD_SECTION:
+			break
+
+def whd_parse_notes(lines):
+	def is_new_note(line):
+		if line.count("[") == 1 and line.count("]") == 1 and line.count("/") == 2:
+			return True
+		return False
+	notes = [["", ""]]
+	for line in lines:
+		if line == WHD_SECTION:
+			break
+		elif is_new_note(line):
+			notes.append([line, ""])
+		else:
+			notes[-1][1] += line
+	return [(ts,v.strip()) for (ts,v) in notes[1:]]
+
+def whd_parse_block(lines):
+	name = None
+	mapping = {}
+	for line in lines:
+		if line == WHD_SECTION:
+			break
+		elif ":" in line and name != "request_detail":
+			name, value = line.split(":", 1)
+			name = name.lower().replace(" ", "_").replace(".", "")
+			mapping[name] = value
+		elif name is not None:
+			mapping[name] += line
+	return dict((k,v.strip()) for k,v in mapping.items())
+
+
+def emit_lines(lines):
+	map(emit, lines)
+
+def emit(msg):
+	sys.stdout.write(msg)
+
+if __name__ == "__main__":
+	sys.exit(main(sys.argv[1:]))

@@ -1,8 +1,16 @@
 (defun ic/org-capture-full-window ()
+  "Run `(org-capture)' without splitting the frame"
   (interactive)
   (message "ic/org-capture-full-window")
-  (flet ((delete-other-windows () (message "captured delete-other-windows")))
+  (flet ((org-switch-to-buffer-other-window (&rest args) (apply #'switch-to-buffer args)))
     (org-capture)))
+
+
+(defadvice org-capture-finalize (after delete-capture-frame activate)
+  "Close OrgCapture frame after completing a capture"
+  (when (equal (frame-parameter nil 'name) "OrgCapture")
+    (delete-frame)))
+
 
 
 ;;; functions taken from http://doc.norang.ca/org-mode.html
