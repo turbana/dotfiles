@@ -1,4 +1,3 @@
-(require 'noflet)
 (defun ic/org-capture-full-window ()
   (interactive)
   (message "ic/org-capture-full-window")
