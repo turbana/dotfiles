@@ -1,11 +1,24 @@
 (defvar ian-packages
-  '(org noflet))
+  '(org noflet org-babel-sql mu4e))
 
 (defvar ian-excluded-packages '())
 
 
+(defun ian/init-org-babel-sql ()
+  (use-package org-babel-sql))
+
 (defun ian/init-noflet ()
   (use-package noflet))
+
+
+(defun ian/init-mu4e ()
+  (use-package mu4e
+    :init
+    (setq mu4e-maildir "~/.mail/eastern")
+    (setq mu4e-drafts-folter "drafts")
+    (setq mu4e-sent-folder "sent")
+    (setq mu4e-trash-folder "junk")
+    ))
 
 
 (defun ian/init-org ()

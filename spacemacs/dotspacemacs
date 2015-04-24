@@ -132,12 +132,17 @@ before layers configuration."
   ;; User initialization goes here
   ;; use X11 primary to copy/paste
   (setq x-select-enable-primary t)
+  ;; add mu3e to load path
+  (add-to-list 'load-path "/home/iclark/git/mu/mu4e")
+  (require 'mu4e)
   )
 
 (defun dotspacemacs/config ()
   "Configuration function.
  This function is called at the very end of Spacemacs initialization after
 layers configuration."
+  ;; disable search highlighting
+  (global-evil-search-highlight-persist 0)
   )
 
 ;; Do not write anything past this comment. This is where Emacs will
