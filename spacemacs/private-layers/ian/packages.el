@@ -1,11 +1,9 @@
 (defvar ian-packages
-  '(org noflet org-babel-sql mu4e))
+  '(org noflet))
 
-(defvar ian-excluded-packages '())
+(defvar ian-excluded-packages
+  '(tern))
 
-
-(defun ian/init-org-babel-sql ()
-  (use-package org-babel-sql))
 
 (defun ian/init-noflet ()
   (use-package noflet))
