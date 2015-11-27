@@ -22,6 +22,7 @@ import XMonad.Layout.Grid
 import XMonad.Layout.Combo
 import XMonad.Layout.TwoPane
 import XMonad.Layout.WindowNavigation --XXX
+import XMonad.Layout.NoBorders
 
 import XMonad.Actions.PhysicalScreens
 
@@ -82,6 +83,7 @@ myScratchPads = [
 layoutHooks =
   avoidStruts $
   desktopLayoutModifiers $
+  smartBorders $
   onHost hostHome (tall ||| Full) $              -- Home layouts (below this are work layouts)
   onWorkspace "2" (Mirror tallLarge ||| Full) $
   reflectVert tile ||| Full
