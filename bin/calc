@@ -1,0 +1,336 @@
+#!/usr/bin/python
+
+from __future__ import division
+import sys
+import math
+import datetime
+import collections
+import time
+try:
+	import readline
+except ImportError:
+	try:
+		import pyreadline as readline
+	except ImportError:
+		pass
+import types
+import os
+import os.path
+
+
+BASE   = os.path.join(os.path.expanduser("~"), ".calc")
+PID    = os.path.join(BASE, "pid")
+STATE  = os.path.join(BASE, "state")
+HIST   = os.path.join(BASE, "hist")
+RLHIST = os.path.join(BASE, "rlhist")
+INIT   = os.path.join(BASE, "init")
+
+namespace = {}
+functions = {}
+history   = [str() for _ in range(24)]
+
+
+def main(args):
+	create_basedir()
+	create_pidfile()
+	setup_namespace()
+	load_state()
+	try:
+		while True:
+			exp_raw = read()
+			if not exp_raw: continue
+			add_history("> " + exp_raw)
+			exp = translate(exp_raw)
+			res = evaluate(exp)
+			display(res)
+			save_state()
+	except EOFError:
+		print
+		pass
+	remove_pidfile()
+
+
+################################################################################
+# Main eval functions
+################################################################################
+
+def read():
+	return raw_input("> ").strip()
+
+
+def translate(exp):
+	if exp[0] in "+-*/%":
+		exp = str(namespace["_1"]) + exp
+	if exp[0] == "=":
+		exp = exp[1:] + "=" + str(namespace["_1"])
+	return exp
+
+
+def evaluate(exp):
+	try:
+		name = None
+		if "=" in exp:
+			i = exp.find("=")
+			name = exp[:i].strip()
+			exp = exp[i+1:].strip()
+		if exp == ":vars":
+			show_namespace()
+			return None
+		if exp == ":reset":
+			reset()
+			return None
+		if exp.startswith("import"):
+			chunks = exp.split()
+			if len(chunks) != 2:
+				return "import requires a single parameter (module name)"
+			module = chunks[1]
+			load_module(module)
+			return None
+		if name and "lambda" in exp:
+			functions[name] = exp
+		res = eval(exp, namespace)
+		isfunc = hasattr(res, "__call__")
+		ep = sys.float_info.epsilon
+		if not isfunc and -ep < (res % 1) < ep:
+			try:
+				res = int(res)
+			except TypeError:
+				pass
+		save_result(res, name)
+		if name:
+			return None
+		return res
+	except SyntaxError:
+		return "Syntax error"
+	except ImportError:
+		return "ImportError"
+	except NameError as e:
+		return e.args[0].capitalize()
+	except TypeError as e:
+		return e.args[0]
+	except Exception as e:
+		return e.args[0]
+
+
+def display(res, add_hist=True):
+	if res is not None:
+		print res
+		add_history(res)
+
+
+################################################################################
+# Setup / History Functions
+################################################################################
+
+def create_basedir():
+	if not os.path.exists(BASE):
+		os.mkdir(BASE, 0750)
+
+
+def create_pidfile():
+	f = open(PID, "w")
+	f.write(str(os.getpid()))
+	f.close()
+
+
+def remove_pidfile():
+	os.remove(PID)
+
+
+def load_state():
+	def load(filename):
+		try:
+			for line in open(filename, "r"):
+				evaluate(line)
+		except IOError:
+			return
+	load(INIT)
+	load(STATE)
+	try:
+		readline.read_history_file(RLHIST)
+	except IOError:
+		pass
+	load_history()
+
+
+def save_state():
+	f = open(STATE, "w")
+	for name in visible_namespace():
+		if name in functions:
+			value = functions[name]
+		else:
+			value = namespace[name]
+		f.write("%s=%s\n" % (name, value))
+	f.close()
+	readline.write_history_file(RLHIST)
+	save_history()
+
+
+def save_history():
+	f = open(HIST, "w")
+	for exp in history:
+		f.write(str(exp) + "\n")
+	f.close()
+
+
+def load_history():
+	try:
+		lines = [l.rstrip() for l in open(HIST, "r").readlines()]
+		for line in lines:
+			if line:
+				print line
+			add_history(line)
+	except IOError:
+		pass
+
+
+def add_history(exp):
+	history.append(exp)
+	del history[0]
+
+
+def reset():
+	setup_namespace()
+	for i in range(0, len(history)):
+		history[i] = ""
+	readline.clear_history()
+
+
+################################################################################
+# Namespace functions
+################################################################################
+
+def setup_namespace():
+	namespace.clear()
+	functions.clear()
+	namespace["_1"] = ""
+	namespace["_2"] = ""
+	namespace["_3"] = ""
+	namespace["_4"] = ""
+	namespace["_5"] = ""
+	_load_mod(math)
+	namespace["time"] = time
+	functions["time"] = "<parse date/time expression>"
+	evaluate("tdelta = lambda t1, t2: abs((time(t1) - time(t2)).total_seconds())")
+
+
+def _load_mod(mod, attrs=[]):
+	if not attrs:
+		attrs = (attr for attr in dir(mod) if not attr.startswith("_"))
+	namespace.update((attr, getattr(mod, attr)) for attr in attrs)
+
+
+def load_module(module, attrs=[]):
+	mod = __import__(module)
+	if not attrs:
+		attrs = (attr for attr in dir(mod) if not attr.startswith("_"))
+	namespace.update(("%s.%s" % (module, attr), getattr(mod, attr)) for attr in attrs)
+	namespace[module] = mod
+
+
+def visible_namespace():
+	for name in sorted(namespace.keys()):
+		value = namespace[name]
+		if name == "__builtins__": continue
+		if isinstance(value, types.BuiltinFunctionType): continue
+		yield name
+
+
+def show_namespace():
+	for name in visible_namespace():
+		if name in functions:
+			value = functions[name]
+		else:
+			value = namespace[name]
+		display("%8s = %s" % (name, value))
+
+
+def save_result(res, name=None):
+	if name is not None:
+		namespace[name] = res
+	else:
+		namespace["_5"] = namespace["_4"]
+		namespace["_4"] = namespace["_3"]
+		namespace["_3"] = namespace["_2"]
+		namespace["_2"] = namespace["_1"]
+		namespace["_1"] = res
+
+
+################################################################################
+# Time functions
+################################################################################
+
+def count_spec(s):
+	specials = ":.,/-"
+	counts = []
+	for c in specials:
+		counts.append(s.count(c))
+	return tuple(counts)
+
+
+def cross_product(l1, l2):
+	for x in l1:
+		for y in l2:
+			yield "%s %s" % (x, y)
+
+
+_time_formats = (
+	"%H:%M",
+	"%H:%M:%S",
+	"%H:%M:%S.%f",
+	"%H:%M:%S,%f",
+)
+
+_date_formats = (
+	"%Y-%m-%d",
+	"%m/%d/%y",
+	"%m/%d/%Y",
+	"%m/%d",
+	"%b %d",
+	"%d %b",
+)
+_all_formats = _time_formats + _date_formats + tuple(cross_product(_date_formats, _time_formats))
+
+TIME_FORMATS = collections.defaultdict(list)
+for fmt in _all_formats:
+	TIME_FORMATS[count_spec(fmt)].append(fmt)
+
+
+def time(s):
+	for fmt in TIME_FORMATS[count_spec(s)]:
+		try:
+			return CustomTime(datetime.datetime.strptime(s, fmt))
+		except ValueError:
+			pass
+	raise ValueError("Invalid date/time")
+
+
+class CustomTime(object):
+	def __init__(self, date):
+		self._date = date
+	
+	def __getattr__(self, attr):
+		if attr == "_date":
+			return self._date
+		return getattr(self._date, attr)
+
+	def __setattr__(self, attr, value):
+		if attr == "_date":
+			return super(CustomTime, self).__setattr__(attr, value)
+		return setattr(self._date, attr, value)
+
+	def __str__(self):
+		return 'time("%s")' % str(self._date)
+
+	def __add__(self, other):
+		if isinstance(other, CustomTime): other = other._date
+		return CustomTime(self._date + other)
+
+	def __sub__(self, other):
+		if isinstance(other, CustomTime): other = other._date
+		return CustomTime(self._date - other)
+
+
+
+if __name__ == "__main__":
+	sys.exit(main(sys.argv[1:]))
