@@ -91,7 +91,7 @@ def evaluate(exp):
 		res = eval(exp, namespace)
 		isfunc = hasattr(res, "__call__")
 		ep = sys.float_info.epsilon
-		if not isfunc and -ep < (res % 1) < ep:
+		if not isfunc and isinstance(res, float) and -ep < (res % 1) < ep:
 			try:
 				res = int(res)
 			except TypeError:
@@ -308,7 +308,7 @@ def time(s):
 class CustomTime(object):
 	def __init__(self, date):
 		self._date = date
-	
+
 	def __getattr__(self, attr):
 		if attr == "_date":
 			return self._date
