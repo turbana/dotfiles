@@ -10,6 +10,7 @@ import System.Posix.Unistd
 import XMonad.Layout.OnHost
 import XMonad.Util.Run
 import XMonad.Util.CustomKeys
+import XMonad.Util.Cursor
 import XMonad.Hooks.DynamicLog
 import System.IO
 import XMonad.Util.NamedScratchpad
@@ -33,6 +34,7 @@ main = do
   dzenRightBar <- spawnPipe myStatusBar
   xmonad $ defaultConfig {
     terminal           = "gnome-terminal",
+    startupHook        = setDefaultCursor xC_left_ptr,
     borderWidth        = 2,
     normalBorderColor  = "#202020",
     focusedBorderColor = "#009900",
@@ -45,16 +47,16 @@ main = do
 emptyKeys XConfig {modMask = modm} = []
 
 myKeys conf@(XConfig {modMask = modm}) =
-  [ ((mod1Mask,               xK_j    ), windows W.focusUp  )
-  , ((mod1Mask,               xK_k    ), windows W.focusDown)
-  , ((mod1Mask .|. shiftMask, xK_j    ), windows W.swapUp)
-  , ((mod1Mask .|. shiftMask, xK_k    ), windows W.swapDown)
+  [ ((mod1Mask,               xK_k    ), windows W.focusUp  )
+  , ((mod1Mask,               xK_j    ), windows W.focusDown)
+  , ((mod1Mask .|. shiftMask, xK_k    ), windows W.swapUp)
+  , ((mod1Mask .|. shiftMask, xK_j    ), windows W.swapDown)
   , ((mod1Mask .|. shiftMask, xK_l    ), sendMessage Shrink)
   , ((mod1Mask .|. shiftMask, xK_h    ), sendMessage Expand)
   , ((mod1Mask,               xK_l    ), sendMessage $ Go R)
   , ((mod1Mask,               xK_h    ), sendMessage $ Go L)
-  , ((mod1Mask,               xK_j    ), sendMessage $ Go U)
-  , ((mod1Mask,               xK_k    ), sendMessage $ Go D)
+  , ((mod1Mask,               xK_k    ), sendMessage $ Go U)
+  , ((mod1Mask,               xK_j    ), sendMessage $ Go D)
   , ((0       ,               xK_Pause), namedScratchpadAction myScratchPads "calc")
   , ((0       ,               xK_F1   ), namedScratchpadAction myScratchPads "orgCap")
   , ((mod1Mask,               xK_p    ), spawn "dmenu_run -m 0 -b -nb '#555555' -nf '#eeeeee' -sb '#003399' -sf '#ffffff' -p '>'")
@@ -69,13 +71,13 @@ myKeys conf@(XConfig {modMask = modm}) =
 
 
 myScratchPads = [
-  NS "calc" "gnome-terminal --role=calculator --title=calc -x python /home/iclark/src/python/calc/calc.py"
+  NS "calc" "gnome-terminal --role=calculator --title=calc -x ~/.etc/bin/calc"
   (role =? "calculator")
-  (customFloating $ W.RationalRect (1/8) (2/4) (3/4) (1/4)),
+  (customFloating $ W.RationalRect (5/8) (1/4) (1/4) (1/2)),
 
   NS "orgCap" "emacsclient -c -F '(quote (name . \"OrgCapture\"))' -e '(ic/org-capture-full-window)'" -- -e '(progn (delete-other-windows) (org-capture))'"
   (title =? "OrgCapture")
-  (customFloating $ W.RationalRect (1/8) (2/4) (3/4) (1/4))
+  (customFloating $ W.RationalRect (1/4) (1/4) (1/2) (1/2))
   ]
   where role = stringProperty "WM_WINDOW_ROLE"
 
