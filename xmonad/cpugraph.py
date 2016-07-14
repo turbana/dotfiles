@@ -25,6 +25,7 @@ TIME_CHECK_STALE  = 12
 GRAPH_HEIGHT     = 16
 GRAPH_WIDTH      = 8
 SPACE_DEFAULT    = 6
+SPACE_LARGE      = 3 * SPACE_DEFAULT
 POPUP_ROWS       = 16
 POPUP_COLUMNS    = 62
 CALENDAR_COLUMNS = 31
@@ -56,7 +57,7 @@ EVENT_FUTURE = "^fg(#cccccc)^bg(#222222)"
 EVENT_TIME   = "^fg(#33ff33)"
 EVENT_DATE   = "^fg(#999933)"
 
-WEATHER_STATION = "KGEG"
+WEATHER_STATION = "KPWT"
 WEATHER_UPDATE  = 15 * 60
 
 _WEATHER_TICKS = int(WEATHER_UPDATE / float(DELAY))
@@ -90,7 +91,7 @@ def main(args):
 			icon_check(have_im,            COLOR_URGENT,  "info_02.xbm")
 
 			# show cpu usages
-			pad(SPACE_DEFAULT * 4)
+			pad(SPACE_LARGE)
 			color(COLOR_HIGHLIGHT)
 			xbm("cpu.xbm")
 			color(COLOR_NORMAL)
@@ -100,14 +101,13 @@ def main(args):
 			map(show_graph, usages)
 
 			# show memory usages
-			pad(SPACE_DEFAULT * 4)
+			pad(SPACE_LARGE)
 			color(COLOR_HIGHLIGHT)
 			xbm("mem.xbm")
 			color(COLOR_NORMAL)
 			pad(SPACE_DEFAULT)
-			#map(show_graph, memory_usages())
 			ram, swap = memory_usages()
-			show_ram(ram)
+			show_graph(ram)
 			show_graph(swap)
 
 			# show weather
@@ -115,7 +115,7 @@ def main(args):
 			if weather_ticks >= _WEATHER_TICKS:
 				weather_ticks = 0
 				update_weather()
-			pad(SPACE_DEFAULT * 4)
+			pad(SPACE_LARGE)
 			color(COLOR_HIGHLIGHT)
 			xbm("temp.xbm")
 			color(COLOR_NORMAL)
@@ -123,7 +123,7 @@ def main(args):
 			sys.stdout.write("%d" % current_temp[0])
 
 			# show clock
-			pad(SPACE_DEFAULT * 4)
+			pad(SPACE_LARGE)
 			color(COLOR_HIGHLIGHT)
 			if have_event():
 				sys.stdout.write("^co(13x13)^p(-10)")
@@ -297,41 +297,19 @@ def memory_usages():
 			elif key == "Cached":    mem_cached = val
 			elif key == "SwapTotal": swap_total = val
 			elif key == "SwapFree":  swap_free = val
-	#mem_usage = (mem_total - mem_free - mem_buffers - mem_cached) / float(mem_total)
+	mem_usage = (mem_total - mem_free - mem_buffers - mem_cached) / float(mem_total)
 	swap_usage = (swap_total - swap_free) / float(swap_total)
-	return ((mem_total, mem_free, mem_buffers, mem_cached), swap_usage)
+	return (mem_usage, swap_usage)
 
 
-def show_ram((total, free, buffers, cached)):
+def show_graph(percent):
 	w = GRAPH_WIDTH
 	h = GRAPH_HEIGHT
-	def draw(load, color, _offset=[0]):
-		x = int(load * h)
-		y = (h/2) - (x/2)
-		sys.stdout.write("^fg(%s)" % color)
-		sys.stdout.write("^r(%dx%d-%d+%d)" % (w-2, x, w-2, y-_offset[0]))
-		_offset[0] += x
-	sys.stdout.write("^ib(1)^fg(%s)^r(%dx%d)^p(-1)" % (COLOR_NORMAL, w, h))
-	draw((total - free - buffers - cached) / float(total), COLOR_GRAPH) # used
-	#draw((buffers + cached) / float(total), COLOR_HIGHLIGHT)
-
-	#draw((total - free - buffers - cached) / float(total), "#FF0000")
-	#draw((total - free - buffers - cached) / float(total), "#0000FF")
-	#draw(cached / float(total), "#FF0000") # cached
-	# buffered
-	# free
-	sys.stdout.write("^ib(0)^fg()")
-	pad(SPACE_DEFAULT)
-
-
-def show_graph(load):
-	w = GRAPH_WIDTH
-	h = GRAPH_HEIGHT
+	y = int(percent * h)
+	offset = (h/2) - (y/2)
 	sys.stdout.write("^ib(1)^fg(%s)^r(%dx%d)" % (COLOR_NORMAL, w, h))
-	x = int(load * h)
-	y = (h/2) - (x/2)
 	sys.stdout.write("^fg(%s)" % COLOR_GRAPH)
-	sys.stdout.write("^r(%dx%d-%d+%d)" % (w-2, x, w-1, y))
+	sys.stdout.write("^r(%dx%d-%d+%d)" % (w-2, y, w-1, offset))
 	sys.stdout.write("^ib(0)^fg()")
 	pad(SPACE_DEFAULT)
 
@@ -367,6 +345,8 @@ def mail_failure():
 
 
 def have_mail():
+	if not os.path.exists(INBOX):
+		return False
 	return len(os.listdir(INBOX)) > 0
 
 
@@ -505,6 +485,7 @@ def combine(left, right, cols):
 
 
 def file_changed(filename):
+	if not os.path.exists(filename): return False
 	mtime = os.path.getmtime(filename)
 	changed = file_changes[filename] != mtime
 	file_changes[filename] = mtime
