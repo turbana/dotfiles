@@ -1,7 +1,8 @@
 #!/bin/bash
 
-font="-*-fixed-medium-r-*-*-12-*-*-*-*-*-iso8859-*"
+#font="-*-fixed-medium-r-*-*-12-*-*-*-*-*-iso8859-*"
 #font="Monospace-8"
+font="DejaVu Sans Mono-9"
 fg="#ffffff"
 bg="#222222"
 

@@ -5,3 +5,6 @@ if [ -n "$BASH_VERSION" ]; then
 	. "$HOME/.bashrc"
     fi
 fi
+
+# startx if haven't yet
+[[ -z $DISPLAY && $XDG_VTNR -eq 1 ]] && exec startx

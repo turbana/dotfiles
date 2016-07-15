@@ -46,6 +46,7 @@ link profile		~/.profile
 link screenrc		~/.screenrc
 link vimrc			~/.vimrc
 link xsession		~/.xsession
+link xresources		~/.Xresources
 
 link_recursive mutt		~/.mutt
 link_recursive vim		~/.vim

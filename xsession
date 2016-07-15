@@ -13,6 +13,8 @@ if at_work; then
 	xrandr --output VBOX2 --auto --right-of VBOX0 --mode 1050x1680
 
 	xsetroot -cursor_name left_ptr
+else
+    xrandr --dpi 94
 fi
 
 # needed for border repainting with xmonad and virtualbox
