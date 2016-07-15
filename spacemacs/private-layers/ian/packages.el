@@ -2,7 +2,7 @@
   '(org noflet))
 
 (defvar ian-excluded-packages
-  '(tern))
+  '(tern exec-path-from-shell))
 
 
 (defun ian/init-noflet ()
@@ -26,6 +26,7 @@
     (setq org-directory "~/org")
     (setq org-agenda-files '("~/org" "~/org/work" "~/org/home"))
     (setq org-default-notes-file "~/org/refile.org")
+    (setq org-default-jobs-file "~/org/home/jobs.org")
     (setq org-startup-folded t)
     (setq org-archive-location "%s_archive::")
 
@@ -82,6 +83,8 @@
              "* NEXT %?\n%U\nSCHEDULED: %(format-time-string \"<%Y-%m-%d %a .+1d/3d>\")\n:PROPERTIES:\n:STYLE: habit\n:REPEAT_TO_STATE: NEXT\n:END:\n")
             ("R" "Recipe" entry (file org-default-notes-file)
              "* %^{name} :uncooked::\n:PROPERTIES:\n:SOURCE: %^{source}\n:IMAGE: %^{image}\n:SERVING: %^{serving}\n:TYPE: %^{type}\n:END:\n** Ingredients\n   | %? | |\n** Procedure\n   1.\n** Log")
+            ("A" "Job Application" entry (file org-default-jobs-file)
+             "* %^{company} - %^{title}\n  %U\n  [[%^{submission}][Submission]]\n  %?\n** Description\n   %^{description}\n** Contact Info\n** Log\n")
             ))
     (setq org-refile-targets
           '((nil :maxlevel . 6)

@@ -23,6 +23,7 @@
           git-gutter-use-fringe t)
      markdown
      syntax-checking
+     spell-checking
      org
      javascript
      ian
@@ -89,7 +90,7 @@ before layers configuration."
    dotspacemacs-command-key ":"
    ;; If non nil the paste micro-state is enabled. While enabled pressing `p`
    ;; several times cycle between the kill ring content.
-   dotspacemacs-enable-paste-micro-state t
+   dotspacemacs-enable-paste-micro-state nil
    ;; Guide-key delay in seconds. The Guide-key is the popup buffer listing
    ;; the commands bound to the current keystrokes.
    dotspacemacs-guide-key-delay 0.5
@@ -131,6 +132,7 @@ before layers configuration."
    dotspacemacs-default-package-repository nil
    )
   ;; User initialization goes here
+  (setq create-lockfiles nil)
   ;; use X11 primary to copy/paste
   (setq x-select-enable-primary t)
   (setq-default indent-tabs-mode t)
@@ -141,6 +143,15 @@ before layers configuration."
 
 (defun my-javascript-mode-hook ()
   (setq indent-tabs-mode t tab-width 4 js-indent-level 4))
+
+(defun my-asm-mode-hook ()
+  (setq indent-tabs-mode t)
+  (setq tab-width 8))
+
+(defun my-python-mode-hook ()
+  (setq indent-tabs-mode t)
+  (setq python-indent 4)
+  (setq tab-width 4))
 
 (defun dotspacemacs/config ()
   "Configuration function.
@@ -155,6 +166,8 @@ layers configuration."
   (add-hook 'javascript-mode-hook 'my-javascript-mode-hook)
   (add-hook 'js-mode-hook 'my-javascript-mode-hook)
   (add-hook 'js2-mode-hook 'my-javascript-mode-hook)
+  (add-hook 'asm-mode-hook 'my-asm-mode-hook)
+  (add-hook 'python-mode-hook 'my-python-mode-hook)
   )
 
 ;; Do not write anything past this comment. This is where Emacs will
