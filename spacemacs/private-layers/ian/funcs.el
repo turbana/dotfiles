@@ -37,3 +37,27 @@
                   nil))  ; available to archive
             (or subtree-end (point-max)))
         next-headline))))
+
+
+(defun ic/org-recipe-publish-to-html (plist org-filename target-dir)
+  "Export ORG-FILENAME as html. Similar to `org-html-publish-to-html', but only exporting certain sections"
+  (interactive)
+  (let* ((base-name (file-name-sans-extension (file-name-nondirectory org-filename)))
+         (target-filename (concat target-dir base-name ".html")))
+    (with-temp-file target-filename
+      (insert-file-contents org-filename)
+      (goto-char (point-min))
+      )
+    )
+  )
+
+
+(defun ic/org-export-filter-recipes (backend)
+  "Filter out unwanted elements from org-mode recipes, but only when export as HTML."
+  (when (equal backend 'html)
+    (org-map-entries
+     (lambda ()
+       )
+     ;; (lambda () (delete-region (point) (progn (forward-line) (point)))))
+    )
+  ))

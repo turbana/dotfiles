@@ -79,7 +79,10 @@
              "* PHONE %? :PHONE:\n%U"
              :clock-in t :clock-resume t)
             ("h" "Habit" entry (file org-default-notes-file)
-             "* NEXT %?\n%U\nSCHEDULED: %(format-time-string \"<%Y-%m-%d %a .+1d/3d>\")\n:PROPERTIES:\n:STYLE: habit\n:REPEAT_TO_STATE: NEXT\n:END:\n")))
+             "* NEXT %?\n%U\nSCHEDULED: %(format-time-string \"<%Y-%m-%d %a .+1d/3d>\")\n:PROPERTIES:\n:STYLE: habit\n:REPEAT_TO_STATE: NEXT\n:END:\n")
+            ("R" "Recipe" entry (file org-default-notes-file)
+             "* %^{name} :uncooked::\n:PROPERTIES:\n:SOURCE: %^{source}\n:IMAGE: %^{image}\n:SERVING: %^{serving}\n:TYPE: %^{type}\n:END:\n** Ingredients\n   | %? | |\n** Procedure\n   1.\n** Log")
+            ))
     (setq org-refile-targets
           '((nil :maxlevel . 6)
             (org-agenda-files :maxlevel . 6)))
@@ -138,9 +141,24 @@
     (setq org-archive-mark-done nil)
 
 
+    ;;; exporting
+    (setq org-publish-project-alist
+          '(("recipes"
+             :base-directory "~/org/home/food/"
+             :base-extension "org"
+             :publishing-directory "~/food/"
+             :recursive t
+             :publishing-function org-html-publish-to-html
+             :headline-levels 4
+             :auto-preamble t
+             )
+            ))
+
+
     :config
     ;; setup persistant clocks
     (org-clock-persistence-insinuate)
     ;; begin captures in insert mode
     (add-hook 'org-capture-mode-hook 'evil-insert-state)
+    (add-hook 'org-export-before-parsing-hook 'ic/org-export-filter-recipes)
     ))
