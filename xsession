@@ -19,6 +19,7 @@ fi
 xcompmgr &
 feh --bg-fill $HOME/.xmonad/black.png
 
+emacs &
 gnome-terminal &
 
 if at_work; then

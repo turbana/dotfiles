@@ -59,7 +59,7 @@ myKeys conf@(XConfig {modMask = modm}) =
   , ((mod1Mask,               xK_j    ), sendMessage $ Go D)
   , ((0       ,               xK_Pause), namedScratchpadAction myScratchPads "calc")
   , ((0       ,               xK_F1   ), namedScratchpadAction myScratchPads "orgCap")
-  , ((mod1Mask,               xK_p    ), spawn "dmenu_run -m 0 -b -nb '#555555' -nf '#eeeeee' -sb '#003399' -sf '#ffffff' -p '>'")
+  , ((mod1Mask,               xK_p    ), spawn "dmenu_run -b -nb '#333333' -nf '#eeeeee' -sb '#afaf00' -sf '#000000' -p '>'")
   , ((mod1Mask .|. controlMask, xK_e  ), spawn "emacsclient -c -a ''")
   , ((mod1Mask .|. controlMask, xK_q  ), spawn "if type xmonad; then killall dzen2; xmonad --recompile && xmonad --restart; else xmessage xmonad not in \\$PATH: \"$PATH\"; fi")
   ]
@@ -73,7 +73,7 @@ myKeys conf@(XConfig {modMask = modm}) =
 myScratchPads = [
   NS "calc" "gnome-terminal --role=calculator --title=calc -x ~/.etc/bin/calc"
   (role =? "calculator")
-  (customFloating $ W.RationalRect (5/8) (1/4) (1/4) (1/2)),
+  (customFloating $ W.RationalRect (3/8) (1/4) (1/4) (1/2)),
 
   NS "orgCap" "emacsclient -c -F '(quote (name . \"OrgCapture\"))' -e '(ic/org-capture-full-window)'" -- -e '(progn (delete-other-windows) (org-capture))'"
   (title =? "OrgCapture")
@@ -90,15 +90,13 @@ layoutHooks =
   onWorkspace "2" (Mirror tallLarge ||| Full) $
   reflectVert tile ||| Full
   where
-    tall       = Tall      nmaster delta golden
+    tall       = Tall      nmaster delta 0.50
     tallLarge  = Tall      nmaster delta 0.70
     tile       = StackTile nmaster delta 0.57
     tileMany   = StackTile nmaster delta 0.25
     nmaster    = 1
     delta      = 0.03
     golden     = toRational (2/(1 + sqrt 5 :: Double))
-    half       = 0.5
-    third      = 0.33
 
 
 manageHooks = composeAll [

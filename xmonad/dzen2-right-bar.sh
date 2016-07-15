@@ -1,7 +1,7 @@
 #!/bin/bash
 
-#font="-*-fixed-medium-r-*-*-12-90-*-*-*-*-iso8859-1"
-font="Monospace-8"
+font="-*-fixed-medium-r-*-*-12-*-*-*-*-*-iso8859-*"
+#font="Monospace-8"
 fg="#cccccc"
 bg="#222222"
 
