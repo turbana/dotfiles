@@ -7,7 +7,7 @@
   (setq-default
    ;; List of additional paths where to look for configuration layers.
    ;; Paths must have a trailing slash (ie. `~/.mycontribs/')
-   dotspacemacs-configuration-layer-path '()
+   dotspacemacs-configuration-layer-path '("~/.etc/spacemacs/private-layers/")
    ;; List of configuration layers to load. If it is the symbol `all' instead
    ;; of a list then all discovered layers will be installed.
    dotspacemacs-configuration-layers
@@ -16,9 +16,7 @@
      ;; Example of useful layers you may want to use right away
      ;; Uncomment a layer name and press C-c C-c to install it
      ;; --------------------------------------------------------
-     ;auto-completion
      haskell
-     better-defaults
      (git :variables
           git-gutter-use-fringe t)
      markdown
@@ -27,11 +25,11 @@
      org
      javascript
 	 colors
-     ian
+     ;; ian
 	 themian
      )
    ;; A list of packages and/or extensions that will not be install and loaded.
-   dotspacemacs-excluded-packages '()
+   dotspacemacs-excluded-packages '(highlight-parentheses)
    ;; If non-nil spacemacs will delete any orphan packages, i.e. packages that
    ;; are declared in a layer which is not a member of
    ;; the list `dotspacemacs-configuration-layers'
@@ -64,9 +62,12 @@ before layers configuration."
    ;; List of themes, the first of the list is loaded when spacemacs starts.
    ;; Press <SPC> T n to cycle to the next theme in the list (works great
    ;; with 2 themes variants, one dark and one light)
-   dotspacemacs-themes '(zenburn
-                         solarized-light
-                         solarized-dark)
+   dotspacemacs-themes '(
+						 themian
+                         ;; zenburn
+                         ;; solarized-light
+                         ;; solarized-dark
+						 )
    ;; If non nil the cursor color matches the state color.
    dotspacemacs-colorize-cursor-according-to-state t
    ;; Default font. `powerline-scale' allows to quickly tweak the mode-line
@@ -141,6 +142,8 @@ before layers configuration."
   ;; add mu3e to load path
 ;  (add-to-list 'load-path "/home/iclark/git/mu/mu4e")
 ;  (require 'mu4e)
+  ;; HACK ensure our custom theme is loadable
+  (setq custom-theme-load-path '("/home/ian/.etc/spacemacs/private-layers/themian/local/themian-theme/"))
   )
 
 (defun my-javascript-mode-hook ()
@@ -155,7 +158,7 @@ before layers configuration."
   (setq python-indent 4)
   (setq tab-width 4))
 
-(defun dotspacemacs/config ()
+(defun dotspacemacs/user-config ()
   "Configuration function.
  This function is called at the very end of Spacemacs initialization after
 layers configuration."

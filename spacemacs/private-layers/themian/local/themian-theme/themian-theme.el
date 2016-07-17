@@ -46,9 +46,9 @@ Taken from zenburn-theme.el"
   (setq themian-faces-list
         `(
           ;; basic
-          (button (:background ,unknown))
+          (button (:foreground ,white-1 :background ,grey-3 :box (:line-width 1 :style released-button)))
           (cursor (:background ,yellow-1))
-          (default (:foreground ,white-2 :background ,grey-1))
+          (default (:foreground ,white-2 :background ,grey-1 :weight normal))
           (escape-glyph (:background ,unknown))
           (font-lock-builtin-face (:foreground ,blue-2))
           (font-lock-comment-delimiter-face (:inherit font-lock-comment-face))
@@ -78,7 +78,7 @@ Taken from zenburn-theme.el"
           (trailing-whitespace (:background ,yellow-1))
 
           ;; rest
-          (helm-M-x-key (:background ,unknown))
+          (helm-M-x-key (:foreground ,white-1 :background ,grey-3 :box (:line-width 1 :style released-button)))
           (helm-action (:background ,unknown))
           (helm-bookmark-addressbook (:background ,unknown))
           (helm-bookmark-directory (:inherit helm-ff-directory))
@@ -125,7 +125,7 @@ Taken from zenburn-theme.el"
           (helm-selection (:inherit highlight))
           (helm-selection-line (:inherit highlight))
           (helm-separator (:background ,unknown))
-          (helm-source-header (:foreground ,blue-2 :weight bold :height 1.25))
+          (helm-source-header (:foreground ,blue-2 :weight bold :height 1.15))
           (helm-visible-mark (:background ,unknown))
           (mode-line (:background ,grey-3 :box (:line-width -1 :color nil :style released-button)))
           (mode-line-buffer-id (:foreground ,white-1 :weight bold))
@@ -149,14 +149,14 @@ Taken from zenburn-theme.el"
           (rainbow-delimiters-depth-9-face (:foreground ,white-1))
           (show-paren-match (:inverse-video t :weight normal))
           (show-paren-mismatch (:foreground ,red-1 :background ,grey-3))
-          (spacemacs-emacs-face (:background ,unknown))
+          (spacemacs-emacs-face (:background ,blue-2))
           (spacemacs-evilified-face (:background ,unknown))
           (spacemacs-helm-navigation-ms-face (:background ,unknown))
           (spacemacs-hybrid-face (:background ,unknown))
           (spacemacs-ido-navigation-ms-face (:background ,unknown))
           (spacemacs-iedit-face (:background ,unknown))
           (spacemacs-iedit-insert-face (:background ,unknown))
-          (spacemacs-insert-face (:foreground ,grey-1 :background ,green-1 :weight bold))
+          (spacemacs-insert-face (:foreground ,grey-1 :background ,green-2 :weight bold))
           (spacemacs-lisp-face (:background ,unknown))
           (spacemacs-micro-state-binding-face (:background ,unknown))
           (spacemacs-micro-state-header-face (:background ,unknown))
