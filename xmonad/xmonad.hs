@@ -60,7 +60,7 @@ myKeys conf@(XConfig {modMask = modm}) =
   , ((0       ,               xK_Pause), namedScratchpadAction myScratchPads "calc")
   , ((0       ,               xK_F1   ), namedScratchpadAction myScratchPads "orgCap")
   , ((mod1Mask,               xK_p    ), spawn "dmenu_run -b -nb '#333333' -nf '#eeeeee' -sb '#afaf00' -sf '#000000' -p '>'")
-  , ((mod1Mask .|. controlMask, xK_e  ), spawn "emacsclient -c -a ''")
+  , ((mod1Mask .|. controlMask, xK_e  ), spawn "emacsclient -c -a '' --eval '(spacemacs/home)'")
   , ((mod1Mask .|. controlMask, xK_q  ), spawn "if type xmonad; then killall dzen2; xmonad --recompile && xmonad --restart; else xmessage xmonad not in \\$PATH: \"$PATH\"; fi")
   ]
   ++

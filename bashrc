@@ -117,9 +117,10 @@ export LESS="-SR"
 export TERM=xterm-256color
 
 # use emacs as editor
-export EDITOR=emacsclient
+export EDITOR='emacsclient -c -a ""'
 export ALTERNATE_EDITOR=
-alias emacs='emacsclient -c -a ""'
+alias emacs=$EDITOR
+alias em=$EDITOR
 
 # colorize grep's matches
 export GREP_COLOR='1;32'

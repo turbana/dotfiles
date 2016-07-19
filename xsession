@@ -17,10 +17,6 @@ else
     xrandr --dpi 94
 fi
 
-# needed for border repainting with xmonad and virtualbox
-xcompmgr &
-feh --bg-fill $HOME/.xmonad/black.png
-
 emacs &
 gnome-terminal &
 
