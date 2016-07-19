@@ -144,6 +144,7 @@ before layers configuration."
 ;  (require 'mu4e)
   ;; HACK ensure our custom theme is loadable
   (setq custom-theme-load-path '("/home/ian/.etc/spacemacs/private-layers/themian/local/themian-theme/"))
+  (setq magit-diff-refine-hunk 'all)
   )
 
 (defun my-javascript-mode-hook ()
