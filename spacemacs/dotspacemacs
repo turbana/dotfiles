@@ -16,15 +16,21 @@
      ;; Example of useful layers you may want to use right away
      ;; Uncomment a layer name and press C-c C-c to install it
      ;; --------------------------------------------------------
-     haskell
+     (auto-completion :variables
+                      auto-completion-return-key-behavior nil
+                      auto-completion-tab-key-behavior 'complete
+                      auto-completion-complete-with-key-sequence nil
+                      auto-completion-private-snippets-directory nil)
+	 colors
+     evil-commentary
      (git :variables
           git-gutter-use-fringe t)
-     markdown
-     syntax-checking
-     spell-checking
-     org
+     haskell
      javascript
-	 colors
+     ;; markdown
+     org
+     spell-checking
+     syntax-checking
      ;; ian
 	 themian
      )
@@ -139,9 +145,6 @@ before layers configuration."
   ;; use X11 primary to copy/paste
   (setq x-select-enable-primary t)
   (setq-default indent-tabs-mode t)
-  ;; add mu3e to load path
-;  (add-to-list 'load-path "/home/iclark/git/mu/mu4e")
-;  (require 'mu4e)
   ;; HACK ensure our custom theme is loadable
   (setq custom-theme-load-path '("/home/ian/.etc/spacemacs/private-layers/themian/local/themian-theme/"))
   (setq magit-diff-refine-hunk 'all)
@@ -174,6 +177,7 @@ layers configuration."
   (add-hook 'js2-mode-hook 'my-javascript-mode-hook)
   (add-hook 'asm-mode-hook 'my-asm-mode-hook)
   (add-hook 'python-mode-hook 'my-python-mode-hook)
+  (global-linum-mode)
   )
 
 ;; Do not write anything past this comment. This is where Emacs will

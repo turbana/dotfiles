@@ -23,10 +23,11 @@ Taken from zenburn-theme.el"
 (setq themian-colors-list
       '((unknown  "#9933ff")
         (grey-1   "#181818")
-        (grey-2   "#222222")
-        (grey-3   "#333333")
-        (grey-4   "#444444")
-        (grey-5   "#555555")
+        (grey-2   "#202020")
+        (grey-3   "#303030")
+        (grey-4   "#404040")
+        (grey-5   "#505050")
+        (grey-6   "#606060")
         (white-1  "#ffffff")
         (white-2  "#eeeeee")
         (white-3  "#bbbbbb")
@@ -84,6 +85,10 @@ Taken from zenburn-theme.el"
           (trailing-whitespace (:background ,yellow-1))
 
           ;; rest
+          (diff-refine-added (:background ,green-2))
+          (diff-refine-changed (:background ,unknown))
+          (diff-refine-removed (:background ,red-1))
+          (diff-header (:background ,unknown))
           (helm-M-x-key (:foreground ,white-1 :background ,grey-3 :box (:line-width 1 :style released-button)))
           (helm-action (:background ,unknown))
           (helm-bookmark-addressbook (:background ,unknown))
@@ -133,8 +138,7 @@ Taken from zenburn-theme.el"
           (helm-separator (:background ,unknown))
           (helm-source-header (:foreground ,blue-3 :weight bold :height 1.15))
           (helm-visible-mark (:background ,unknown))
-
-
+          (linum (:foreground ,grey-6))
           (magit-bisect-bad (:background ,unknown))
           (magit-bisect-good (:background ,unknown))
           (magit-bisect-skip (:background ,unknown))
@@ -172,9 +176,6 @@ Taken from zenburn-theme.el"
           (magit-diff-whitespace-warning (:background ,unknown))
           (magit-diffstat-added (:foreground ,green-2))
           (magit-diffstat-removed (:foreground ,red-1))
-          (diff-refine-added (:background ,green-2))
-          (diff-refine-changed (:background ,unknown))
-          (diff-refine-removed (:background ,red-1))
           (magit-dimmed (:background ,unknown))
           (magit-filename (:inherit default))
           (magit-hash (:foreground ,white-4))
@@ -217,7 +218,6 @@ Taken from zenburn-theme.el"
           (magit-signature-good (:background ,unknown))
           (magit-signature-untrusted (:background ,unknown))
           (magit-tag (:foreground ,yellow-3 :weight bold :box t))
-
           (mode-line (:background ,grey-3 :box (:line-width -1 :color nil :style released-button)))
           (mode-line-buffer-id (:foreground ,white-1 :weight bold))
           (mode-line-emphasis (:background ,unknown))
@@ -241,7 +241,7 @@ Taken from zenburn-theme.el"
           (show-paren-match (:inverse-video t :weight normal))
           (show-paren-mismatch (:foreground ,red-1 :background ,grey-3))
           (spacemacs-emacs-face (:background ,blue-3))
-          (spacemacs-evilified-face (:background ,unknown))
+          (spacemacs-evilified-face (:background ,blue-1))
           (spacemacs-helm-navigation-ms-face (:background ,unknown))
           (spacemacs-hybrid-face (:background ,unknown))
           (spacemacs-ido-navigation-ms-face (:background ,unknown))
@@ -249,7 +249,7 @@ Taken from zenburn-theme.el"
           (spacemacs-iedit-insert-face (:background ,unknown))
           (spacemacs-insert-face (:foreground ,grey-1 :background ,green-2 :weight bold))
           (spacemacs-lisp-face (:background ,unknown))
-          (spacemacs-micro-state-binding-face (:background ,unknown))
+          (spacemacs-micro-state-binding-face (:foreground ,cyan-1)) ; XXX this is being overwritten somewhere :/
           (spacemacs-micro-state-header-face (:background ,unknown))
           (spacemacs-mode-line-new-version-lighter-error-face (:background ,unknown))
           (spacemacs-mode-line-new-version-lighter-success-face (:background ,unknown))
