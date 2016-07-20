@@ -82,7 +82,7 @@ before layers configuration."
                                :size 12
                                :weight normal
                                :width normal
-                               :powerline-scale 1)
+                               :powerline-scale 1.2)
    ;; The leader key
    dotspacemacs-leader-key "SPC"
    ;; The leader key accessible in `emacs state' and `insert state'
@@ -148,6 +148,7 @@ before layers configuration."
   ;; HACK ensure our custom theme is loadable
   (setq custom-theme-load-path '("/home/ian/.etc/spacemacs/private-layers/themian/local/themian-theme/"))
   (setq magit-diff-refine-hunk 'all)
+  (setq powerline-default-separator 'contour)
   )
 
 (defun my-javascript-mode-hook ()
