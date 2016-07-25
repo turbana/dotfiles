@@ -61,8 +61,10 @@ def read():
 def translate(exp):
 	if exp[0] in "+-*/%":
 		exp = str(namespace["_1"]) + exp
+		display(": " + exp)
 	if exp[0] == "=":
 		exp = exp[1:] + "=" + str(namespace["_1"])
+		display(": " + exp)
 	return exp
 
 
