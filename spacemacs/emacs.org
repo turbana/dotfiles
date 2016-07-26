@@ -13,43 +13,58 @@
 #+END_SRC
 *** Appearance
 #+BEGIN_SRC emacs-lisp :tangle yes
-  (setq org-startup-folded t)
+  ;; (setq org-startup-folded t)
   (setq org-hide-leading-stars t)
   (setq org-odd-levels-only nil)
   (setq org-completion-use-ido t)
   (setq org-return-follows-link t)
   ;; (setq org-blank-before-new-entry nil)
+  ;; don't mess with windows when editing inline code
+  (setq org-src-window-setup 'current-window)
 #+END_SRC
 *** Agenda
 #+BEGIN_SRC emacs-lisp :tangle yes
   ;; don't show completed DEADLINE and SCHEDULED in agenda
-  (setq org-agenda-skip-deadline-if-done t)
   (setq org-agenda-skip-scheduled-if-done t)
+  (setq org-agenda-skip-deadline-if-done t)
+  (setq org-agenda-skip-deadline-prewarning-if-scheduled 't)
   ;; first day in agenda should be today
   (setq org-agenda-start-on-weekday nil)
+  (setq org-agenda-time-grid
+        '((daily today require-timed)
+          "----------------"
+          (800 1000 1200 1400 1600 1800)))
   ;; show weekly agenda by default
   (setq org-agenda-span 'week)
   ;; custom agenda views
   (setq org-agenda-custom-commands
         '(("a" "Agenda"
            ((agenda "" nil)
-            (tags "REFILE"
+            (tags "refile"
                   ((org-agenda-overriding-header "Refile tasks:")
                    (org-tags-match-list-sublevels nil)))
-            (tags "-REFILE/"
+            (tags "-refile/"
                     ((org-agenda-overriding-header "Archive tasks:")
                      (org-agenda-skip-function 'bh/skip-non-archivable-tasks)
                      (org-tags-match-list-sublevels nil))))
-             nil)))
+           nil)
+          ;; ("d" "Day View"
+          ;;  ((agenda ""))
+          ;;  ((org-agenda-ndays 1)
+          ;;   (org-agenda-show-log t)
+          ;;   (org-agenda-log-mode-items '(clock closed))
+          ;;   (org-agenda-clockreport-mode t)
+          ;;   (org-agenda-entry-types '())))
+          ))
 #+END_SRC
 *** Todo 
 #+BEGIN_SRC emacs-lisp :tangle yes
   (setq org-todo-keywords
   '((sequence "TODO(t)" "NEXT(n)" "|" "DONE(d!)")
-              (sequence "WAITING(a@/!)" "HOLD(h@/!)" "|"
-                        "CANCELLED(c@/!)" "PHONE" "MEETING" "HABIT(a)")))
-      (setq org-enforce-todo-dependencies t)
-      (setq org-enforce-todo-checkbox-dependencies t)
+    (sequence "WAIT(a@/!)" "HOLD(h@/!)" "|"
+              "CANCELLED(c@/!)" "PHONE" "MEETING" "HABIT(a)")))
+  (setq org-enforce-todo-dependencies t)
+  (setq org-enforce-todo-checkbox-dependencies t)
 #+END_SRC
 *** Logging
 #+BEGIN_SRC emacs-lisp :tangle yes
@@ -199,6 +214,11 @@ Need to clean these up
        ;; (lambda () (delete-region (point) (progn (forward-line) (point)))))
       )
     ))
+#+END_SRC
+** Helm
+*** Keybinds
+#+BEGIN_SRC emacs-lisp :tangle yes
+(define-key helm-map (kbd "C-w") 'backward-kill-word)
 #+END_SRC
 * Programming
 ** Indentation

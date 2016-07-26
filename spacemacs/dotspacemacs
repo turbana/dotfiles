@@ -21,8 +21,8 @@
                       auto-completion-tab-key-behavior 'complete
                       auto-completion-complete-with-key-sequence nil
                       auto-completion-private-snippets-directory "~/.etc/spacemacs/snippets")
-	 colors
-	 ranger
+		 colors
+		 ranger
      (git :variables
           git-gutter-use-fringe t)
      evil-commentary
@@ -33,10 +33,10 @@
      shell
      spell-checking
      syntax-checking
-	 themian
+		 themian
      )
    ;; A list of packages and/or extensions that will not be install and loaded.
-   dotspacemacs-excluded-packages '(highlight-parentheses)
+   dotspacemacs-excluded-packages '(highlight-parentheses tern)
    ;; If non-nil spacemacs will delete any orphan packages, i.e. packages that
    ;; are declared in a layer which is not a member of
    ;; the list `dotspacemacs-configuration-layers'
