@@ -21,7 +21,7 @@
   (load-theme 'themian t))
 
 (defun themian/init-themian-theme ()
-  (message "inside init")
+  ;; (message "inside init")
   (use-package themian-theme)
   (global-set-key (kbd "<f5>") 'themian/reload-theme)
   )
