@@ -224,18 +224,23 @@ Need to clean these up
 ** Indentation
 #+BEGIN_SRC emacs-lisp :tangle yes
   (defun ic/setup-indentation-hook (tab-width use-tabs)
-    (lambda ()
-      (setq indent-tabs-mod use-tabs
-            tab-width tab-width
-            js-indent-level tab-width
-            python-indent tab-width)))
-  (let ((setup '((javascript-mode-hook 4 t)
-                 (j2-mode-hook 4 t)
-                 (js2-mode-hook 4 t)
-                 (asm-mode-hook 8 t)
-                 (python-mode-hook 4 t))))
-    (dolist (elem setup)
-      (add-hook (car elem) (apply #'ic/setup-indentation-hook (cdr elem)))))
+    "Create a mode-hook that will setup indentation variables."
+    `(lambda ()
+       (setq indent-tabs-mode ,use-tabs)
+       (setq tab-width ,tab-width)
+       (setq js-indent-level ,tab-width)
+       (setq python-indent ,tab-width)))
+  (let ((indentation-setup
+         '((javascript-mode-hook 4 t)
+           (j2-mode-hook 4 t)
+           (js2-mode-hook 4 t)
+           (asm-mode-hook 8 t)
+           (python-mode-hook 4 t)
+           )))
+    (dolist (elem indentation-setup)
+      (add-hook (car elem)
+                (apply #'ic/setup-indentation-hook (cdr elem)))))
+  ;; use tabs by default
   (setq-default indent-tabs-mode t)
 #+END_SRC
 * Misc
