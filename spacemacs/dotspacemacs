@@ -20,18 +20,19 @@
                       auto-completion-return-key-behavior nil
                       auto-completion-tab-key-behavior 'complete
                       auto-completion-complete-with-key-sequence nil
-                      auto-completion-private-snippets-directory nil)
+                      auto-completion-private-snippets-directory "~/.etc/spacemacs/snippets")
 	 colors
-     evil-commentary
+	 ranger
      (git :variables
           git-gutter-use-fringe t)
+     evil-commentary
      haskell
      javascript
-     ;; markdown
      org
+     python
+     shell
      spell-checking
      syntax-checking
-     ;; ian
 	 themian
      )
    ;; A list of packages and/or extensions that will not be install and loaded.
@@ -141,45 +142,23 @@ before layers configuration."
    dotspacemacs-default-package-repository nil
    )
   ;; User initialization goes here
-  (setq create-lockfiles nil)
-  ;; use X11 primary to copy/paste
-  (setq x-select-enable-primary t)
-  (setq-default indent-tabs-mode t)
   ;; HACK ensure our custom theme is loadable
   (setq custom-theme-load-path '("/home/ian/.etc/spacemacs/private-layers/themian/local/themian-theme/"))
-  (setq magit-diff-refine-hunk 'all)
-  (setq powerline-default-separator 'contour)
   )
-
-(defun my-javascript-mode-hook ()
-  (setq indent-tabs-mode t tab-width 4 js-indent-level 4))
-
-(defun my-asm-mode-hook ()
-  (setq indent-tabs-mode t)
-  (setq tab-width 8))
-
-(defun my-python-mode-hook ()
-  (setq indent-tabs-mode t)
-  (setq python-indent 4)
-  (setq tab-width 4))
 
 (defun dotspacemacs/user-config ()
   "Configuration function.
  This function is called at the very end of Spacemacs initialization after
 layers configuration."
-  ;; disable search highlighting
-  (global-evil-search-highlight-persist 0)
-  (setq tab-width 4)
-  (setq default-tab-width 4)
-  (setq js-indent-level 4)
-  (setq indent-tabs-mode t)
-  (add-hook 'javascript-mode-hook 'my-javascript-mode-hook)
-  (add-hook 'js-mode-hook 'my-javascript-mode-hook)
-  (add-hook 'js2-mode-hook 'my-javascript-mode-hook)
-  (add-hook 'asm-mode-hook 'my-asm-mode-hook)
-  (add-hook 'python-mode-hook 'my-python-mode-hook)
-  (global-linum-mode)
+  ;; load our custom init
+  (org-babel-load-file (expand-file-name "~/.etc/spacemacs/emacs.org"))
   )
 
 ;; Do not write anything past this comment. This is where Emacs will
 ;; auto-generate custom variable definitions.
+(custom-set-variables
+ ;; custom-set-variables was added by Custom.
+ ;; If you edit it by hand, you could mess it up, so be careful.
+ ;; Your init file should contain only one such instance.
+ ;; If there is more than one, they won't work right.
+ '(org-agenda-files (quote ("~/test.org"))))

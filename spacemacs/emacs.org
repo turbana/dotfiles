@@ -1,0 +1,248 @@
+* Major Modes
+** org-mode
+*** Basic Setup
+#+BEGIN_SRC emacs-lisp :tangle yes
+  (setq org-agenda-files '("~/org" "~/org/home"))
+  (setq org-default-notes-file "~/org/refile.org")
+  (setq org-archive-location "%s_archive::")
+#+END_SRC
+*** Keybinds
+#+BEGIN_SRC emacs-lisp :tangle yes
+  (global-set-key (kbd "M-<f1>") 'org-clock-goto)
+  (global-set-key (kbd "<f12>") 'org-agenda)
+#+END_SRC
+*** Appearance
+#+BEGIN_SRC emacs-lisp :tangle yes
+  (setq org-startup-folded t)
+  (setq org-hide-leading-stars t)
+  (setq org-odd-levels-only nil)
+  (setq org-completion-use-ido t)
+  (setq org-return-follows-link t)
+  ;; (setq org-blank-before-new-entry nil)
+#+END_SRC
+*** Agenda
+#+BEGIN_SRC emacs-lisp :tangle yes
+  ;; don't show completed DEADLINE and SCHEDULED in agenda
+  (setq org-agenda-skip-deadline-if-done t)
+  (setq org-agenda-skip-scheduled-if-done t)
+  ;; first day in agenda should be today
+  (setq org-agenda-start-on-weekday nil)
+  ;; show weekly agenda by default
+  (setq org-agenda-span 'week)
+  ;; custom agenda views
+  (setq org-agenda-custom-commands
+        '(("a" "Agenda"
+           ((agenda "" nil)
+            (tags "REFILE"
+                  ((org-agenda-overriding-header "Refile tasks:")
+                   (org-tags-match-list-sublevels nil)))
+            (tags "-REFILE/"
+                    ((org-agenda-overriding-header "Archive tasks:")
+                     (org-agenda-skip-function 'bh/skip-non-archivable-tasks)
+                     (org-tags-match-list-sublevels nil))))
+             nil)))
+#+END_SRC
+*** Todo 
+#+BEGIN_SRC emacs-lisp :tangle yes
+  (setq org-todo-keywords
+  '((sequence "TODO(t)" "NEXT(n)" "|" "DONE(d!)")
+              (sequence "WAITING(a@/!)" "HOLD(h@/!)" "|"
+                        "CANCELLED(c@/!)" "PHONE" "MEETING" "HABIT(a)")))
+      (setq org-enforce-todo-dependencies t)
+      (setq org-enforce-todo-checkbox-dependencies t)
+#+END_SRC
+*** Logging
+#+BEGIN_SRC emacs-lisp :tangle yes
+  (setq org-log-done 'time)
+  (setq org-log-into-drawer "LOGBOOK"=)
+#+END_SRC
+*** Capture
+#+BEGIN_SRC emacs-lisp :tangle yes
+  (setq org-reverse-note-order nil)
+  (setq org-capture-templates
+        '(("t" "todo" entry (file org-default-notes-file)
+           "* todo %?\n%u\n"
+           :clock-in t :clock-resume t)
+          ("r" "respond" entry (file org-default-notes-file)
+           "* next respond to %:from on %:subject\nscheduled: %t\n%u\n%a\n"
+           :clock-in t :clock-resume t :immediate-finish t)
+          ("n" "note" entry (file org-default-notes-file)
+           "* %? :note:\n%u\n"
+           :clock-in t :clock-resume t)
+          ("m" "meeting" entry (file org-default-notes-file)
+           "* meeting with %? :meeting:\n%u"
+           :clock-in t :clock-resume t)
+          ("p" "phone call" entry (file org-default-notes-file)
+           "* phone %? :phone:\n%u"
+           :clock-in t :clock-resume t)
+          ("h" "habit" entry (file org-default-notes-file)
+           "* next %?\n%u\nscheduled: %(format-time-string \"<%y-%m-%d %a .+1d/3d>\")\n:properties:\n:style: habit\n:repeat_to_state: next\n:end:\n")
+          ("r" "recipe" entry (file org-default-notes-file)
+           "* %^{name} :uncooked::\n:properties:\n:source: %^{source}\n:image: %^{image}\n:serving: %^{serving}\n:type: %^{type}\n:end:\n** ingredients\n   | %? | |\n** procedure\n   1.\n** log")
+          ;; ("a" "job application" entry (file org-default-jobs-file)
+          ;;  "* %^{company} - %^{title}\n  %u\n  [[%^{submission}][submission]]\n  %?\n** description\n   %^{description}\n** contact info\n** log\n")
+          ))
+  (setq org-refile-targets
+        '((nil :maxlevel . 6)
+          (org-agenda-files :maxlevel . 6)))
+  (setq org-refile-use-outline-path t)
+  (add-hook 'org-capture-mode-hook 'evil-insert-state)
+#+END_SRC
+*** Clocking
+#+BEGIN_SRC emacs-lisp :tangle yes
+  ;; resolve open clocks for any amount of time
+  (setq org-clock-idle-time nil)
+  ;; start new clocking immediatly after clocking out
+  (setq org-clock-continuously t)
+  ;; save current clock when emacs exits
+  (setq org-clock-persist t)
+  ;; change to NEXT state when starting a clock
+  (setq org-clock-in-switch-to-state "NEXT")
+  ;; change to TODO state when leaving a clock
+  (setq org-clock-out-switch-to-state "TODO")
+  ;; continue an open clock when checking into task
+  (setq org-clock-in-resume t)
+  ;; include current clock in reports
+  (setq org-clock-report-include-clocking-task t)
+  ;; save all clocks in the LOGBOOK drawer
+  (setq org-clock-into-drawer "LOGBOOK")
+  ;; show current clock in the modeline
+  (setq spacemacs-mode-line-org-clock-current-taskp t)
+  ;; only show today's clock in the modeline
+  (setq org-clock-mode-line-total 'today)
+  (org-clock-persistence-insinuate)
+#+END_SRC
+*** Misc
+#+BEGIN_SRC emacs-lisp :tangle yes
+  ;; don't modify the task state when archiving
+  (setq org-archive-mark-done nil)
+  (add-to-list 'org-structure-template-alist
+               '("e" "#+BEGIN_SRC emacs-lisp :tangle yes\n?\n#+END_SRC"))
+#+END_SRC
+*** Exporting
+#+BEGIN_SRC emacs-lisp :tangle yes
+  (setq org-publish-project-alist
+        '(("recipes"
+           :base-directory "~/org/home/food/"
+           :base-extension "org"
+           :publishing-directory "~/food/"
+           :recursive t
+           :publishing-function org-html-publish-to-html
+           :headline-levels 4
+           :auto-preamble t
+           )))
+  (add-hook 'org-export-before-parsing-hook 'ic/org-export-filter-recipes)
+#+END_SRC
+*** TODO Functions
+Need to clean these up
+#+BEGIN_SRC emacs-lisp :tangle yes
+  (defun ic/org-capture-full-window ()
+    "Run `(org-capture)' without splitting the frame"
+    (interactive)
+    (message "ic/org-capture-full-window")
+    (flet ((org-switch-to-buffer-other-window (&rest args) (apply #'switch-to-buffer args)))
+      (org-capture)))
+
+
+  (defadvice org-capture-finalize (after delete-capture-frame activate)
+    "Close OrgCapture frame after completing a capture"
+    (when (equal (frame-parameter nil 'name) "OrgCapture")
+      (delete-frame)))
+
+
+
+  ;;; functions taken from http://doc.norang.ca/org-mode.html
+
+  (defun bh/skip-non-archivable-tasks ()
+    "Skip trees that are not available for archiving"
+    (save-restriction
+      (widen)
+      ;; Consider only tasks with done todo headings as archivable candidates
+      (let ((next-headline (save-excursion (or (outline-next-heading) (point-max))))
+            (subtree-end (save-excursion (org-end-of-subtree t))))
+        (if (member (org-get-todo-state) org-todo-keywords-1)
+            (if (member (org-get-todo-state) org-done-keywords)
+                (let* ((daynr (string-to-int (format-time-string "%d" (current-time))))
+                       (a-month-ago (* 60 60 24 (+ daynr 1)))
+                       (last-month (format-time-string "%Y-%m-" (time-subtract (current-time) (seconds-to-time a-month-ago))))
+                       (this-month (format-time-string "%Y-%m-" (current-time)))
+                       (subtree-is-current (save-excursion
+                                             (forward-line 1)
+                                             (and (< (point) subtree-end)
+                                                  (re-search-forward (concat last-month "\\|" this-month) subtree-end t)))))
+                  (if subtree-is-current
+                      subtree-end ; Has a date in this month or last month, skip it
+                    nil))  ; available to archive
+              (or subtree-end (point-max)))
+          next-headline))))
+
+
+  (defun ic/org-recipe-publish-to-html (plist org-filename target-dir)
+    "Export ORG-FILENAME as html. Similar to `org-html-publish-to-html', but only exporting certain sections"
+    (interactive)
+    (let* ((base-name (file-name-sans-extension (file-name-nondirectory org-filename)))
+           (target-filename (concat target-dir base-name ".html")))
+      (with-temp-file target-filename
+        (insert-file-contents org-filename)
+        (goto-char (point-min))
+        )
+      )
+    )
+
+
+  (defun ic/org-export-filter-recipes (backend)
+    "Filter out unwanted elements from org-mode recipes, but only when export as HTML."
+    (when (equal backend 'html)
+      (org-map-entries
+       (lambda ()
+         )
+       ;; (lambda () (delete-region (point) (progn (forward-line) (point)))))
+      )
+    ))
+#+END_SRC
+* Programming
+** Indentation
+#+BEGIN_SRC emacs-lisp :tangle yes
+  (defun ic/setup-indentation-hook (tab-width use-tabs)
+    (lambda ()
+      (setq indent-tabs-mod use-tabs
+            tab-width tab-width
+            js-indent-level tab-width
+            python-indent tab-width)))
+  (let ((setup '((javascript-mode-hook 4 t)
+                 (j2-mode-hook 4 t)
+                 (js2-mode-hook 4 t)
+                 (asm-mode-hook 8 t)
+                 (python-mode-hook 4 t))))
+    (dolist (elem setup)
+      (add-hook (car elem) (apply #'ic/setup-indentation-hook (cdr elem)))))
+  (setq-default indent-tabs-mode t)
+#+END_SRC
+* Misc
+** Browser
+Use chromium as default browser
+#+BEGIN_SRC emacs-lisp :tangle yes
+  (setq browse-url-browser-function 'browse-url-generic
+        browse-url-generic-program "chromium")
+#+END_SRC
+** Clipboard
+Use system clipboard
+#+BEGIN_SRC emacs-lisp :tangle yes
+  (setq x-select-enable-primary t)
+#+END_SRC
+** Line Numbers
+Use line numbers everywhere
+#+BEGIN_SRC emacs-lisp :tangle yes
+  (global-linum-mode)
+#+END_SRC
+** Search
+Disable search highlighting
+#+BEGIN_SRC emacs-lisp :tangle yes
+  (global-evil-search-highlight-persist 0)
+#+END_SRC
+* Refile
+#+BEGIN_SRC emacs-lisp :tangle yes
+  (setq create-lockfiles nil)
+  (setq magit-diff-refine-hunk 'all)
+  (setq powerline-default-separator 'contour)
+#+END_SRC
