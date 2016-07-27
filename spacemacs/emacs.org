@@ -1,3 +1,6 @@
+#+TITLE: Spacemacs Config
+#+STARTUP: content
+
 * Major Modes
 ** org-mode
 *** Basic Setup
@@ -13,7 +16,7 @@
 #+END_SRC
 *** Appearance
 #+BEGIN_SRC emacs-lisp :tangle yes
-  ;; (setq org-startup-folded t)
+  (setq org-startup-folded t)
   (setq org-hide-leading-stars t)
   (setq org-odd-levels-only nil)
   (setq org-completion-use-ido t)
@@ -21,6 +24,9 @@
   ;; (setq org-blank-before-new-entry nil)
   ;; don't mess with windows when editing inline code
   (setq org-src-window-setup 'current-window)
+  ;; use fancy bullets/ellipsis
+  (setq org-bullets-bullet-list '("⚫"))
+  (setq org-ellipsis " ⬎")
 #+END_SRC
 *** Agenda
 #+BEGIN_SRC emacs-lisp :tangle yes
@@ -221,7 +227,8 @@ Need to clean these up
 (define-key helm-map (kbd "C-w") 'backward-kill-word)
 #+END_SRC
 * Programming
-** Indentation
+** General
+*** Indentation
 #+BEGIN_SRC emacs-lisp :tangle yes
   (defun ic/setup-indentation-hook (tab-width use-tabs)
     "Create a mode-hook that will setup indentation variables."
