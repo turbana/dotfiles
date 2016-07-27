@@ -243,6 +243,7 @@ Need to clean these up
            (js2-mode-hook 4 t)
            (asm-mode-hook 8 t)
            (python-mode-hook 4 t)
+           (makefile-mode-hook 8 t)
            )))
     (dolist (elem indentation-setup)
       (add-hook (car elem)

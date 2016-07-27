@@ -30,6 +30,7 @@
      javascript
      org
      python
+		 restclient
      shell
      spell-checking
      syntax-checking
