@@ -1,7 +1,7 @@
 #+TITLE: Spacemacs Config
 #+STARTUP: content
 
-* Major Modes
+* Major Packages
 ** org-mode
 *** Basic Setup
 #+BEGIN_SRC emacs-lisp :tangle yes
@@ -16,6 +16,7 @@
 #+END_SRC
 *** Appearance
 #+BEGIN_SRC emacs-lisp :tangle yes
+  (setq org-startup-indented t)
   (setq org-startup-folded t)
   (setq org-hide-leading-stars t)
   (setq org-odd-levels-only nil)
@@ -267,6 +268,11 @@ Use system clipboard
 Use line numbers everywhere
 #+BEGIN_SRC emacs-lisp :tangle yes
   (global-linum-mode)
+#+END_SRC
+** Text Wrap
+#+BEGIN_SRC emacs-lisp :tangle yes
+  (setq-default fill-column 80)
+  (add-hook 'text-mode-hook 'turn-on-auto-fill)
 #+END_SRC
 ** Search
 Disable search highlighting
