@@ -64,7 +64,7 @@
           ;;   (org-agenda-entry-types '())))
           ))
 #+END_SRC
-*** Todo 
+*** Todo
 #+BEGIN_SRC emacs-lisp :tangle yes
   (setq org-todo-keywords
   '((sequence "TODO(t)" "NEXT(n)" "|" "DONE(d!)")
@@ -239,18 +239,19 @@ Need to clean these up
        (setq js-indent-level ,tab-width)
        (setq python-indent ,tab-width)))
   (let ((indentation-setup
-         '((javascript-mode-hook 4 t)
-           (j2-mode-hook 4 t)
-           (js2-mode-hook 4 t)
+         '(
            (asm-mode-hook 8 t)
-           (python-mode-hook 4 t)
+           (emacs-lisp-mode-hook 2 nil)
+           (lisp-mode-hook 2 nil)
            (makefile-mode-hook 8 t)
+           (python-mode-hook 4 t)
            )))
     (dolist (elem indentation-setup)
       (add-hook (car elem)
                 (apply #'ic/setup-indentation-hook (cdr elem)))))
   ;; use tabs by default
   (setq-default indent-tabs-mode t)
+  (setq-default tab-width 4)
 #+END_SRC
 * Misc
 ** Browser
