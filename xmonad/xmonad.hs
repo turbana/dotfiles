@@ -75,7 +75,7 @@ myScratchPads = [
   (role =? "calculator")
   (customFloating $ W.RationalRect (3/8) (1/4) (1/4) (1/2)),
 
-  NS "orgCap" "emacsclient -c -F '(quote (name . \"OrgCapture\"))' -e '(ic/org-capture-full-window)'" -- -e '(progn (delete-other-windows) (org-capture))'"
+  NS "orgCap" "emacsclient -c -F '(quote (name . \"OrgCapture\"))' -e '(org-capture)'"
   (title =? "OrgCapture")
   (customFloating $ W.RationalRect (1/4) (1/4) (1/2) (1/2))
   ]

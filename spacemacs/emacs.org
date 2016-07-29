@@ -79,36 +79,67 @@
   (setq org-log-into-drawer "LOGBOOK"=)
 #+END_SRC
 *** Capture
+**** Templates
 #+BEGIN_SRC emacs-lisp :tangle yes
   (setq org-reverse-note-order nil)
   (setq org-capture-templates
         '(("t" "todo" entry (file org-default-notes-file)
-           "* todo %?\n%u\n"
+           "* TODO %?\n%u\n"
            :clock-in t :clock-resume t)
           ("r" "respond" entry (file org-default-notes-file)
-           "* next respond to %:from on %:subject\nscheduled: %t\n%u\n%a\n"
+           "* TODO respond to %:from on %:subject\nscheduled: %t\n%u\n%a\n"
            :clock-in t :clock-resume t :immediate-finish t)
           ("n" "note" entry (file org-default-notes-file)
            "* %? :note:\n%u\n"
            :clock-in t :clock-resume t)
           ("m" "meeting" entry (file org-default-notes-file)
-           "* meeting with %? :meeting:\n%u"
+           "* MEETING with %? :meeting:\n%u"
            :clock-in t :clock-resume t)
           ("p" "phone call" entry (file org-default-notes-file)
-           "* phone %? :phone:\n%u"
+           "* PHONE %? :phone:\n%u"
            :clock-in t :clock-resume t)
           ("h" "habit" entry (file org-default-notes-file)
-           "* next %?\n%u\nscheduled: %(format-time-string \"<%y-%m-%d %a .+1d/3d>\")\n:properties:\n:style: habit\n:repeat_to_state: next\n:end:\n")
+           "* TODO %?\n%u\nscheduled: %(format-time-string \"<%y-%m-%d %a .+1d/3d>\")\n:properties:\n:style: habit\n:repeat_to_state: next\n:end:\n")
           ("r" "recipe" entry (file org-default-notes-file)
            "* %^{name} :uncooked::\n:properties:\n:source: %^{source}\n:image: %^{image}\n:serving: %^{serving}\n:type: %^{type}\n:end:\n** ingredients\n   | %? | |\n** procedure\n   1.\n** log")
-          ;; ("a" "job application" entry (file org-default-jobs-file)
-          ;;  "* %^{company} - %^{title}\n  %u\n  [[%^{submission}][submission]]\n  %?\n** description\n   %^{description}\n** contact info\n** log\n")
           ))
   (setq org-refile-targets
         '((nil :maxlevel . 6)
           (org-agenda-files :maxlevel . 6)))
   (setq org-refile-use-outline-path t)
   (add-hook 'org-capture-mode-hook 'evil-insert-state)
+#+END_SRC
+
+**** Full Frame
+The standard =org-capture= behavior is to split the window before capturing a
+task. When this is started from outside emacs a random buffer occupies half the
+frame. What I want is the capture buffer to take the full frame when starting
+the capture from outside emacs. My window manager will start the capture task
+with a frame name of =OrgCapture=. Because =org-capture= doesn't provide a hook
+where it splits the frame we'll need to advise it to ~(delete-other-windows)~
+when our frame is =OrgCapture= and one of the following:
+
+1. When choosing the capture template (buffer name: =*Org Select*=)
+2. When inside the capture task (buffer name: =CAPTURE-<filename>=)
+
+Finally, call ~(delete-frame)~ after the capture is finalized.
+
+#+BEGIN_SRC emacs-lisp :tangle yes
+  (defun ic/maybe-org-capture-delete-other-windows (buf)
+    "Maximize frame when starting an external org-capture"
+    (let* ((buffer-name (if (bufferp buf) (buffer-name buf) buf))
+           (is-capture-frame (equal "OrgCapture" (frame-parameter nil 'name)))
+           (is-capture-buffer (or (equal "*Org Select*" buffer-name)
+                                  (string-match "^CAPTURE-" buffer-name))))
+      (when (and is-capture-frame is-capture-buffer)
+        (delete-other-windows))))
+  (advice-add 'org-switch-to-buffer-other-window :after #'ic/maybe-org-capture-delete-other-windows)
+
+  (defun ic/maybe-org-capture-delete-frame ()
+    "Close the frame when finalizing an external org-capture"
+    (when (equal "OrgCapture" (frame-parameter nil 'name))
+      (delete-frame)))
+  (add-hook 'org-capture-after-finalize-hook #'ic/maybe-org-capture-delete-frame)
 #+END_SRC
 *** Clocking
 #+BEGIN_SRC emacs-lisp :tangle yes
@@ -158,21 +189,6 @@
 *** TODO Functions
 Need to clean these up
 #+BEGIN_SRC emacs-lisp :tangle yes
-  (defun ic/org-capture-full-window ()
-    "Run `(org-capture)' without splitting the frame"
-    (interactive)
-    (message "ic/org-capture-full-window")
-    (flet ((org-switch-to-buffer-other-window (&rest args) (apply #'switch-to-buffer args)))
-      (org-capture)))
-
-
-  (defadvice org-capture-finalize (after delete-capture-frame activate)
-    "Close OrgCapture frame after completing a capture"
-    (when (equal (frame-parameter nil 'name) "OrgCapture")
-      (delete-frame)))
-
-
-
   ;;; functions taken from http://doc.norang.ca/org-mode.html
 
   (defun bh/skip-non-archivable-tasks ()
