@@ -28,6 +28,9 @@
   ;; use fancy bullets/ellipsis
   (setq org-bullets-bullet-list '("⚫"))
   (setq org-ellipsis " ⬎")
+  ;; format src blocks
+  (setq org-src-preserve-indentation nil)
+  (setq org-edit-src-content-indentation 2)
 #+END_SRC
 *** Agenda
 #+BEGIN_SRC emacs-lisp :tangle yes
@@ -37,10 +40,6 @@
   (setq org-agenda-skip-deadline-prewarning-if-scheduled 't)
   ;; first day in agenda should be today
   (setq org-agenda-start-on-weekday nil)
-  (setq org-agenda-time-grid
-        '((daily today require-timed)
-          "----------------"
-          (800 1000 1200 1400 1600 1800)))
   ;; show weekly agenda by default
   (setq org-agenda-span 'week)
   ;; custom agenda views
@@ -55,14 +54,9 @@
                      (org-agenda-skip-function 'bh/skip-non-archivable-tasks)
                      (org-tags-match-list-sublevels nil))))
            nil)
-          ;; ("d" "Day View"
-          ;;  ((agenda ""))
-          ;;  ((org-agenda-ndays 1)
-          ;;   (org-agenda-show-log t)
-          ;;   (org-agenda-log-mode-items '(clock closed))
-          ;;   (org-agenda-clockreport-mode t)
-          ;;   (org-agenda-entry-types '())))
           ))
+  ;; don't have a separator between agenda sections
+  (setq org-agenda-block-separator nil)
 #+END_SRC
 *** Todo
 #+BEGIN_SRC emacs-lisp :tangle yes
@@ -171,6 +165,8 @@ Finally, call ~(delete-frame)~ after the capture is finalized.
   (setq org-archive-mark-done nil)
   (add-to-list 'org-structure-template-alist
                '("e" "#+BEGIN_SRC emacs-lisp :tangle yes\n?\n#+END_SRC"))
+  ;; catch modifying collapsed text
+  (setq org-catch-invisible-edits 'error)
 #+END_SRC
 *** Exporting
 #+BEGIN_SRC emacs-lisp :tangle yes
