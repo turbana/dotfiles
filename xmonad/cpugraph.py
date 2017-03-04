@@ -64,6 +64,7 @@ _WEATHER_TICKS = int(WEATHER_UPDATE / float(DELAY))
 current_temp = [0]
 have_event_today = [False]
 file_changes = collections.defaultdict(int)
+current_day = [None]
 
 
 def main(args):
@@ -74,7 +75,7 @@ def main(args):
 
 		while True:
 			# draw slave window
-			if file_changed(EVENTS):
+			if file_changed(EVENTS) or day_changed():
 				today = datetime.date.today()
 				sys.stdout.write("^cs()\n")
 				events = parse_events(EVENTS)
@@ -490,6 +491,14 @@ def file_changed(filename):
 	changed = file_changes[filename] != mtime
 	file_changes[filename] = mtime
 	return changed
+
+
+def day_changed():
+	today = datetime.date.today()
+	if today != current_day[0]:
+		current_day[0] = today
+		return True
+	return False
 
 
 if __name__ == "__main__":
