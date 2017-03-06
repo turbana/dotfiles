@@ -1,4 +1,5 @@
 import calendar
+import collections
 import datetime
 import dbus
 import os
@@ -6,8 +7,6 @@ import os.path
 import subprocess
 import sys
 import time
-import collections
-
 
 DELAY          = 2.0
 SHOW_CPU_TOTAL = False
@@ -222,7 +221,7 @@ def build_calendar(today, events):
 	month_i = 0
 	have_event_today[0] = False
 	for year, month, day, dayweek in iterdays(today.year, today.month):
-		if dayweek == 6:
+		if dayweek == calendar.SUNDAY:
 			show("\n")
 			lines += 1
 			if month != print_month:
@@ -234,13 +233,11 @@ def build_calendar(today, events):
 				month_i += 1
 			else:
 				show(FORMAT_NORMAL + "   ")
-		weekend = dayweek in (5, 6)
+		weekend = dayweek in (calendar.SATURDAY, calendar.SUNDAY)
 		inmonth = month == today.month
 		inday = day == today.day
 		if inmonth and inday:
-#			open("debug.log", "a").write("> %s %s %s\n" % (year, month, day))
 			show(FORMAT_TODAY)
-#			have_event_today[0] = True
 		elif weekend:
 			if inmonth:
 				show(FORMAT_WEEKEND_CURRENT_MONTH)
@@ -394,41 +391,38 @@ def xbm(name):
 
 
 def iterdays(year, month):
-	# previous month
-	prevmonth = month - 1
-	prevyear = year
-	if prevmonth == 0:
-		prevmonth = 12
-		prevyear = year - 1
-	# next month
-	nextmonth = month + 1
-	nextyear = year
-	if nextmonth == 13:
-		nextmonth = 1
-		nextyear = year + 1
-	months = [(prevyear, prevmonth), (year, month), (nextyear, nextmonth)]
-	cal = calendar.Calendar(6)
-	def _inner():
-		for year, month in months:
-			for week in cal.monthdays2calendar(year, month):
-				for day, weekday in week:
-					if day:
-						yield year, month, day, weekday
-	itr = _inner()
-	# yield leading blank days
-	first = itr.next()
-	if first[3] != 6:
-		for i in range(first[3]+1):
-			yield year, prevmonth, 0, (6+i)%7
-	# yield actual calendar
-	yield first
-	for day in itr:
-		yield day
-		last = day
-	# yield trailing blank days
-	# XXX this fails when the last day of the month is a Sunday
-	for i in range(last[3]+2, 7):
-		yield year, nextmonth, 0, (6+i)%7
+	cal = calendar.Calendar(calendar.SUNDAY)
+	months = [
+		month_delta(year, month, -1),
+		(year, month),
+		month_delta(year, month, 1),
+	]
+	dates = []
+	for year, month in months:
+		for week in cal.monthdays2calendar(year, month):
+			for day, weekday in week:
+				dates.append((year, month, day, weekday))
+	DAY = 2
+	count = 0
+	for date in dates:
+		# emit all non-empty days along with up to 6 leading and trailing empty days
+		# 66 = 28 (days in feb) + 31 (days in march) + 7 (extra week)
+		if date[DAY] or count < 7 or 66 < count:
+			count += 1
+			yield date
+
+
+def month_delta(year, month, count):
+	if count < -12 or count > 12:
+		raise ValueError("count must be in range [-12, 12]")
+	month += count
+	if month < 1:
+		month += 12
+		year -=1
+	elif month > 12:
+		month -= 12
+		year += 1
+	return year, month
 
 
 def parse_events(events_filename):
