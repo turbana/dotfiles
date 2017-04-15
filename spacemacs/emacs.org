@@ -256,7 +256,7 @@ Need to clean these up
            (emacs-lisp-mode-hook 2 nil)
            (lisp-mode-hook 2 nil)
            (makefile-mode-hook 8 t)
-           (python-mode-hook 4 t)
+           (python-mode-hook 4 nil)
            )))
     (dolist (elem indentation-setup)
       (add-hook (car elem)
@@ -264,6 +264,11 @@ Need to clean these up
   ;; use tabs by default
   (setq-default indent-tabs-mode t)
   (setq-default tab-width 4)
+#+END_SRC
+** Python
+*** Linter
+#+BEGIN_SRC emacs-lisp :tangle yes
+  (setq flycheck-checker-error-threshold 1024)
 #+END_SRC
 * Misc
 ** Browser
