@@ -21,6 +21,8 @@ TIME_CHECK_TARGET = 7.5
 TIME_CHECK_START  = datetime.time(hour=16, minute=0)
 TIME_CHECK_STALE  = 12
 
+BAR_WIDTH        = 500
+BAR_HEIGHT       = 20
 GRAPH_HEIGHT     = 16
 GRAPH_WIDTH      = 8
 SPACE_DEFAULT    = 6
@@ -31,13 +33,14 @@ CALENDAR_COLUMNS = 31
 EVENTS_COLUMNS   = 31
 ROOM_COLUMNS     = 19
 
-COLOR_NORMAL    = "#cccccc"
-COLOR_HIGHLIGHT = "#999933"
-COLOR_GRAPH     = "#006600"
-COLOR_CLOCK     = "#33ff33"
-COLOR_URGENT    = "#ffff33"
-#COLOR_EVENT     = "#33ccff"
-COLOR_FAILURE   = "#ff3333"
+COLOR_NORMAL		= "#cccccc"
+COLOR_HIGHLIGHT		= "#999933"
+COLOR_GRAPH			= "#006600"
+COLOR_CLOCK			= "#33ff33"
+COLOR_URGENT		= "#ffff33"
+#COLOR_EVENT		= "#33ccff"
+COLOR_FAILURE		= "#ff3333"
+COLOR_BAR_HIGHLIGHT = "#4a4a4a"
 
 FORMAT_DAY_NAMES             = "^fg(#ffffff)^bg(#444444)"
 FORMAT_WEEKEND_OTHER_MONTH   = "^fg(#777711)^bg(#111111)"
@@ -82,10 +85,10 @@ def main(args):
 				event_str = build_events(today, events)
 				sys.stdout.write(combine(event_str, cal_str, POPUP_COLUMNS))
 
-			sys.stdout.write("^tw()")
+			sys.stdout.write("^tw()^p(1)")
 
 			# show alert icons
-			icon_check(need_time_tracking, COLOR_URGENT,  "clock.xbm")
+			# icon_check(need_time_tracking, COLOR_URGENT,  "clock.xbm")
 			icon_check(mail_failure,       COLOR_FAILURE, "mail.xbm")
 			icon_check(have_mail,          COLOR_URGENT,  "mail.xbm")
 			icon_check(have_im,            COLOR_URGENT,  "info_02.xbm")
@@ -114,7 +117,8 @@ def main(args):
 			weather_ticks += 1
 			if weather_ticks >= _WEATHER_TICKS:
 				weather_ticks = 0
-				update_weather()
+				# XXX
+				# update_weather()
 			pad(SPACE_LARGE)
 			color(COLOR_HIGHLIGHT)
 			xbm("temp.xbm")
@@ -136,12 +140,21 @@ def main(args):
 			show_clock()
 
 			pad(SPACE_DEFAULT)
+			draw_bar_highlight()
 			sys.stdout.write("\n")
 			sys.stdout.flush()
 			prev_stats = stats
 			time.sleep(DELAY)
 	except KeyboardInterrupt, e:
 		pass
+
+
+def draw_bar_highlight():
+	color(COLOR_BAR_HIGHLIGHT)
+	# sys.stdout.write("^ib(1)^ro(%dx1-%d-%d)^ib(0)" % (
+	sys.stdout.write("^ib(1)^r(%dx1-%d-%d)^ib(0)" % (
+		BAR_WIDTH, BAR_WIDTH, (BAR_HEIGHT/2)-1
+	))
 
 
 def icon_check(check, color_, icon):

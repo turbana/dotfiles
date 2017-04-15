@@ -11,6 +11,7 @@ import XMonad.Layout.OnHost
 import XMonad.Util.Run
 import XMonad.Util.CustomKeys
 import XMonad.Util.Cursor
+import XMonad.Util.Loggers
 import XMonad.Hooks.DynamicLog
 import System.IO
 import XMonad.Util.NamedScratchpad
@@ -36,7 +37,7 @@ main = do
     terminal           = "gnome-terminal",
     startupHook        = setDefaultCursor xC_left_ptr,
     borderWidth        = 2,
-    normalBorderColor  = "#202020",
+    normalBorderColor  = "#000000",
     focusedBorderColor = "#009900",
     layoutHook         = layoutHooks,
     manageHook         = manageHooks,
