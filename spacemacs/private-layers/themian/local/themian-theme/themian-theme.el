@@ -100,6 +100,7 @@ Taken from zenburn-theme.el"
      (avy-lead-face-0 (:foreground ,white-1 :background ,blue-1))
      (avy-lead-face-1 (:background ,unknown))
      (avy-lead-face-2 (:foreground ,white-1 :background ,red-1))
+     (csv-separator-face (:foreground ,white-4))
      (diff-header (:background ,unknown))
      (diff-refine-added (:box (:line-width -1 :color ,blue-2)))
      (diff-refine-changed (:background ,unknown))
@@ -149,7 +150,8 @@ Taken from zenburn-theme.el"
       (:foreground ,white-1 :background ,grey-3
                    :box (:line-width 1 :style released-button)))
      (helm-action (:foreground ,blue-1))
-     (helm-bookmark-addressbook (:background ,unknown))
+     ;; helm-bookmark-addressbook is used in helm-swoop edit buffers
+     (helm-bookmark-addressbook (:inherit font-lock-comment-face))
      (helm-bookmark-directory (:inherit helm-ff-directory))
      (helm-bookmark-file (:inherit helm-ff-file))
      (helm-bookmark-gnus (:background ,unknown))
@@ -195,6 +197,10 @@ Taken from zenburn-theme.el"
      (helm-selection-line (:inherit highlight))
      (helm-separator (:foreground ,blue-1))
      (helm-source-header (:foreground ,blue-3 :weight bold :height 1.15))
+     (helm-swoop-line-number-face (:background ,unknown))
+     (helm-swoop-target-line-block-face (:background ,unknown))
+     (helm-swoop-target-line-face (:inherit highlight))
+     (helm-swoop-target-word-face (:inherit isearch))
      (helm-visible-mark (:foreground ,orange-2 :weight bold))
      (isearch (:foreground ,green-3 :background ,grey-3 :weight bold))
      (isearch-fail (:foreground ,orange-2 :background ,grey-2))
