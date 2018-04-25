@@ -5,46 +5,33 @@ import sys
 import colour
 
 
-BASE_COLOR = "#334aab"
+BASE_BLUE = "#008dda"
 
-TRANS = {
+COLOR_TRANS = {
     "base": 0,
-    "compliment": 180,
-    "triad_neg": -120,
-    "triad_pos": 120,
-    "tetrad_pos": 90,
-    "tetrad_neg": -90,
-    "analogous_neg": -22.5,
-    "analogous_pos": 22.5,
-    "split_compl_neg": -157.5,
-    "split_compl_pos": 157.5,
+    "orange": 180,
+    "red": 120,
+    "magenta": 90,
+    "green": -90,
+    "violet": 30,
+    "cyan": -30,
+    "yellow": -150,
 }
-
-COLORS = [
-    ("base", "base"),
-    ("orange", "compliment"),
-    ("red", "triad_pos"),
-    ("magenta", "tetrad_pos"),
-    ("green", "tetrad_neg"),
-    ("violet", "analogous_pos"),
-    ("cyan", "analogous_neg"),
-    ("yellow", "split_compl_neg"),
-]
 
 
 def translate(base, trans):
     c = colour.Color(base)
-    delta = TRANS[trans] / 360.0
+    delta = trans / 360.0
     c.hue = (c.hue + delta) % 1.0
     return c
 
 
 def main(args):
-    base = BASE_COLOR
+    blue = BASE_BLUE
     if len(args) == 1:
-        base = args[0]
-    for name, trans in COLORS:
-        color = translate(base, trans)
+        blue = args[0]
+    for name, trans in COLOR_TRANS.items():
+        color = translate(blue, trans)
         print "%s \"%s\"" % (name, color)
 
 
