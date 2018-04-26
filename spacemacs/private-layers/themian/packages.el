@@ -16,14 +16,13 @@
 (defconst themian-packages
   '((themian-theme :location local)))
 
-(defun themian/reload-theme ()
-  (interactive)
-  (load-theme 'themian t))
-
 (defun themian/init-themian-theme ()
-  ;; (message "inside init")
-  (use-package themian-theme)
-  (global-set-key (kbd "<f5>") 'themian/reload-theme)
-  )
+  (use-package themian-theme
+    :init
+    (progn
+      (global-set-key (kbd "<f5>")
+                      '(lambda ()
+                         (interactive)
+                         (load-theme 'themian t))))))
 
 ;;; packages.el ends here
