@@ -273,7 +273,7 @@ Need to clean these up
 * Misc
 ** Color Themes
 #+BEGIN_SRC emacs-lisp :tangle yes
-(load-theme 'themian t)
+(load-theme 'themian-dark t)
 #+END_SRC
 ** Browser
 Use chromium as default browser

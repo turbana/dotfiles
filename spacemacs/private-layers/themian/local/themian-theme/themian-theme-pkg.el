@@ -1,4 +1,4 @@
-;; (define-package
-;;   "themian-theme"
-;;   "0.1"
-;;   "My color theme")
+(define-package
+  "themian-theme"
+  "0.1"
+  "My color theme")
