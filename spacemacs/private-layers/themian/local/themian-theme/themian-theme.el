@@ -37,7 +37,8 @@
           (base+3   (if (eq variant 'dark) base6    base1))
           (base+4   (if (eq variant 'dark) base7    base0)))
      (mapcar (lambda (config)
-               `(,(nth 0 config) ((t ,(nth 1 config)))))
+               `(,(nth 0 config) ((t ,(append '(:inherit default)
+                                              (nth 1 config))))))
              ,@body)))
 
 
@@ -48,10 +49,12 @@
    (themian-with-color-variables
      variant
      `(
+       (default (:foreground ,base+3 :background ,base-4 :weight normal :box nil
+                             :underline nil :slant normal :overline nil
+                             :strike-through nil))
        (button (:foreground ,base+4 :background ,base-2
                             :box (:line-width 1 :style released-button)))
        (cursor (:background ,cyan))
-       (default (:foreground ,base+3 :background ,base-4 :weight normal))
        (escape-glyph (:foreground ,base+3 :background ,base-2 :weight bold))
        (font-lock-builtin-face (:foreground ,blue))
        (font-lock-comment-delimiter-face (:inherit font-lock-comment-face))
@@ -71,7 +74,7 @@
        (fringe (:foreground ,base+1 :background ,base-3))
        (header-line (:background ,base-3))
        (highlight (:background ,base-3))
-       (lazy-highlight (:inherit normal))
+       (lazy-highlight (:inherit default))
        (link (:foreground ,yellow :underline t))
        (link-visited (:background ,unknown))
        (linum
@@ -287,7 +290,7 @@
        (mode-line-highlight (:foreground ,base-4 :background ,yellow))
        (mode-line-inactive
         (:background ,base-4 :foreground ,base+2 :inherit (mode-line)))
-       (org-agenda-calendar-event (:inherit normal))
+       (org-agenda-calendar-event (:inherit default))
        (org-agenda-calendar-sexp (:foreground ,green :weight bold))
        (org-agenda-clocking (:background ,unknown))
        (org-agenda-column-dateline (:background ,unknown))
@@ -317,12 +320,12 @@
        (org-date (:foreground ,cyan))
        (org-date-selected (:foreground ,base-4 :background ,cyan))
        (org-default (:background ,unknown))
-       (org-document-info (:inherit normal))
+       (org-document-info (:inherit default))
        (org-document-info-keyword (:foreground ,blue :slant italic))
        (org-document-title (:foreground ,base+4 :weight bold :height 1.2))
        (org-done (:foreground ,green :weight bold :strike-through t))
        (org-drawer (:background ,unknown))
-       (org-ellipsis (:inherit normal))
+       (org-ellipsis (:inherit default))
        (org-footnote (:background ,unknown))
        (org-formula (:background ,unknown))
        (org-headline-done (:background ,unknown))
