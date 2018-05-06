@@ -283,13 +283,14 @@
        (magit-signature-untrusted (:background ,unknown))
        (magit-tag (:foreground ,yellow :weight bold :box t))
        (mode-line
-        (:background ,base-2
-                     :box (:line-width -1 :color nil :style released-button)))
-       (mode-line-buffer-id (:foreground ,base+4 :weight bold))
+        (:background ,base-3
+                     :box (:line-width -1 :color ,base-3 :style released-button)))
+       (mode-line-buffer-id (:foreground ,base+4 :background ,base-3
+                                         :weight bold :inherit mode-line))
        (mode-line-emphasis (:background ,unknown))
        (mode-line-highlight (:foreground ,base-4 :background ,yellow))
        (mode-line-inactive
-        (:background ,base-4 :foreground ,base+2 :inherit (mode-line)))
+        (:background ,base-3 :foreground ,base+2 :inherit mode-line))
        (org-agenda-calendar-event (:inherit default))
        (org-agenda-calendar-sexp (:foreground ,green :weight bold))
        (org-agenda-clocking (:background ,unknown))
@@ -368,12 +369,12 @@
        (paren-face-match (:background ,red))
        (paren-face-mismatch (:background ,yellow))
        (paren-face-no-match (:background ,blue))
-       (powerline-active1 (:background ,base-3))
-       (powerline-active2 (:background ,base-2))
-       (powerline-inactive1
-        (:background ,base-3 :box (:line-width -1 :color ,base-3 :style released-button)))
-       (powerline-inactive2
+       (powerline-active1
         (:background ,base-4 :box (:line-width -1 :color ,base-3 :style released-button)))
+       (powerline-active2
+        (:background ,base-2 :box (:line-width -1 :color ,base-3 :style released-button)))
+       (powerline-inactive1 (:inherit powerline-active1))
+       (powerline-inactive2 (:background ,base-4 :inherit powerline-active2))
        (spaceline-modified (:background ,unknown))
        (rainbow-delimiters-depth-1-face (:foreground ,base+4))
        (rainbow-delimiters-depth-10-face (:foreground ,base+3))
@@ -389,18 +390,20 @@
        (rainbow-delimiters-depth-9-face (:foreground ,base+4))
        (show-paren-match (:inverse-video t :weight normal))
        (show-paren-mismatch (:foreground ,red :background ,base-2))
-       (spacemacs-emacs-face (:background ,blue))
-       (spacemacs-evilified-face (:background ,blue))
+       (spacemacs-emacs-face (:background ,blue :inherit powerline-active1))
+       (spacemacs-evilified-face (:background ,blue :inherit powerline-active1))
        (spacemacs-helm-navigation-ms-face (:background ,unknown))
        (spacemacs-hybrid-face (:background ,unknown))
        (spacemacs-ido-navigation-ms-face (:background ,unknown))
        (spacemacs-iedit-face (:background ,unknown))
        (spacemacs-iedit-insert-face (:background ,unknown))
        (spacemacs-insert-face
-        (:foreground ,base-4 :background ,green :weight bold))
+        (:foreground ,base-4 :background ,green :weight bold
+                     :inherit powerline-active1))
        (spacemacs-lisp-face (:background ,unknown))
        ;; spacemacs-micro-state-binding-face is being overwritten somewhere
-       (spacemacs-micro-state-binding-face (:foreground ,cyan))
+       (spacemacs-micro-state-binding-face (:foreground ,cyan
+                                                        :inherit powerline-active1))
        (spacemacs-micro-state-header-face (:background ,unknown))
        (spacemacs-mode-line-new-version-lighter-error-face (:background ,red))
        (spacemacs-mode-line-new-version-lighter-success-face
@@ -409,13 +412,17 @@
        (spacemacs-mode-line-new-version-lighter-warning-face
         (:background ,orange))
        (spacemacs-motion-face
-        (:foreground ,base-4 :background ,blue :weight bold))
+        (:foreground ,base-4 :background ,blue :weight bold
+                     :inherit powerline-active1))
        (spacemacs-normal-face
-        (:foreground ,base-4 :background ,base+3 :weight bold))
+        (:foreground ,base-4 :background ,base+3 :weight bold
+                     :inherit powerline-active1))
        (spacemacs-replace-face
-        (:foreground ,base+3 :background ,red :weight bold))
+        (:foreground ,base+3 :background ,red :weight bold
+                     :inherit powerline-active1))
        (spacemacs-visual-face
-        (:foreground ,base-4 :background ,blue :weight bold))
+        (:foreground ,base-4 :background ,blue :weight bold
+                     :inherit powerline-active1))
        (undo-tree-visualizer-active-branch-face
         (:foreground ,base+4 :weight bold))
        (undo-tree-visualizer-current-face (:foreground ,cyan :weight bold))
