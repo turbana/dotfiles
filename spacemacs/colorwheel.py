@@ -10,7 +10,7 @@ BASE_BLUE = "#7091ce"
 
 DARKEN_AMOUNT = 0.30
 
-COLOR_TRANS = {
+MAIN_COLORS = {
     "blue": 0,
     "orange": 180,
     "red": 120,
@@ -20,6 +20,10 @@ COLOR_TRANS = {
     "cyan": -30,
     "yellow": -150,
 }
+
+DARK_LUM = 0.10
+LIGHT_LUM = 0.90
+GRAY_STEPS = (0, 1, 6, 7, 9, 10, 15, 16)
 
 
 def translate(base, trans):
@@ -35,12 +39,26 @@ def darken(color, amount):
     return c
 
 
+def load_color(name):
+    return translate(BASE_BLUE, MAIN_COLORS[name])
+
+
+def load_grays(dark_lum, light_lum):
+    step_size = (light_lum - dark_lum) / 16.0
+    for step in GRAY_STEPS:
+        lum = dark_lum + (step * step_size)
+        c = colour.Color()
+        c.hsl = (0.0, 0.0, lum)
+        yield c
+
+
 def main(args):
-    blue = BASE_BLUE
-    if len(args) == 1:
-        blue = args[0]
-    for name, trans in COLOR_TRANS.items():
-        color = translate(blue, trans)
+    print ";; base grays"
+    for i, color in enumerate(load_grays(DARK_LUM, LIGHT_LUM)):
+        print "(base%d    \"%s\")" % (i, color.hex_l)
+    print "\n;; main colors"
+    for name in MAIN_COLORS:
+        color = load_color(name)
         dcolor = darken(color, DARKEN_AMOUNT)
         print "(%-8s (if dark \"%s\" \"%s\"))" % (
             name, color.hex_l, dcolor.hex_l)
