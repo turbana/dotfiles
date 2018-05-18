@@ -54,8 +54,11 @@ def load_grays(dark_lum, light_lum):
 
 def main(args):
     print ";; base grays"
-    for i, color in enumerate(load_grays(DARK_LUM, LIGHT_LUM)):
-        print "(base%d    \"%s\")" % (i, color.hex_l)
+    grays = list(load_grays(DARK_LUM, LIGHT_LUM))
+    loop = zip(range(-4, 0) + range(1, 5),
+               zip(grays, reversed(grays)))
+    for n, (c1, c2) in loop:
+        print "(base%+d   (if dark \"%s\" \"%s\"))" % (n, c1.hex_l, c2.hex_l)
     print "\n;; main colors"
     for name in MAIN_COLORS:
         color = load_color(name)
