@@ -5,10 +5,13 @@ import sys
 import colour
 
 
-BASE_BLUE = "#008dda"
+BASE_BLUE = "#7091ce"
+# BASE_BLUE = "#829ed7"
+
+DARKEN_AMOUNT = 0.30
 
 COLOR_TRANS = {
-    "base": 0,
+    "blue": 0,
     "orange": 180,
     "red": 120,
     "magenta": 90,
@@ -26,13 +29,21 @@ def translate(base, trans):
     return c
 
 
+def darken(color, amount):
+    c = colour.Color(color)
+    c.luminance -= amount
+    return c
+
+
 def main(args):
     blue = BASE_BLUE
     if len(args) == 1:
         blue = args[0]
     for name, trans in COLOR_TRANS.items():
         color = translate(blue, trans)
-        print "%s \"%s\"" % (name, color)
+        dcolor = darken(color, DARKEN_AMOUNT)
+        print "(%-8s (if dark \"%s\" \"%s\"))" % (
+            name, color.hex_l, dcolor.hex_l)
 
 
 if __name__ == "__main__":
