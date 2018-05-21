@@ -5,11 +5,19 @@ import sys
 import colour
 
 
+# main blue color that all other colors are in reference to
 BASE_BLUE = "#7091ce"
-# BASE_BLUE = "#829ed7"
-
+# luminance of darkest gray
+DARK_LUM = 0.10
+# luminance of lightest gray
+LIGHT_LUM = 0.90
+# scale of grays in multiples of steps
+# step is defined as (LIGHT_LUM - DARK_LUM) / 16
+GRAY_STEPS = (0, 1, 6, 7, 9, 10, 15, 16)
+# luminance change when finding colors for light color scheme
 DARKEN_AMOUNT = 0.30
 
+# hue transformations defined in degrees from BASE_BLUE
 MAIN_COLORS = {
     "blue": 0,
     "orange": 180,
@@ -20,10 +28,6 @@ MAIN_COLORS = {
     "cyan": -30,
     "yellow": -150,
 }
-
-DARK_LUM = 0.10
-LIGHT_LUM = 0.90
-GRAY_STEPS = (0, 1, 6, 7, 9, 10, 15, 16)
 
 
 def translate(base, trans):
