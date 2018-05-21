@@ -29,6 +29,15 @@ MAIN_COLORS = {
     "yellow": -150,
 }
 
+# luminance of cyan for dark-mode diff colors
+DIFF_DARK = 0.2
+# luminance of cyan for light-mode diff colors
+DIFF_LIGHT = 0.7
+# luminance step size
+DIFF_STEP = 0.05
+# luminance steps
+DIFF_STEPS = [1, 2, -2, -1]
+
 
 def translate(base, trans):
     c = colour.Color(base)
@@ -56,6 +65,19 @@ def load_grays(dark_lum, light_lum):
         yield c
 
 
+def load_diffs(color, dark_lum, light_lum, step):
+    dark = colour.Color(color)
+    dark.luminance = dark_lum
+    light = colour.Color(color)
+    light.luminance = light_lum
+    for s in DIFF_STEPS:
+        c1 = colour.Color(dark)
+        c1.luminance += s * step
+        c2 = colour.Color(light)
+        c2.luminance -= s * step  # light color is inverted
+        yield (c1, c2)
+
+
 def main(args):
     print ";; base grays"
     grays = list(load_grays(DARK_LUM, LIGHT_LUM))
@@ -69,6 +91,11 @@ def main(args):
         dcolor = darken(color, DARKEN_AMOUNT)
         print "(%-8s (if dark \"%s\" \"%s\"))" % (
             name, color.hex_l, dcolor.hex_l)
+    print "\n;; diff colors"
+    cyan = load_color("cyan")
+    for i, (c1, c2) in enumerate(load_diffs(cyan, DIFF_DARK, DIFF_LIGHT,
+                                            DIFF_STEP)):
+        print "(diff-%d   (if dark \"%s\" \"%s\"))" % (i+1, c1, c2)
 
 
 if __name__ == "__main__":
