@@ -5,12 +5,6 @@
 ;;; Code:
 
 
-;; all faces inherit from default except these faces
-(setq themian/no-inherit-faces
-      '(highlight lazy-highlight diff-refine-added flyspell-duplicate
-        flyspell-incorrect))
-
-
 (defmacro themian-with-color-variables (variant &rest body)
   (declare (indent 0))
   `(let* ((class '((class color) (min-colors 89)))
@@ -45,12 +39,7 @@
           (unknown  "#9933ff"))
      (mapcar
       (lambda (config)
-        (let ((name (nth 0 config))
-              (attrs (nth 1 config)))
-          `(,name ((t ,(append
-                        (unless (seq-contains themian/no-inherit-faces name)
-                          '(:inherit default))
-                        attrs))))))
+          `(,(nth 0 config) ((t ,(nth 1 config)))))
       ,@body)))
 
 
