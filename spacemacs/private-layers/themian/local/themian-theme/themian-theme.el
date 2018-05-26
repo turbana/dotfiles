@@ -4,6 +4,13 @@
 
 ;;; Code:
 
+
+;; all faces inherit from default except these faces
+(setq themian/no-inherit-faces
+      '(highlight lazy-highlight diff-refine-added flyspell-duplicate
+        flyspell-incorrect))
+
+
 (defmacro themian-with-color-variables (variant &rest body)
   (declare (indent 0))
   `(let* ((class '((class color) (min-colors 89)))
@@ -36,10 +43,15 @@
           (diff-4   (if dark "#133439" "#a0d5de"))
 
           (unknown  "#9933ff"))
-     (mapcar (lambda (config)
-               `(,(nth 0 config) ((t ,(append '(:inherit default)
-                                              (nth 1 config))))))
-             ,@body)))
+     (mapcar
+      (lambda (config)
+        (let ((name (nth 0 config))
+              (attrs (nth 1 config)))
+          `(,name ((t ,(append
+                        (unless (seq-contains themian/no-inherit-faces name)
+                          '(:inherit default))
+                        attrs))))))
+      ,@body)))
 
 
 (defun themian-create-color-theme (theme-name variant)
