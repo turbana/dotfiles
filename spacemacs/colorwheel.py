@@ -46,9 +46,9 @@ def translate(base, trans):
     return c
 
 
-def darken(color, amount):
+def invert(color):
     c = colour.Color(color)
-    c.luminance -= amount
+    c.luminance = 1.0 - color.luminance
     return c
 
 
@@ -88,7 +88,7 @@ def main(args):
     print "\n;; main colors"
     for name in MAIN_COLORS:
         color = load_color(name)
-        dcolor = darken(color, DARKEN_AMOUNT)
+        dcolor = invert(color)
         print "(%-8s (if dark \"%s\" \"%s\"))" % (
             name, color.hex_l, dcolor.hex_l)
     print "\n;; diff colors"
