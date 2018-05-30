@@ -9,34 +9,32 @@
   (declare (indent 0))
   `(let* ((class '((class color) (min-colors 89)))
           (dark (eq variant 'dark))
+          (unknown  "#9933ff")
 
-          ;; base grays
+          ;; The following is generated automatically from colorwheel.py
+          ;;;; THEMIAN-COLORS-START
           (base-4   (if dark "#191919" "#e5e5e5"))
           (base-3   (if dark "#262626" "#d9d9d9"))
-          (base-2   (if dark "#666666" "#999999"))
+          (base-2   (if dark "#595959" "#a6a6a6"))
           (base-1   (if dark "#737373" "#8c8c8c"))
           (base+1   (if dark "#8c8c8c" "#737373"))
-          (base+2   (if dark "#999999" "#666666"))
+          (base+2   (if dark "#a6a6a6" "#595959"))
           (base+3   (if dark "#d9d9d9" "#262626"))
           (base+4   (if dark "#e5e5e5" "#191919"))
-
-          ;; main colors
-          (blue     (if dark "#7091ce" "#2a467b"))
-          (green    (if dark "#70ce7e" "#2a7b36"))
-          (yellow   (if dark "#c0ce70" "#6f7b2a"))
-          (violet   (if dark "#7e70ce" "#362a7b"))
-          (orange   (if dark "#cead70" "#7b5f2a"))
-          (cyan     (if dark "#70c0ce" "#2a6f7b"))
-          (magenta  (if dark "#ce70c0" "#7b2a6f"))
-          (red      (if dark "#ce7091" "#7b2a46"))
-
-          ;; diff colors
+          (blue     (if dark "#7091ce" "#31528f"))
+          (green    (if dark "#70ce7e" "#318f3f"))
+          (yellow   (if dark "#c0ce70" "#818f31"))
+          (violet   (if dark "#7e70ce" "#3f318f"))
+          (orange   (if dark "#cead70" "#8f6e31"))
+          (cyan     (if dark "#70c0ce" "#31818f"))
+          (magenta  (if dark "#ce70c0" "#8f3181"))
+          (red      (if dark "#ce7091" "#8f3152"))
           (diff-1   (if dark "#20565f" "#7ac5d1"))
           (diff-2   (if dark "#276772" "#67bccb"))
           (diff-3   (if dark "#0d2226" "#b3dee5"))
           (diff-4   (if dark "#133439" "#a0d5de"))
-
-          (unknown  "#9933ff"))
+          ;;;; THEMIAN-COLORS-END
+          )
      (mapcar
       (lambda (config)
           `(,(nth 0 config) ((t ,(nth 1 config)))))
