@@ -5,3 +5,5 @@ Xft.autohint: true
 Xft.hinting: true
 Xft.hintstyle: hintsfull
 Xft.rgba: rgb
+
+Emacs*font: DejaVu Sans Mono-10:pixelsize=12
