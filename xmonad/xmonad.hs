@@ -38,7 +38,7 @@ main = do
     startupHook        = setDefaultCursor xC_left_ptr,
     borderWidth        = 2,
     normalBorderColor  = "#000000",
-    focusedBorderColor = "#009900",
+    focusedBorderColor = "#92f3a1",
     layoutHook         = layoutHooks,
     manageHook         = manageHooks,
     logHook            = logHooks dzenLeftBar,
@@ -115,7 +115,7 @@ manageHooks = composeAll [
 
 myXmonadBar = "$HOME/.xmonad/dzen2-left-bar.sh"
 myStatusBar = "$HOME/.xmonad/dzen2-right-bar.sh"
-dzenBackground = "#222222"
+dzenBackground = "#262626"
 
 logHooks h = dynamicLogWithPP . namedScratchpadFilterOutWorkspacePP $ defaultPP {
   ppCurrent           = dzenColor "#ffffff" dzenBackground,

@@ -33,14 +33,15 @@ CALENDAR_COLUMNS = 31
 EVENTS_COLUMNS   = 31
 ROOM_COLUMNS     = 19
 
-COLOR_NORMAL		= "#cccccc"
-COLOR_HIGHLIGHT		= "#999933"
-COLOR_GRAPH			= "#006600"
-COLOR_CLOCK			= "#33ff33"
-COLOR_URGENT		= "#ffff33"
+COLOR_NORMAL		= "#d9d9d9"
+COLOR_HIGHLIGHT		= "#e3f392"
+COLOR_GRAPH			= "#92f3a1"
+COLOR_GRAPH_BG      = "#595959"
+COLOR_CLOCK			= "#92f3a1"
+COLOR_URGENT		= "#e3f392"
 #COLOR_EVENT		= "#33ccff"
-COLOR_FAILURE		= "#ff3333"
-COLOR_BAR_HIGHLIGHT = "#4a4a4a"
+COLOR_FAILURE		= "#dc7d9e"
+COLOR_BAR_HIGHLIGHT = "#595959"
 
 FORMAT_DAY_NAMES             = "^fg(#ffffff)^bg(#444444)"
 FORMAT_WEEKEND_OTHER_MONTH   = "^fg(#777711)^bg(#111111)"
@@ -49,7 +50,7 @@ FORMAT_WEEKDAY_OTHER_MONTH   = "^fg(#cccccc)^bg(#222222)"
 FORMAT_WEEKDAY_CURRENT_MONTH = "^fg(#ffffff)^bg(#444444)"
 FORMAT_TODAY                 = "^fg(#ffffff)^bg(#666666)"
 FORMAT_MONTH                 = "^fg(#ffffff)^bg(#222222)"
-FORMAT_NORMAL                = "^fg(#cccccc)^bg(#222222)"
+FORMAT_NORMAL                = "^fg(#d9d9d9)^bg(#262626)"
 #FORMAT_EVENT                 = "^fg(#33ff33)"
 FORMAT_EVENT                 = "^fg(#ffff33)"
 
@@ -318,7 +319,7 @@ def show_graph(percent):
 	h = GRAPH_HEIGHT
 	y = int(percent * h)
 	offset = (h/2) - (y/2)
-	sys.stdout.write("^ib(1)^fg(%s)^r(%dx%d)" % (COLOR_NORMAL, w, h))
+	sys.stdout.write("^ib(1)^fg(%s)^r(%dx%d)" % (COLOR_GRAPH_BG, w, h))
 	sys.stdout.write("^fg(%s)" % COLOR_GRAPH)
 	sys.stdout.write("^r(%dx%d-%d+%d)" % (w-2, y, w-1, offset))
 	sys.stdout.write("^ib(0)^fg()")

@@ -3,8 +3,8 @@
 #font="-*-fixed-medium-r-*-*-12-*-*-*-*-*-iso8859-*"
 #font="Monospace-8"
 font="DejaVu Sans Mono-9"
-fg="#cccccc"
-bg="#222222"
+fg="#d9d9d9"
+bg="#262626"
 
 python ~/.xmonad/cpugraph.py | \
 /home/ian/downloads/dzen/dzen2 -y 1060 -x 1420 -w 500 -ta r -sa r -h 20 -fg $fg -bg $bg -fn "$font" -l 16 -e 'button1=togglecollapse'
