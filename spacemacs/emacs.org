@@ -100,7 +100,7 @@
   (setq org-refile-targets
         '((nil :maxlevel . 6)
           (org-agenda-files :maxlevel . 6)))
-  (setq org-refile-use-outline-path t)
+  (setq org-refile-use-outline-path 'file)
   (add-hook 'org-capture-mode-hook 'evil-insert-state)
 #+END_SRC
 
