@@ -296,6 +296,10 @@ Use line numbers everywhere
   (setq-default fill-column 80)
   (add-hook 'text-mode-hook 'turn-on-auto-fill)
 #+END_SRC
+** Fill Column
+#+BEGIN_SRC emacs-lisp :tangle yes
+  (turn-on-fci-mode)
+#+END_SRC
 ** Search
 Disable search highlighting
 #+BEGIN_SRC emacs-lisp :tangle yes
