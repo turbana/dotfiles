@@ -270,6 +270,12 @@ Need to clean these up
 #+BEGIN_SRC emacs-lisp :tangle yes
   (setq flycheck-checker-error-threshold 1024)
 #+END_SRC
+** Lisp
+*** Indentation
+#+BEGIN_SRC emacs-lisp :tangle yes
+  ;; better indentation of quoted lists
+  (setq lisp-indent-function 'common-lisp-indent-function)
+#+END_SRC
 * Misc
 ** Color Themes
 #+BEGIN_SRC emacs-lisp :tangle yes
