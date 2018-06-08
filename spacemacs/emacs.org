@@ -70,7 +70,7 @@
 *** Logging
 #+BEGIN_SRC emacs-lisp :tangle yes
   (setq org-log-done 'time)
-  (setq org-log-into-drawer "LOGBOOK"=)
+  (setq org-log-into-drawer "LOGBOOK")
 #+END_SRC
 *** Capture
 **** Templates
