@@ -1,5 +1,7 @@
 # come up with color scheme colors
 
+import argparse
+import gtk
 import os.path
 import StringIO
 import subprocess
@@ -17,13 +19,11 @@ EMACS_COLOR_THEME_MARK = ";;;; THEMIAN-COLORS"
 BASE_BLUE = "#7091ce"
 # luminance of darkest gray
 DARK_LUM = 0.10
-# luminance of lightest gray
+# luminance of lightest gray (also used to invert colors)
 LIGHT_LUM = 0.90
 # scale of grays in multiples of steps
 # step is defined as (LIGHT_LUM - DARK_LUM) / 16
 GRAY_STEPS = (0, 1, 5, 7, 9, 11, 15, 16)
-# luminance change when finding colors for light color scheme
-DARKEN_AMOUNT = 0.30
 
 # hue transformations defined in degrees from BASE_BLUE
 MAIN_COLORS = {
@@ -56,12 +56,12 @@ def translate(base, trans):
 
 def invert(color):
     c = colour.Color(color)
-    c.luminance = 1.0 - color.luminance
+    c.luminance = LIGHT_LUM - color.luminance
     return c
 
 
-def load_color(name):
-    return translate(BASE_BLUE, MAIN_COLORS[name])
+def load_color(name, base_color):
+    return translate(base_color, MAIN_COLORS[name])
 
 
 def load_grays(dark_lum, light_lum):
@@ -86,15 +86,17 @@ def load_diffs(color, dark_lum, light_lum, step):
         yield (c1, c2)
 
 
-def load_colors():
+def load_colors(base_color):
+    def _load_color(c):
+        return load_color(c, base_color)
     gray_names = ["base%+d" % i for i in range(-4, 0) + range(1, 5)]
     gray_dark = list(load_grays(DARK_LUM, LIGHT_LUM))
     gray_light = list(reversed(gray_dark))
     main_names = list(MAIN_COLORS.keys())
-    main_dark = map(load_color, main_names)
+    main_dark = map(_load_color, main_names)
     main_light = map(invert, main_dark)
     diff_names = ["diff-%d" % (i + 1) for i in range(4)]
-    cyan = load_color("cyan")
+    cyan = _load_color("cyan")
     diffs = list(load_diffs(cyan, DIFF_DARK, DIFF_LIGHT, DIFF_STEP))
     diff_dark = [x[0] for x in diffs]
     diff_light = [x[1] for x in diffs]
@@ -156,9 +158,43 @@ def reload_emacs():
     subprocess.call(command.strip() % theme_file, shell=True)
 
 
-def main(args):
+def current_blue():
+    simple = os.path.join(os.path.expanduser(COLOR_DIR), "dark")
+    with open(simple) as file:
+        for line in file:
+            if line.startswith("blue"):
+                return line.split()[1]
+
+
+def color_picker(initial_color):
+    csd = gtk.ColorSelectionDialog("Gnome Color Chooser")
+    cs = csd.colorsel
+    cs.set_current_color(gtk.gdk.color_parse(initial_color))
+    if csd.run() != gtk.RESPONSE_OK:
+        return None
+    color = str(cs.get_current_color())
+    if len(color) > 7:
+        color = color[0:3] + color[5:7] + color[9:11]
+    return color
+
+
+def parse_args():
+    p = argparse.ArgumentParser()
+    p.add_argument("--picker", help="use gtk color picker",
+                   action="store_true")
+    return p.parse_args()
+
+
+def main(raw_args):
+    args = parse_args()
     color_dir = os.path.expanduser(COLOR_DIR)
-    colors = load_colors()
+    if args.picker:
+        base_color = color_picker(current_blue())
+        if not base_color:
+            return 0
+    else:
+        base_color = BASE_BLUE
+    colors = load_colors(base_color)
     dark_colors = zip(colors["names"], colors["dark"])
     light_colors = zip(colors["names"], colors["light"])
     emit_simple(dark_colors, os.path.join(color_dir, "dark"))
