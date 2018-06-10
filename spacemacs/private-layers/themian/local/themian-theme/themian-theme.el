@@ -259,7 +259,7 @@
        (magit-reflog-cherry-pick (:background ,unknown))
        (magit-reflog-commit (:foreground ,base+2))
        (magit-reflog-merge (:foreground ,green))
-       (magit-reflog-other (:background ,unknown))
+       (magit-reflog-other (:foreground ,red))
        (magit-reflog-rebase (:foreground ,yellow))
        (magit-reflog-remote (:foreground ,blue))
        (magit-reflog-reset (:foreground ,blue))
@@ -282,14 +282,15 @@
        (magit-signature-untrusted (:background ,unknown))
        (magit-tag (:foreground ,yellow :weight bold :box t))
        (mode-line
-        (:background ,base-3
+        (:background ,base-3 :foreground ,base+2
                      :box (:line-width -1 :color ,base-3 :style released-button)))
        (mode-line-buffer-id (:foreground ,base+4 :background ,base-3
-                                         :weight bold :inherit mode-line))
-       (mode-line-emphasis (:background ,unknown))
+                                         :inherit mode-line))
+       (mode-line-emphasis (:foreground ,yellow :background ,base-3
+                                        :weight bold))
        (mode-line-highlight (:foreground ,base-4 :background ,yellow))
        (mode-line-inactive
-        (:background ,base-3 :foreground ,base+2 :inherit mode-line))
+        (:background ,base-3 :foreground ,base+1 :inherit mode-line))
        (org-agenda-calendar-event (:inherit default))
        (org-agenda-calendar-sexp (:foreground ,green :weight bold))
        (org-agenda-clocking (:background ,unknown))
