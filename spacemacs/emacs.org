@@ -92,10 +92,12 @@
           ("p" "phone call" entry (file org-default-notes-file)
            "* PHONE %? :phone:\n%u"
            :clock-in t :clock-resume t)
-          ("h" "habit" entry (file org-default-notes-file)
+          ("H" "habit" entry (file org-default-notes-file)
            "* TODO %?\n%u\nscheduled: %(format-time-string \"<%y-%m-%d %a .+1d/3d>\")\n:properties:\n:style: habit\n:repeat_to_state: next\n:end:\n")
-          ("r" "recipe" entry (file org-default-notes-file)
+          ("R" "recipe" entry (file org-default-notes-file)
            "* %^{name} :uncooked::\n:properties:\n:source: %^{source}\n:image: %^{image}\n:serving: %^{serving}\n:type: %^{type}\n:end:\n** ingredients\n   | %? | |\n** procedure\n   1.\n** log")
+          ("J" "job" entry (file org-default-notes-file)
+           "* %^{company} - %^{title} :toapply:\n%U\n[[%^{url}][Submission]]\n%?\n** Description\n%^{description}\n** Contact Info\n** Log\n")
           ))
   (setq org-refile-targets
         '((nil :maxlevel . 6)
