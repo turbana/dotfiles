@@ -14,16 +14,9 @@ COLOR_DIR = "~/.etc/colors"
 EMACS_COLOR_THEME = "~/.etc/spacemacs/private-layers/themian/local/themian-theme/themian-theme.el"
 EMACS_COLOR_THEME_MARK = ";;;; THEMIAN-COLORS"
 
+
 # main blue color that all other colors are in reference to
-# BASE_BLUE = "#748ed7"
-BASE_BLUE = "#7091ce"
-# luminance of darkest gray
-DARK_LUM = 0.10
-# luminance of lightest gray (also used to invert colors)
-LIGHT_LUM = 0.90
-# scale of grays in multiples of steps
-# step is defined as (LIGHT_LUM - DARK_LUM) / 16
-GRAY_STEPS = (0, 1, 5, 7, 9, 11, 15, 16)
+BASE_BLUE = "#7a90cc"
 
 # hue transformations defined in degrees from BASE_BLUE
 MAIN_COLORS = {
@@ -37,6 +30,28 @@ MAIN_COLORS = {
     "yellow": -150,
 }
 
+# gray values in HSL
+GRAYS = (
+    # dark theme
+    (0.0, 0.0, 0.10),
+    (0.0, 0.0, 0.15),
+    (0.0, 0.0, 0.30),
+    (0.0, 0.0, 0.45),
+    (0.0, 0.0, 0.55),
+    (0.0, 0.0, 0.70),
+    (0.0, 0.0, 0.85),
+    (0.0, 0.0, 0.90),
+    # light theme
+    (0.125, 0.50, 0.90),
+    (0.125, 0.40, 0.85),
+    (0.125, 0.30, 0.70),
+    (0.125, 0.20, 0.55),
+    (0.125, 0.20, 0.45),
+    (0.125, 0.10, 0.30),
+    (0.125, 0.10, 0.15),
+    (0.125, 0.10, 0.10),
+)
+
 # luminance of cyan for dark-mode diff colors
 DIFF_DARK = 0.2
 # luminance of cyan for light-mode diff colors
@@ -44,7 +59,7 @@ DIFF_LIGHT = 0.7
 # luminance step size
 DIFF_STEP = 0.05
 # luminance steps
-DIFF_STEPS = [1, 2, -2, -1]
+DIFF_STEPS = [0, 3, -3, -0]
 
 
 def translate(base, trans):
@@ -56,7 +71,7 @@ def translate(base, trans):
 
 def invert(color):
     c = colour.Color(color)
-    c.luminance = LIGHT_LUM - color.luminance
+    c.luminance = 1.0 - color.luminance
     return c
 
 
@@ -64,12 +79,10 @@ def load_color(name, base_color):
     return translate(base_color, MAIN_COLORS[name])
 
 
-def load_grays(dark_lum, light_lum):
-    step_size = (light_lum - dark_lum) / 16.0
-    for step in GRAY_STEPS:
-        lum = dark_lum + (step * step_size)
+def load_grays():
+    for hsl in GRAYS:
         c = colour.Color()
-        c.hsl = (0.0, 0.0, lum)
+        c.hsl = hsl
         yield c
 
 
@@ -90,8 +103,11 @@ def load_colors(base_color):
     def _load_color(c):
         return load_color(c, base_color)
     gray_names = ["base%+d" % i for i in range(-4, 0) + range(1, 5)]
-    gray_dark = list(load_grays(DARK_LUM, LIGHT_LUM))
-    gray_light = list(reversed(gray_dark))
+    # gray_dark = list(load_grays(DARK_LUM, LIGHT_LUM))
+    # gray_light = list(reversed(gray_dark))
+    grays = list(load_grays())
+    gray_dark = grays[:8]
+    gray_light = grays[8:]
     main_names = list(MAIN_COLORS.keys())
     main_dark = map(_load_color, main_names)
     main_light = map(invert, main_dark)
