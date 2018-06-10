@@ -8,6 +8,23 @@ import subprocess
 import sys
 import time
 
+COLOR_FILE = os.path.expanduser("~/.etc/colors/current")
+
+
+def color(c, _cache={}):
+    if not _cache:
+        with open(COLOR_FILE) as file:
+            for line in file:
+                name, value = line.split()
+                _cache[name] = value
+    return _cache[c]
+
+
+def format(fg=None, bg=None):
+    return (("^fg(%s)" % color(fg) if fg else "") +
+            ("^bg(%s)" % color(bg) if bg else ""))
+
+
 DELAY          = 2.0
 SHOW_CPU_TOTAL = False
 
@@ -33,32 +50,32 @@ CALENDAR_COLUMNS = 31
 EVENTS_COLUMNS   = 31
 ROOM_COLUMNS     = 19
 
-COLOR_NORMAL		= "#d9d9d9"
-COLOR_HIGHLIGHT		= "#e3f392"
-COLOR_GRAPH			= "#92f3a1"
-COLOR_GRAPH_BG      = "#595959"
-COLOR_CLOCK			= "#92f3a1"
-COLOR_URGENT		= "#e3f392"
-#COLOR_EVENT		= "#33ccff"
-COLOR_FAILURE		= "#dc7d9e"
-COLOR_BAR_HIGHLIGHT = "#595959"
+COLOR_NORMAL		= color("base+3")
+COLOR_HIGHLIGHT		= color("orange")
+COLOR_GRAPH			= color("green")
+COLOR_GRAPH_BG      = color("base-2")
+COLOR_CLOCK			= color("green")
+COLOR_URGENT		= color("orange")
+#COLOR_EVENT		= color("blue")
+COLOR_FAILURE		= color("red")
+COLOR_BAR_HIGHLIGHT = color("base-2")
 
-FORMAT_DAY_NAMES             = "^fg(#ffffff)^bg(#444444)"
-FORMAT_WEEKEND_OTHER_MONTH   = "^fg(#777711)^bg(#111111)"
-FORMAT_WEEKEND_CURRENT_MONTH = "^fg(#999933)^bg(#333333)"
-FORMAT_WEEKDAY_OTHER_MONTH   = "^fg(#cccccc)^bg(#222222)"
-FORMAT_WEEKDAY_CURRENT_MONTH = "^fg(#ffffff)^bg(#444444)"
-FORMAT_TODAY                 = "^fg(#ffffff)^bg(#666666)"
-FORMAT_MONTH                 = "^fg(#ffffff)^bg(#222222)"
-FORMAT_NORMAL                = "^fg(#d9d9d9)^bg(#262626)"
-#FORMAT_EVENT                 = "^fg(#33ff33)"
-FORMAT_EVENT                 = "^fg(#ffff33)"
+FORMAT_DAY_NAMES             = format("base+4", "base-2")
+FORMAT_WEEKEND_OTHER_MONTH   = format("orange", "base-4")
+FORMAT_WEEKEND_CURRENT_MONTH = format("orange", "base-3")
+FORMAT_WEEKDAY_OTHER_MONTH   = format("base+2", "base-3")
+FORMAT_WEEKDAY_CURRENT_MONTH = format("base+4", "base-2")
+FORMAT_TODAY                 = format("base+4", "base-1")
+FORMAT_MONTH                 = format("base+2", "base-3")
+FORMAT_NORMAL                = format("base+3", "base-3")
+#FORMAT_EVENT                 = format("green")
+FORMAT_EVENT                 = format("yellow")
 
-EVENT_TODAY  = "^fg(#ffffff)^bg(#444444)"
-EVENT_WEEK   = "^fg(#ffffff)^bg(#333333)"
-EVENT_FUTURE = "^fg(#cccccc)^bg(#222222)"
-EVENT_TIME   = "^fg(#33ff33)"
-EVENT_DATE   = "^fg(#999933)"
+EVENT_TODAY  = format("base+4", "base-2")
+EVENT_WEEK   = format("base+4", "base-3")
+EVENT_FUTURE = format("base+3", "base-4")
+EVENT_TIME   = format("green")
+EVENT_DATE   = format("orange")
 
 WEATHER_STATION = "KPWT"
 WEATHER_UPDATE  = 15 * 60
