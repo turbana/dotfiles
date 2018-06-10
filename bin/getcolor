@@ -1,0 +1,11 @@
+#!/bin/bash
+
+COLOR_FILE=~/.etc/colors/current
+
+if [ $# -ne 1 ]; then
+	echo "USAGE: $(basename $0) color"
+	exit 2
+fi
+
+color=$1
+grep $color $COLOR_FILE | cut -d' ' -f2
