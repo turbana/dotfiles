@@ -10,9 +10,20 @@
   (setq org-archive-location "%s_archive::")
 #+END_SRC
 *** Keybinds
+**** Agenda
 #+BEGIN_SRC emacs-lisp :tangle yes
   (global-set-key (kbd "M-<f1>") 'org-clock-goto)
   (global-set-key (kbd "<f12>") 'org-agenda)
+#+END_SRC
+**** Refile jump
+Add ability to jump to any org heading with SPC-aoj
+#+BEGIN_SRC emacs-lisp :tangle yes
+  (defun ic/org-refile ()
+    "call C-u `org-refile'"
+    (interactive)
+    (setq current-prefix-arg '(1))
+    (call-interactively 'org-refile))
+  (spacemacs/set-leader-keys "aoj" 'ic/org-refile)
 #+END_SRC
 *** Appearance
 #+BEGIN_SRC emacs-lisp :tangle yes
