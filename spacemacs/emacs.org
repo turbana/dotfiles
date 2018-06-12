@@ -25,6 +25,13 @@ Add ability to jump to any org heading with SPC-aoj
     (call-interactively 'org-refile))
   (spacemacs/set-leader-keys "aoj" 'ic/org-refile)
 #+END_SRC
+**** Normal mode navigation
+#+BEGIN_SRC emacs-lisp :tangle yes
+  (evil-define-key 'normal org-mode-map (kbd "<left>") 'outline-up-heading)
+  (evil-define-key 'normal org-mode-map (kbd "<up>") 'org-backward-heading-same-level)
+  (evil-define-key 'normal org-mode-map (kbd "<down>") 'org-forward-heading-same-level)
+  (evil-define-key 'normal org-mode-map (kbd "<right>") 'outline-next-visible-heading)
+#+END_SRC
 *** Appearance
 #+BEGIN_SRC emacs-lisp :tangle yes
   (setq org-startup-indented t)
