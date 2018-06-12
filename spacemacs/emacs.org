@@ -178,7 +178,9 @@ Finally, call ~(delete-frame)~ after the capture is finalized.
   ;; don't modify the task state when archiving
   (setq org-archive-mark-done nil)
   (add-to-list 'org-structure-template-alist
-               '("e" "#+BEGIN_SRC emacs-lisp :tangle yes\n?\n#+END_SRC"))
+               '("e" "#+BEGIN_SRC emacs-lisp :tangle yes\n?\n#+END_SRC")
+               '("y" "#+BEGIN_SRC yaml :tangle yes\n?\n#+END_SRC")
+               )
   ;; catch modifying collapsed text
   (setq org-catch-invisible-edits 'error)
 #+END_SRC
