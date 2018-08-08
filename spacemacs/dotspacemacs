@@ -306,6 +306,16 @@ executes.
  This function is mostly useful for variables that need to be set
 before packages are loaded. If you are unsure, you should try in setting them in
 `dotspacemacs/user-config' first."
+  (setq org-modules '(org-w3m
+                      org-bbdb
+                      org-bibtex
+                      org-docview
+                      org-gnus
+                      org-info
+                      org-irc
+                      org-mhe
+                      org-rmail
+                      org-habit))
   )
 
 (defun dotspacemacs/user-config ()

@@ -83,6 +83,13 @@ Add ability to jump to any org heading with SPC-aoj
           ))
   ;; don't have a separator between agenda sections
   (setq org-agenda-block-separator nil)
+*** Habits
+#+BEGIN_SRC emacs-lisp :tangle yes
+  (setq org-habit-preceding-days 7)
+  (setq org-habit-following-days 1)
+  (setq org-habit-graph-column 2)
+  (setq org-habit-show-habits-only-for-today t)
+  (setq org-habit-show-all-today t)
 #+END_SRC
 *** Todo
 #+BEGIN_SRC emacs-lisp :tangle yes
