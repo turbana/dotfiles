@@ -109,6 +109,7 @@ def load_colors(base_color):
     gray_dark = grays[:8]
     gray_light = grays[8:]
     main_names = list(MAIN_COLORS.keys())
+    main_bg_names = [name+"-bg" for name in main_names]
     main_dark = map(_load_color, main_names)
     main_light = map(invert, main_dark)
     diff_names = ["diff-%d" % (i + 1) for i in range(4)]
@@ -120,9 +121,9 @@ def load_colors(base_color):
         # "grays": (gray_names, grays, list(reversed(grays))),
         # "main": (main_names, main_dark, main_light),
         # "diff": (diff_names, diff_dark, diff_light),
-        "names": gray_names + main_names + diff_names,
-        "dark": gray_dark + main_dark + diff_dark,
-        "light": gray_light + main_light + diff_light,
+        "names": gray_names + main_names + main_bg_names + diff_names,
+        "dark": gray_dark + main_dark + main_light + diff_dark,
+        "light": gray_light + main_light + main_dark + diff_light,
     }
     return colors
 
