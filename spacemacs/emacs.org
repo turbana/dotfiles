@@ -31,6 +31,14 @@ Add ability to jump to any org heading with SPC-aoj
   (evil-define-key 'normal org-mode-map (kbd "<up>") 'org-backward-heading-same-level)
   (evil-define-key 'normal org-mode-map (kbd "<down>") 'org-forward-heading-same-level)
   (evil-define-key 'normal org-mode-map (kbd "<right>") 'outline-next-visible-heading)
+
+  (evil-define-key 'normal org-mode-map (kbd "S-<left>") 'org-promote-subtree)
+  (evil-define-key 'normal org-mode-map (kbd "S-<up>") 'org-move-subtree-up)
+  (evil-define-key 'normal org-mode-map (kbd "S-<down>") 'org-move-subtree-down)
+  (evil-define-key 'normal org-mode-map (kbd "S-<right>") 'org-demote-subtree)
+
+  (evil-define-key 'normal org-mode-map (kbd "C-S-<left>") 'org-do-promote)
+  (evil-define-key 'normal org-mode-map (kbd "C-S-<right>") 'org-do-demote)
 #+END_SRC
 *** Appearance
 #+BEGIN_SRC emacs-lisp :tangle yes
