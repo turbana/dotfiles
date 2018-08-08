@@ -87,7 +87,10 @@ Add ability to jump to any org heading with SPC-aoj
 #+END_SRC
 *** Logging
 #+BEGIN_SRC emacs-lisp :tangle yes
+  ;; log status changes
   (setq org-log-done 'time)
+  (setq org-log-redeadline 'time)
+  (setq org-log-reschedule 'time)
   (setq org-log-into-drawer "LOGBOOK")
 #+END_SRC
 *** Capture
