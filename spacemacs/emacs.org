@@ -177,8 +177,8 @@ Finally, call ~(delete-frame)~ after the capture is finalized.
       (delete-frame)))
   (add-hook 'org-capture-after-finalize-hook #'ic/maybe-org-capture-delete-frame)
 #+END_SRC
-*** Clocking
-#+BEGIN_SRC emacs-lisp :tangle yes
+*** Clocking (disabled)
+#+BEGIN_SRC emacs-lisp :tangle no
   ;; resolve open clocks for any amount of time
   (setq org-clock-idle-time nil)
   ;; start new clocking immediatly after clocking out
