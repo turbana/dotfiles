@@ -1,0 +1,10 @@
+#!/bin/bash
+
+TZ=$1
+
+mv /etc/timezone /etc/timezone.old
+echo $TZ > /etc/timezone
+chmod 0644 /etc/timezone
+
+mv /etc/localtime /etc/localtime.old
+ln -s /usr/share/zoneinfo/$TZ /etc/localtime
