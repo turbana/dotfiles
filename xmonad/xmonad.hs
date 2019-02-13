@@ -1,5 +1,9 @@
+import Control.Monad
+import Data.Map (fromList, (!))
 import qualified Data.Map        as M
 import qualified XMonad.StackSet as W
+import System.Directory
+import System.Environment
 import System.IO
 import System.Posix.Unistd
 import XMonad
@@ -30,41 +34,59 @@ import XMonad.Util.Run
 
 hostHome = "cyclone"
 
-myWorkspaces = map show [1..9]
+myWorkspaces = Prelude.map show [1..9]
 
-dzenBackground = "#262626"
+myColorFile = "~/.etc/colors/current"
 
-myCommand "editor" = "emacsclient -c -a '' --eval '(spacemacs/home)'"
-myCommand "dmenu"  = "dmenu_run -b -nb '#333333' -nf '#eeeeee' -sb '#afaf00' -sf '#000000' -p '>'"
-myCommand "xmonad" = "if type xmonad; then killall dzen2; xmonad --recompile && xmonad --restart; else xmessage xmonad not in \\$PATH: \"$PATH\"; fi"
-myCommand "left-status-bar" = "$HOME/.xmonad/dzen2-left-bar.sh"
-myCommand "right-status-bar" = "$HOME/.xmonad/dzen2-right-bar.sh"
+data Command = Editor | Dmenu | XMonad | LeftStatusBar | RightStatusBar | Calculator | OrgCapture
+command cmd colors = case cmd of
+  Editor -> "emacsclient -c -a '' --eval '(spacemacs/home)'"
+  Dmenu  -> "dmenu_run -b -nb '" ++ (colors ! "base-4") ++
+            "' -nf '" ++ (colors ! "base+3") ++
+            "' -sb '" ++ (colors ! "yellow") ++
+            "' -sf '" ++ (colors ! "base-4") ++ "' -p '>'"
+  XMonad -> "if type xmonad; then killall dzen2; xmonad --recompile && " ++
+            "xmonad --restart; else xmessage xmonad not in \\$PATH: \"$PATH\"; fi"
+  LeftStatusBar -> "$HOME/.xmonad/dzen2-left-bar.sh"
+  RightStatusBar -> "$HOME/.xmonad/dzen2-right-bar.sh"
+
+
+loadColors filename = do
+  home <- getHomeDirectory
+  x <- readFile $ (expandHome home filename)
+  return . fromList . map (toPair . words) . lines $ x
+  where
+    expandHome home ('~':xs) = home ++ xs
+    expandHome home path     = path
+    toPair xs = (xs !! 0, xs !! 1)
+
 
 main = do
-  dzenLeftBar <- spawnPipe $ myCommand "left-status-bar"
-  xmonad $ docks $ myConfig dzenLeftBar `additionalKeysP` myKeys_
+  colors <- loadColors myColorFile
+  dzenLeftBar <- spawnPipe $ command LeftStatusBar colors
+  xmonad $ docks $ myConfig dzenLeftBar colors `additionalKeysP` myKeys colors
 
-myConfig h = def {
+myConfig h colors = def {
     terminal           = "gnome-terminal",
-    startupHook        = spawn $ myCommand "right-status-bar",
+    startupHook        = spawn $ command RightStatusBar colors,
     borderWidth        = 2,
-    normalBorderColor  = "#000000",
-    focusedBorderColor = "#67e671",
+    normalBorderColor  = colors ! "base-4",
+    focusedBorderColor = colors ! "green",
     manageHook         = manageHooks,
     layoutHook         = layoutHooks,
-    logHook            = logHooks h
+    logHook            = logHooks h colors
   }
 
-myKeys_ =
+myKeys colors =
   [("M-j", windows W.focusDown)
   ,("M-k", windows W.focusUp)
   ,("S-M-j", windows W.swapDown)
   ,("S-M-k", windows W.swapUp)
   ,("<Pause>", namedScratchpadAction myScratchPads "calc")
   ,("<F1>", namedScratchpadAction myScratchPads "orgCap")
-  ,("M-p", spawn $ myCommand "dmenu")
-  ,("M-o", spawn $ myCommand "editor")
-  ,("C-M-x r", spawn $ myCommand "xmonad")
+  ,("M-p", spawn $ command Dmenu colors)
+  ,("M-o", spawn $ command Editor colors)
+  ,("C-M-x r", spawn $ command XMonad colors)
   ,("c-M-x s", sendMessage ToggleStruts)
   ]
   ++
@@ -115,15 +137,20 @@ manageHooks = composeAll [
       otherwise           -> c
 
 
-logHooks h = dynamicLogWithPP . namedScratchpadFilterOutWorkspacePP $ defaultPP {
-  ppCurrent           = dzenColor "#ffffff" dzenBackground,
-  ppVisible           = dzenColor "#ffffff" dzenBackground,
-  ppHidden            = dzenColor "#cccc33" dzenBackground,
-  ppHiddenNoWindows   = dzenColor "#666666" dzenBackground,
-  ppUrgent            = dzenColor "#ff0000" dzenBackground,
-  ppTitle             = dzenColor "#cccccc" dzenBackground . dzenEscape,
-  ppLayout            = dzenColor dzenBackground dzenBackground,
+logHooks h colors = dynamicLogWithPP . namedScratchpadFilterOutWorkspacePP $ def {
+  ppCurrent           = dzenColor fg bg,
+  ppVisible           = dzenColor fg bg,
+  ppHidden            = dzenColor yellow bg,
+  ppHiddenNoWindows   = dzenColor grey bg,
+  ppUrgent            = dzenColor red bg,
+  ppTitle             = dzenColor fg bg . dzenEscape,
+  ppLayout            = dzenColor bg bg,
   ppWsSep             = " ",
   ppSep               = "  |  ",
   ppOutput            = hPutStrLn h
 }
+  where bg = colors ! "base-3"
+        fg = colors ! "base+3"
+        yellow = colors ! "yellow"
+        grey = colors ! "base-1"
+        red = colors ! "red"
