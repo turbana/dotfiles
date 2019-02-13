@@ -13,5 +13,4 @@ sed -ue 's/|[^|]*|/|/' | \
 sed -ue 's/^/ /' | \
 # insert our bar highlight
 sed -ue 's/$/^pa(0)^fg('"$bar"')^ib(1)^ro(1420x1-0-9)^ib(0)/' | \
-dzen2 -y 1060 -x 0 -w 1420 -ta l -h 20 -fg $fg -bg $bg -fn "$font" -xs 1 \
-	-e 'onstart=lower'
+dzen2 -y 1060 -x 0 -w 1420 -ta l -h 20 -fg $fg -bg $bg -fn "$font" -xs 1 -dock

@@ -1,46 +1,45 @@
-import XMonad
-import XMonad.Config.Desktop
-import XMonad.Layout.Reflect
-import XMonad.Layout.PerWorkspace
-import XMonad.Hooks.ManageHelpers
-import XMonad.Hooks.ManageDocks
-import qualified XMonad.StackSet as W
 import qualified Data.Map        as M
-import System.Posix.Unistd
-import XMonad.Layout.OnHost
-import XMonad.Util.Run
-import XMonad.Util.CustomKeys
-import XMonad.Util.Cursor
-import XMonad.Util.Loggers
-import XMonad.Hooks.DynamicLog
+import qualified XMonad.StackSet as W
 import System.IO
-import XMonad.Util.NamedScratchpad
-
-import XMonad.ManageHook
-
-import XMonad.Layout.StackTile
-import XMonad.Layout.Grid
-
+import System.Posix.Unistd
+import XMonad
+import XMonad.Actions.PhysicalScreens
+import XMonad.Config
+import XMonad.Config.Desktop
+import XMonad.Hooks.DynamicLog
+import XMonad.Hooks.EwmhDesktops
+import XMonad.Hooks.ManageDocks
+import XMonad.Hooks.ManageHelpers
 import XMonad.Layout.Combo
+import XMonad.Layout.Grid
+import XMonad.Layout.LayoutHints
+import XMonad.Layout.NoBorders
+import XMonad.Layout.OnHost
+import XMonad.Layout.PerWorkspace
+import XMonad.Layout.Reflect
+import XMonad.Layout.StackTile
 import XMonad.Layout.TwoPane
 import XMonad.Layout.WindowNavigation --XXX
-import XMonad.Layout.NoBorders
-
-import XMonad.Actions.PhysicalScreens
+import XMonad.ManageHook
+import XMonad.Util.Cursor
+import XMonad.Util.CustomKeys
+import XMonad.Util.Loggers
+import XMonad.Util.NamedScratchpad
+import XMonad.Util.Run
 
 hostHome = "cyclone"
 
 main = do
   dzenLeftBar <- spawnPipe myXmonadBar
-  dzenRightBar <- spawnPipe myStatusBar
-  xmonad $ defaultConfig {
+  spawn myStatusBar
+  xmonad $ docks def {
     terminal           = "gnome-terminal",
     startupHook        = setDefaultCursor xC_left_ptr,
     borderWidth        = 2,
     normalBorderColor  = "#000000",
-    focusedBorderColor = "#92f3a1",
-    layoutHook         = layoutHooks,
+    focusedBorderColor = "#67e671",
     manageHook         = manageHooks,
+    layoutHook         = layoutHooks,
     logHook            = logHooks dzenLeftBar,
     keys               = customKeys emptyKeys myKeys
   }
@@ -63,6 +62,7 @@ myKeys conf@(XConfig {modMask = modm}) =
   , ((mod1Mask,               xK_p    ), spawn "dmenu_run -b -nb '#333333' -nf '#eeeeee' -sb '#afaf00' -sf '#000000' -p '>'")
   , ((mod1Mask .|. controlMask, xK_e  ), spawn "emacsclient -c -a '' --eval '(spacemacs/home)'")
   , ((mod1Mask .|. controlMask, xK_q  ), spawn "if type xmonad; then killall dzen2; xmonad --recompile && xmonad --restart; else xmessage xmonad not in \\$PATH: \"$PATH\"; fi")
+  , ((mod1Mask .|. controlMask, xK_s  ), sendMessage ToggleStruts)
   ]
   ++
   -- mod-{q,w,e} to switch screens
@@ -85,8 +85,6 @@ myScratchPads = [
 
 layoutHooks =
   avoidStruts $
-  desktopLayoutModifiers $
-  smartBorders $
   onHost hostHome (tall ||| Full) $              -- Home layouts (below this are work layouts)
   onWorkspace "2" (Mirror tallLarge ||| Full) $
   reflectVert tile ||| Full
@@ -102,7 +100,6 @@ layoutHooks =
 
 manageHooks = composeAll [
     namedScratchpadManageHook myScratchPads,
-    manageDocks,
     className =? "Pidgin"  --> doShift "2",
     className =? "Pidgin"  --> doF avoidMaster
   ]
