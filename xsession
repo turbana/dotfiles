@@ -27,4 +27,5 @@ fi
 gpg-agent --daemon --enable-ssh-support --write-env-file "${HOME}/.gpg-agent-info"
 
 # xmonad config needs our hostname in $HOST
-HOST=$(hostname) exec xmonad
+# HOST=$(hostname) exec xmonad
+HOST=$(hostname) exec $HOME/.cabal/bin/xmonad
