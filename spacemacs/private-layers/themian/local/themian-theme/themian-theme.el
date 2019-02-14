@@ -13,14 +13,14 @@
 
           ;; The following is generated automatically from colorwheel.py
           ;;;; THEMIAN-COLORS-START
-          (base-4   (if dark "#333333" "#f7eed4"))
-          (base-3   (if dark "#404040" "#ece2c6"))
-          (base-2   (if dark "#595959" "#d1c294"))
-          (base-1   (if dark "#737373" "#baa35e"))
-          (base+1   (if dark "#8c8c8c" "#958450"))
+          (base-4   (if dark "#262626" "#f7eed4"))
+          (base-3   (if dark "#333333" "#ece2c6"))
+          (base-2   (if dark "#666666" "#d1c294"))
+          (base-1   (if dark "#7f7f7f" "#baa35e"))
+          (base+1   (if dark "#999999" "#958450"))
           (base+2   (if dark "#b2b2b2" "#74673e"))
-          (base+3   (if dark "#d9d9d9" "#4c4633"))
-          (base+4   (if dark "#e5e5e5" "#38362e"))
+          (base+3   (if dark "#cccccc" "#4c4633"))
+          (base+4   (if dark "#d9d9d9" "#38362e"))
           (blue     (if dark "#7a90cc" "#334985"))
           (green    (if dark "#7acc8d" "#338546"))
           (yellow   (if dark "#b9cc7a" "#728533"))
