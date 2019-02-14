@@ -16,3 +16,17 @@ cd ~/.etc/colors
 ln -sf $color current
 emacsclient -e "(progn (load-file \"${EMACS_COLOR_THEME}\") (load-theme 'themian-${color} t))"
 restart-xmonad
+
+
+### the following updates gnome-terminal
+
+palette="['$(getcolor base-4)', '$(getcolor red)', '$(getcolor green)', '$(getcolor yellow)', '\
+$(getcolor blue)', '$(getcolor violet)', '$(getcolor cyan)', '$(getcolor base+2)', '\
+$(getcolor base-2)', '$(getcolor red-bg)', '$(getcolor green-bg)', '$(getcolor yellow-bg)', '\
+$(getcolor blue-bg)', '$(getcolor violet-bg)', '$(getcolor cyan-bg)', '$(getcolor base+4)']"
+
+gset="gsettings set org.gnome.Terminal.Legacy.Profile:/org/gnome/terminal/legacy/profiles:/:b1dcc9dd-5262-4d8d-a863-c897e6d979b9/"
+$gset use-theme-colors false
+$gset background-color $(getcolor base-4)
+$gset foreground-color $(getcolor base+3)
+$gset palette "$palette"
