@@ -1,5 +1,6 @@
 import Control.Monad
 import Data.Map (fromList, (!))
+import  XMonad.Util.WorkspaceCompare
 import qualified Data.Map        as M
 import qualified XMonad.StackSet as W
 import System.Directory
@@ -41,13 +42,17 @@ myColorFile = "~/.etc/colors/current"
 data Command = Editor | Dmenu | XMonad | LeftStatusBar | RightStatusBar | Calculator | OrgCapture
 command cmd colors = case cmd of
   Editor -> "emacsclient -c -a '' --eval '(spacemacs/home)'"
-  Dmenu  -> "dmenu_run -b -nb '" ++ (colors ! "base-4") ++
-            "' -nf '" ++ (colors ! "base+3") ++
-            "' -sb '" ++ (colors ! "yellow") ++
-            "' -sf '" ++ (colors ! "base-4") ++ "' -p '>'"
+  Dmenu  -> "dmenu_run -b -p '>'"
+            ++ " -nb '" ++ (colors ! "base-4") ++ "'"
+            ++ " -nf '" ++ (colors ! "base+3") ++ "'"
+            ++ " -sb '" ++ (colors ! "yellow") ++ "'"
+            ++ " -sf '" ++ (colors ! "base-4") ++ "'"
   XMonad -> "if type xmonad; then killall dzen2; xmonad --recompile && " ++
             "xmonad --restart; else xmessage xmonad not in \\$PATH: \"$PATH\"; fi"
-  LeftStatusBar -> "$HOME/.xmonad/dzen2-left-bar.sh"
+  LeftStatusBar -> "dzen2 -y 1060 -x 0 -w 1420 -ta l -h 20 -xs 1 -dock"
+                   ++ " -fg '" ++ (colors ! "base+3") ++ "'"
+                   ++ " -bg '" ++ (colors ! "base-3") ++ "'"
+                   ++ " -fn 'DejaVu Sans Mono-9'"
   RightStatusBar -> "$HOME/.xmonad/dzen2-right-bar.sh"
 
 
@@ -63,6 +68,7 @@ loadColors filename = do
 
 main = do
   colors <- loadColors myColorFile
+  writeFile "/dev/null" $ show colors -- XXX we have to expand colors for some reason
   dzenLeftBar <- spawnPipe $ command LeftStatusBar colors
   xmonad $ docks $ myConfig dzenLeftBar colors `additionalKeysP` myKeys colors
 
@@ -138,19 +144,22 @@ manageHooks = composeAll [
 
 
 logHooks h colors = dynamicLogWithPP . namedScratchpadFilterOutWorkspacePP $ def {
-  ppCurrent           = dzenColor fg bg,
-  ppVisible           = dzenColor fg bg,
-  ppHidden            = dzenColor yellow bg,
-  ppHiddenNoWindows   = dzenColor grey bg,
-  ppUrgent            = dzenColor red bg,
-  ppTitle             = dzenColor fg bg . dzenEscape,
-  ppLayout            = dzenColor bg bg,
-  ppWsSep             = " ",
-  ppSep               = "  |  ",
-  ppOutput            = hPutStrLn h
+   ppCurrent           = dzenColor fg bg . wrap "[" "]"
+   -- ppCurrent           = dzenColor fg bg . wrap "" "^ib(1)^r(8x2-8+7)^ib(0)"
+  ,ppVisible           = dzenColor fg bg
+  ,ppHidden            = dzenColor yellow bg
+  ,ppHiddenNoWindows   = const ""
+  ,ppUrgent            = dzenColor red bg
+  ,ppTitle             = dzenColor fg bg . dzenEscape
+  ,ppLayout            = const ""
+  ,ppWsSep             = " "
+  ,ppSep               = "  |  "
+  ,ppOutput            = hPutStrLn h
+  ,ppSort              = getSortByXineramaRule
 }
-  where bg = colors ! "base-3"
-        fg = colors ! "base+3"
-        yellow = colors ! "yellow"
-        grey = colors ! "base-1"
-        red = colors ! "red"
+  where
+    bg = colors ! "base-3"
+    fg = colors ! "base+3"
+    yellow = colors ! "yellow"
+    grey = colors ! "base-1"
+    red = colors ! "red"
