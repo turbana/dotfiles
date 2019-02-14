@@ -8,4 +8,4 @@ if [ $# -ne 1 ]; then
 fi
 
 color=$1
-grep $color $COLOR_FILE | cut -d' ' -f2
+grep "^$color " $COLOR_FILE | cut -d' ' -f2
