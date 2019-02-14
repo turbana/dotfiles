@@ -1,18 +1,22 @@
 #!/bin/bash
 
-set -e
 
 EMACS_COLOR_THEME=~/.etc/spacemacs/private-layers/themian/local/themian-theme/themian-theme.el
 
 color=$1
 shift
 
-if [[ $# -ne 0 || ( $color != "light" && $color != "dark" ) ]]; then
+set -e
+
+if [[ $# -ne 0 || ( $color != "light" && $color != "dark" && "$color" != "" ) ]]; then
 	echo "USAGE: $(basename $0) (light|dark)"
 	exit 2
 fi
 
 cd ~/.etc/colors
+if [[ -z "$color" ]]; then
+	color=$(basename $(readlink -f current))
+fi
 ln -sf $color current
 emacsclient -e "(progn (load-file \"${EMACS_COLOR_THEME}\") (load-theme 'themian-${color} t))"
 restart-xmonad
