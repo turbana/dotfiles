@@ -47,8 +47,8 @@ command cmd colors = case cmd of
             ++ " -nf '" ++ (colors ! "base+3") ++ "'"
             ++ " -sb '" ++ (colors ! "yellow") ++ "'"
             ++ " -sf '" ++ (colors ! "base-4") ++ "'"
-  XMonad -> "if type xmonad; then killall dzen2; xmonad --recompile && " ++
-            "xmonad --restart; else xmessage xmonad not in \\$PATH: \"$PATH\"; fi"
+  XMonad -> "if type restart-xmonad; then xmonad-restart; "
+            ++ "else xmessage xmonad-restart not in \\$PATH: \"$PATH\"; fi"
   LeftStatusBar -> "dzen2 -y 1060 -x 0 -w 1420 -ta l -h 20 -xs 1 -dock"
                    ++ " -fg '" ++ (colors ! "base+3") ++ "'"
                    ++ " -bg '" ++ (colors ! "base-3") ++ "'"
@@ -77,7 +77,7 @@ myConfig h colors = def {
     startupHook        = spawn $ command RightStatusBar colors,
     borderWidth        = 2,
     normalBorderColor  = colors ! "base-4",
-    focusedBorderColor = colors ! "green",
+    focusedBorderColor = colors ! "blue",
     manageHook         = manageHooks,
     layoutHook         = layoutHooks,
     logHook            = logHooks h colors
