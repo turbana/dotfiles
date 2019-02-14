@@ -168,11 +168,8 @@ def emit_emacs(colors, filename):
         map(file.write, buffer_tail)
 
 
-def reload_emacs():
-    theme_file = os.path.expanduser(EMACS_COLOR_THEME)
-    command = """emacsclient -e '(progn (load-file "%s")
-        (load-theme '\\''themian-dark t))'"""
-    subprocess.call(command.strip() % theme_file, shell=True)
+def reload_theme():
+    subprocess.call("set-color-theme", shell=True)
 
 
 def current_blue():
@@ -217,7 +214,7 @@ def main(raw_args):
     emit_simple(dark_colors, os.path.join(color_dir, "dark"))
     emit_simple(light_colors, os.path.join(color_dir, "light"))
     emit_emacs(colors, os.path.expanduser(EMACS_COLOR_THEME))
-    reload_emacs()
+    reload_theme()
 
 
 if __name__ == "__main__":
