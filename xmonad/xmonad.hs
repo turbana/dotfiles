@@ -39,21 +39,24 @@ hostHome = "cyclone"
 myWorkspaces = Prelude.map show [1..9]
 
 myColorFile = "~/.etc/colors/current"
+myFont = "DejaVu Sans Mono-9"
 
 data Command = Editor | Dmenu | XMonad | LeftStatusBar | RightStatusBar | Calculator | OrgCapture
 command cmd colors = case cmd of
   Editor -> "emacsclient -c -a '' --eval '(spacemacs/home)'"
-  Dmenu  -> "dmenu_run -b -p '>'"
-            ++ " -nb '" ++ (colors ! "base-4") ++ "'"
-            ++ " -nf '" ++ (colors ! "base+3") ++ "'"
-            ++ " -sb '" ++ (colors ! "yellow") ++ "'"
-            ++ " -sf '" ++ (colors ! "base-4") ++ "'"
+  Dmenu  -> concat [
+    "dmenu_run -b -p '>'"
+    , " -nb '", (colors ! "base-4"), "'"
+    , " -nf '", (colors ! "base+3"), "'"
+    , " -sb '", (colors ! "yellow"), "'"
+    , " -sf '", (colors ! "base-4"), "'"]
   XMonad -> "if type restart-xmonad; then xmonad-restart; "
             ++ "else xmessage xmonad-restart not in \\$PATH: \"$PATH\"; fi"
-  LeftStatusBar -> "dzen2 -y 1060 -x 0 -w 1420 -ta l -h 20 -xs 1 -dock"
-                   ++ " -fg '" ++ (colors ! "base+3") ++ "'"
-                   ++ " -bg '" ++ (colors ! "base-3") ++ "'"
-                   ++ " -fn 'DejaVu Sans Mono-9'"
+  LeftStatusBar -> concat [
+    "dzen2 -y 1060 -x 0 -w 1420 -ta l -h 20 -xs 1 -dock"
+    , " -fg '", (colors ! "base+3"), "'"
+    , " -bg '", (colors ! "base-3"), "'"
+    , " -fn '", myFont, "'"]
   RightStatusBar -> "$HOME/.xmonad/dzen2-right-bar.sh"
 
 
