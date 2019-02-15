@@ -136,11 +136,14 @@ layoutHooks =
 
 
 manageHooks = composeAll [
-    namedScratchpadManageHook myScratchPads,
-    className =? "Pidgin"  --> doShift "2",
-    className =? "Pidgin"  --> doF avoidMaster
+    namedScratchpadManageHook myScratchPads
+    -- manageDocks,
+    ,className =? "Pidgin"  --> doShift "2"
+    ,className =? "Pidgin"  --> doF avoidMaster
+    ,wmName =? "dzen slave" --> doIgnore
   ]
   where
+    wmName = stringProperty "WM_NAME"
     avoidMaster :: W.StackSet i l a s sd -> W.StackSet i l a s sd
     avoidMaster = W.modify' $ \c -> case c of
       W.Stack t [] (r:rs) ->  W.Stack t [r] rs
