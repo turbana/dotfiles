@@ -78,7 +78,7 @@ main = do
 
 myConfig h colors = def {
     terminal           = "gnome-terminal",
-    startupHook        = spawn $ command RightStatusBar colors,
+    startupHook        = myStartupHook colors,
     borderWidth        = 2,
     normalBorderColor  = colors ! "base-4",
     focusedBorderColor = colors ! "blue",
@@ -86,6 +86,10 @@ myConfig h colors = def {
     layoutHook         = layoutHooks,
     logHook            = logHooks h colors
   }
+
+myStartupHook colors = do
+  spawn $ command RightStatusBar colors
+  setDefaultCursor xC_left_ptr
 
 myKeys colors =
   [("M-j", windows W.focusDown)
