@@ -1,4 +1,5 @@
 import Control.Monad
+import qualified XMonad.Config.Prime as X
 import Data.Map (fromList, (!))
 import  XMonad.Util.WorkspaceCompare
 import qualified Data.Map        as M
@@ -145,21 +146,25 @@ manageHooks = composeAll [
 
 logHooks h colors = dynamicLogWithPP . namedScratchpadFilterOutWorkspacePP $ def {
    ppCurrent           = dzenColor fg bg . wrap "[" "]"
-   -- ppCurrent           = dzenColor fg bg . wrap "" "^ib(1)^r(8x2-8+7)^ib(0)"
   ,ppVisible           = dzenColor fg bg
   ,ppHidden            = dzenColor yellow bg
   ,ppHiddenNoWindows   = const ""
   ,ppUrgent            = dzenColor red bg
   ,ppTitle             = dzenColor fg bg . dzenEscape
   ,ppLayout            = const ""
+  ,ppExtras            = [drawBorder]
   ,ppWsSep             = " "
-  ,ppSep               = "  |  "
+  ,ppSep               = dzenColor grey bg "  |  "
   ,ppOutput            = hPutStrLn h
   ,ppSort              = getSortByXineramaRule
 }
   where
-    bg = colors ! "base-3"
-    fg = colors ! "base+3"
+    bg     = colors ! "base-3"
+    fg     = colors ! "base+3"
     yellow = colors ! "yellow"
-    grey = colors ! "base-1"
-    red = colors ! "red"
+    grey   = colors ! "base-1"
+    red    = colors ! "red"
+    border = colors ! "base-2"
+    drawBorder =
+      return $ Just $ dzenColor border bg $ wrap "^ib(1)" "^ib(0)"
+      "^pa(0)^ro(1420x1-0-9)"
