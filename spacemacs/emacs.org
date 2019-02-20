@@ -323,7 +323,50 @@ Need to clean these up
 * Misc
 ** Color Themes
 #+BEGIN_SRC emacs-lisp :tangle yes
-(load-theme 'themian-dark t)
+  (load-theme 'themian-dark t)
+#+END_SRC
+** Fonts
+Setup both monospaced and non-monospaced fonts.
+
+Some good variable spaced fonts:
+- Century Schoolbook L
+- TeX Gyre Pagella
+- Utopia
+
+#+BEGIN_SRC emacs-lisp :tangle yes
+  (custom-theme-set-faces
+   'user
+   '(variable-pitch ((t (:family "Century Schoolbook L" :height 120 :weight light))))
+   '(fixed-pitch ((t (:family "DejaVu Sans Mono" :height 0.9166666)))))
+#+END_SRC
+** Variable pitch
+=org-mode= should be mostly variable pitch with only code being fixed.
+#+BEGIN_SRC emacs-lisp :tangle yes
+  (setq ic/org-faces-fixed-pitch
+        (list
+         'linum
+         'org-block
+         'org-block-begin-line
+         'org-block-end-line
+         'org-checkbox
+         'org-code
+         'org-document-info-keyword
+         'org-hide
+         'org-indent
+         'org-link
+         'org-meta-line
+         'org-special-keyword
+         'org-table
+         ))
+
+  (defun ic/variable-pitch-mode ()
+    (variable-pitch-mode 1)
+    (mapc
+     (lambda (face)
+       (set-face-attribute face nil :inherit 'fixed-pitch))
+     ic/org-faces-fixed-pitch)
+    )
+  (add-hook 'org-mode-hook #'ic/variable-pitch-mode)
 #+END_SRC
 ** Browser
 Use chromium as default browser
