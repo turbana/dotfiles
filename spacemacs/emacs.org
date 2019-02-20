@@ -49,22 +49,60 @@ Add ability to jump to any org heading with SPC-aoj
   (evil-define-key 'normal org-mode-map (kbd "C-S-<right>") 'org-do-demote)
 #+END_SRC
 *** Appearance
+Basic heading setup
 #+BEGIN_SRC emacs-lisp :tangle yes
   (setq org-startup-indented t)
-  (setq org-startup-folded t)
+  (setq org-startup-folded nil)
   (setq org-hide-leading-stars t)
   (setq org-odd-levels-only nil)
-  (setq org-completion-use-ido t)
-  (setq org-return-follows-link t)
-  ;; (setq org-blank-before-new-entry nil)
-  ;; don't mess with windows when editing inline code
-  (setq org-src-window-setup 'current-window)
-  ;; use fancy bullets/ellipsis
+
+  (setq org-adapt-indentation t)
+  (setq org-indent-indentation-per-level 2)
+
+  (setq org-fontify-whole-heading-line t)
+  (setq org-fontify-done-headline nil)
+  (setq org-fontify-quote-and-verse-blocks t)
+#+END_SRC
+
+Use =visual-line-mode= as =org-mode= is mostly prose.
+#+BEGIN_SRC emacs-lisp :tangle yes
+  (add-hook 'org-mode-hook #'visual-line-mode)
+#+END_SRC
+
+Change some characters to unicode icons
+#+BEGIN_SRC emacs-lisp :tangle yes
+  ;; ⟡⚫•¤⦾⦿☙❥❧‣—⁓
   (setq org-bullets-bullet-list '("⚫"))
+  ;; (setq org-bullets-bullet-list '("⚫"))
+  ;; (setq org-bullets-bullet-list '("*"))
   (setq org-ellipsis " ⬎")
-  ;; format src blocks
+  (setq ic/org-list-icon "—")
+  (font-lock-add-keywords
+   'org-mode
+   '(("^ *\\([-]\\) "
+      (0 (prog1 ()
+           (compose-region (match-beginning 1)
+                           (match-end 1)
+                           ic/org-list-icon))))))
+#+END_SRC
+
+XXX what do these do?
+#+BEGIN_SRC emacs-lisp :tangle yes
+(setq org-completion-use-ido t)
+(setq org-return-follows-link t)
+;; (setq org-blank-before-new-entry nil)
+#+END_SRC
+
+Use current window to edit =org-src= blocks. Don't indent.
+#+BEGIN_SRC emacs-lisp :tangle yes
   (setq org-src-preserve-indentation nil)
   (setq org-edit-src-content-indentation 2)
+  (setq org-src-window-setup 'current-window)
+#+END_SRC
+
+Hide emphasis markers such as *bold*, /italic/, etc.
+#+BEGIN_SRC emacs-lisp :tangle yes
+(setq org-hide-emphasis-markers t)
 #+END_SRC
 *** Agenda
 #+BEGIN_SRC emacs-lisp :tangle yes
