@@ -64,6 +64,12 @@ Basic heading setup
   (setq org-fontify-quote-and-verse-blocks t)
 #+END_SRC
 
+Let's use some fancy LaTeX symbols.
+Example: E \equal{} \gamma{}mc^2
+#+BEGIN_SRC emacs-lisp :tangle yes
+  (setq org-pretty-entities t)
+#+END_SRC
+
 Use =visual-line-mode= as =org-mode= is mostly prose.
 #+BEGIN_SRC emacs-lisp :tangle yes
   (add-hook 'org-mode-hook #'visual-line-mode)
