@@ -429,10 +429,12 @@ Use system clipboard
   (setq x-select-enable-primary t)
 #+END_SRC
 ** Line Numbers
-Use line numbers everywhere
+Use relative line numbers everywhere.
 #+BEGIN_SRC emacs-lisp :tangle yes
   (global-linum-mode)
+  (linum-relative-global-mode)
 #+END_SRC
+
 ** Text Wrap
 #+BEGIN_SRC emacs-lisp :tangle yes
   (setq-default fill-column 80)
