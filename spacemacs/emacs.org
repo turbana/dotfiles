@@ -387,10 +387,14 @@ Some good variable spaced fonts:
 - URW Palladio L
 
 #+BEGIN_SRC emacs-lisp :tangle yes
-  (custom-theme-set-faces
-   'user
-   '(variable-pitch ((t (:family "Gentium" :height 120 :weight normal))))
-   '(fixed-pitch ((t (:family "DejaVu Sans Mono" :height 0.9166666)))))
+  (let* ((variable '("Gentium" 13.0))
+         (fixed    '("DejaVu Sans Mono" 11.0))
+         (variable-size (truncate (* 10 (second variable))))
+         (fixed-size (/ (second fixed) (second variable))))
+    (custom-theme-set-faces
+     'user
+     `(variable-pitch ((t (:family ,(first variable) :height ,variable-size :weight normal))))
+     `(fixed-pitch ((t (:family ,(first fixed) :height ,fixed-size))))))
 #+END_SRC
 ** Variable pitch
 =org-mode= should be mostly variable pitch with only code being fixed.
