@@ -377,11 +377,15 @@ Some good variable spaced fonts:
 - Century Schoolbook L
 - TeX Gyre Pagella
 - Utopia
+- Caladea
+- Gentium
+- Gillius ADF
+- URW Palladio L
 
 #+BEGIN_SRC emacs-lisp :tangle yes
   (custom-theme-set-faces
    'user
-   '(variable-pitch ((t (:family "Century Schoolbook L" :height 120 :weight light))))
+   '(variable-pitch ((t (:family "Gentium" :height 120 :weight normal))))
    '(fixed-pitch ((t (:family "DejaVu Sans Mono" :height 0.9166666)))))
 #+END_SRC
 ** Variable pitch
