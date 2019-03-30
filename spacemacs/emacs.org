@@ -357,6 +357,86 @@ Need to clean these up
 *** Keybinds
 #+BEGIN_SRC emacs-lisp :tangle yes
 (define-key helm-map (kbd "C-w") 'backward-kill-word)
+** Recipes
+First, we need to setup some configuration.
+#+BEGIN_SRC emacs-lisp :tangle yes
+  (defvar ic/recipes-org-file "~/org/home/recipes/recipes.org")
+  (defvar ic/recipes-www-dir "~/www/recipes")
+#+END_SRC
+
+For the export we want to iterate though the org file, looking for recipes,
+export those recipes individually, then build the table of contents.
+#+BEGIN_SRC emacs-lisp :tangle yes
+  (defun ic/recipes-export ()
+    (interactive)
+    (with-temp-buffer
+      (insert-file-contents ic/recipes-org-file)
+      ;; (org-show-subtree)
+      (org-element-map (org-element-parse-buffer) 'headline
+        (lambda (elem)
+          (when (ic//is-recipe-p elem)
+            (ic//recipes-export-single elem))))))
+#+END_SRC
+
+We define a recipe as a headline with two specific child headlines: =Ingredients=
+and =Steps=.
+#+BEGIN_SRC emacs-lisp :tangle yes
+  (defun ic//is-recipe-p (elem)
+    (let ((children
+           (org-element-map elem 'headline
+             (lambda (child)
+               (let ((parent (org-element-property :parent child)))
+                 (when (eq parent elem)
+                   (org-element-property :raw-value child)))))))
+      (and (member "Ingredients" children)
+           (member "Steps" children))))
+#+END_SRC
+
+For some reason the both the =:tags= property of =org-property= and =org-get-tags=
+only return the local tags for a headline, even when =org-use-tag-inheritance= is
+=t=. I want tag inheritance, so let's define a function to do that.
+#+BEGIN_SRC emacs-lisp :tangle yes
+  (defun ic/org-element-tags (elem)
+    (let ((tags (org-element-property :tags elem))
+          (parent (org-element-property :parent elem)))
+      (if (and org-use-tag-inheritance parent)
+          (delete-dups (append tags (ic/org-element-tags parent)))
+        tags)))
+#+END_SRC
+
+Test for exporting a recipe.
+#+BEGIN_SRC emacs-lisp :tangle yes
+  (defun ic//recipes-export-single (recipe)
+    (message "!! %s" (org-element-property :raw-value recipe))
+    (message "%S" (ic/org-element-tags recipe))
+    )
+
+  (global-set-key (kbd "<f2>") 'ic/recipes-export)
+#+END_SRC
+*** Old
+TODO: I can't figure out how to get =org-publish= to write each headline to a
+separate html file.
+See [[*Exporting][Exporting]].
+#+BEGIN_SRC emacs-lisp :tangle no
+  (setq org-publish-project-alist
+        '(("recipes"
+           :base-directory "~/org/home/recipes"
+           :base-extension "org"
+           :publishing-directory "~/recipes"
+           :publishing-function org-html-publish-to-html
+           :with-properties t
+           :with-tags t
+           :auto-sitemap t
+           :html-postamble nil
+
+           :exclude "PrivatePage.org"
+           :headline-levels 3
+           :section-numbers nil
+           :with-toc nil
+           :html-head "<link rel=\"stylesheet\" href=\"../other/mystyle.css\" type=\"text/css\"/>"
+           :html-preamble t
+           )))
+#+END_SRC
 #+END_SRC
 * Programming
 ** General
