@@ -1,8 +1,9 @@
 import Control.Monad
-import qualified XMonad.Config.Prime as X
 import Data.Map (fromList, (!))
-import  XMonad.Util.WorkspaceCompare
+import Data.Maybe
+import Data.List (find)
 import qualified Data.Map        as M
+import qualified XMonad.Config.Prime as X
 import qualified XMonad.StackSet as W
 import System.Directory
 import System.Environment
@@ -33,13 +34,16 @@ import XMonad.Util.EZConfig
 import XMonad.Util.Loggers
 import XMonad.Util.NamedScratchpad
 import XMonad.Util.Run
+import XMonad.Util.WorkspaceCompare
 
 hostHome = "cyclone"
 
 myWorkspaces = Prelude.map show [1..9]
 
 myColorFile = "~/.etc/colors/current"
-myFont = "DejaVu Sans Mono-9"
+-- myFont = "DejaVu Sans Mono-9"
+-- myFont = "Nimbus Sans L Regular-11"
+myFont = "Latin Modern Mono-12"
 
 data Command = Editor | Dmenu | XMonad | LeftStatusBar | RightStatusBar | Calculator | OrgCapture
 command cmd colors = case cmd of
@@ -80,7 +84,7 @@ myConfig h colors = def {
     terminal           = "gnome-terminal",
     startupHook        = myStartupHook colors,
     borderWidth        = 2,
-    normalBorderColor  = colors ! "base-4",
+    normalBorderColor  = colors ! "base-3",
     focusedBorderColor = colors ! "blue",
     manageHook         = manageHooks,
     layoutHook         = layoutHooks,
@@ -155,9 +159,9 @@ manageHooks = composeAll [
 
 
 logHooks h colors = dynamicLogWithPP . namedScratchpadFilterOutWorkspacePP $ def {
-   ppCurrent           = dzenColor fg bg . wrap "[" "]"
+   ppCurrent           = dzenColor yellow bg . (++ underline)
   ,ppVisible           = dzenColor fg bg
-  ,ppHidden            = dzenColor yellow bg
+  ,ppHidden            = dzenColor grey bg
   ,ppHiddenNoWindows   = const ""
   ,ppUrgent            = dzenColor red bg
   ,ppTitle             = dzenColor fg bg . dzenEscape
@@ -169,12 +173,15 @@ logHooks h colors = dynamicLogWithPP . namedScratchpadFilterOutWorkspacePP $ def
   ,ppSort              = getSortByXineramaRule
 }
   where
+    cyan   = colors ! "cyan"
     bg     = colors ! "base-3"
     fg     = colors ! "base+3"
     yellow = colors ! "yellow"
-    grey   = colors ! "base-1"
+    grey   = colors ! "base+1"
     red    = colors ! "red"
     border = colors ! "base-2"
+    ignoreBg = wrap "^ib(1)" "^ib(0)"
     drawBorder =
-      return $ Just $ dzenColor border bg $ wrap "^ib(1)" "^ib(0)"
+      return $ Just $ dzenColor border bg $ ignoreBg
       "^pa(0)^ro(1420x1-0-9)"
+    underline = ignoreBg "^r(10x2-10+9)"

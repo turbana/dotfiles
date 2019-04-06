@@ -1,9 +1,10 @@
 #!/bin/bash
 
 font="DejaVu Sans Mono-9"
-fg=$(getcolor base+3)
-bg=$(getcolor base-3)
-bar=$(getcolor base-2)
+GC=$HOME/.etc/bin/getcolor
+fg=$($GC base+3)
+bg=$($GC base-3)
+bar=$($GC base-2)
 
 # I don't see a way to configure what Xmonad is sending us without
 # re-implementing an entire logger. I don't want to see what layout mode we're
