@@ -359,10 +359,11 @@ Need to clean these up
       )
     ))
 #+END_SRC
-** Helm
-*** Keybinds
-#+BEGIN_SRC emacs-lisp :tangle yes
-(define-key helm-map (kbd "C-w") 'backward-kill-word)
+** TODO disk-usage
+So we can see how much crap there is.
+#+BEGIN_SRC emacs-lisp :tangle no
+  (use-package disk-usage)
+#+END_SRC
 ** Recipes
 First, we need to setup some configuration.
 #+BEGIN_SRC emacs-lisp :tangle yes
