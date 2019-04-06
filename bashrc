@@ -89,6 +89,7 @@ add_path /usr/bin
 add_path /usr/sbin
 
 export JAVA_HOME=/opt/java
+export GOPATH=~/apps/go
 
 mutt() {
 	imap_pid=$HOME/.offlineimap/pid
@@ -130,6 +131,7 @@ if [ -f "${HOME}/.gpg-agent-info" ]; then
 	. "${HOME}/.gpg-agent-info"
 	export GPG_AGENT_INFO
 	export SSH_AUTH_SOCK
+	export SSH_AGENT_PID
 fi
 
 if at_work && [ -f $ETC/bashrc.work ]; then
