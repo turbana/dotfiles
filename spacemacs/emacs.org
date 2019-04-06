@@ -596,6 +596,11 @@ Disable search highlighting
 #+BEGIN_SRC emacs-lisp :tangle yes
   (global-evil-search-highlight-persist 0)
 #+END_SRC
+** Helm
+*** Keybinds
+#+BEGIN_SRC emacs-lisp :tangle yes
+(define-key helm-map (kbd "C-w") 'backward-kill-word)
+#+END_SRC
 * Refile
 #+BEGIN_SRC emacs-lisp :tangle yes
   (setq create-lockfiles nil)
