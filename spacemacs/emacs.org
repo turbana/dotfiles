@@ -564,11 +564,11 @@ fixed width.
 
   (add-hook 'org-mode-hook #'ic/variable-pitch-mode)
 #+END_SRC
-** Browser
-Use chromium as default browser
+** Web Browser
+Use whatever we have as =web= as default browser
 #+BEGIN_SRC emacs-lisp :tangle yes
   (setq browse-url-browser-function 'browse-url-generic
-        browse-url-generic-program "chromium")
+        browse-url-generic-program "web")
 #+END_SRC
 ** Clipboard
 Use system clipboard
