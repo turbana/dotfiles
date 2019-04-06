@@ -44,6 +44,7 @@ values."
      evil-commentary
      haskell
      javascript
+     ;; mu4e
      org
      python
 		 restclient

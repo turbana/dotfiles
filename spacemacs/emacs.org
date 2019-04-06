@@ -402,6 +402,140 @@ So we can see how much crap there is.
 #+BEGIN_SRC emacs-lisp :tangle no
   (use-package disk-usage)
 #+END_SRC
+** mu4e
+First, setup mu.
+#+BEGIN_SRC emacs-lisp :tangle no
+  (setq mail-user-agent 'mu4e-user-agent)
+  (setq mu4e-maildir "~/mail")
+  ;; (setq mu4e-mu-binary "/usr/local/bin/mu")
+  (setq mu4e-get-mail-command "offlineimap -o")
+#+END_SRC
+
+We can only check our gmail accounts once every 10 minutes or we risk a ban.
+#+BEGIN_QUOTE
+Make sure your mail app isn't set to check for new email too frequently. If your mail app checks for new messages more than once every 10 minutes, the app’s access to your account could be blocked.
+#+END_QUOTE
+More information [[https://support.google.com/mail/answer/7126229?p=BadCredentials&visit_id=636868193607658613-796315695&rd=2#cantsignin][here]].
+
+#+BEGIN_SRC emacs-lisp :tangle no
+  (setq mu4e-update-interval 600)
+#+END_SRC
+
+Then, some common variables.
+#+BEGIN_SRC emacs-lisp :tangle no
+  ;; show images inline
+  (setq mu4e-view-show-images t)
+  (setq mu4e-show-images t)
+  ;; show addresses rather than names
+  (setq mu4e-view-show-addresses t)
+  ;; strip html when viewing emails...
+  (setq mu4e-html2text-command "w3m -dump -T text/html")
+  ;; ... and allow me to open an email in a browser
+  (add-to-list 'mu4e-view-actions '("view in browser" . mu4e-action-view-in-browser) t)
+  ;; don't keep message buffers around
+  (setq message-kill-buffer-on-exit t)
+  ;; quit silently
+  (setq mu4e-confirm-quit nil)
+#+END_SRC
+
+Have a slightly different layout when showing an inbox.
+#+BEGIN_SRC emacs-lisp :tangle no
+  ;; different date format
+  (setq mu4e-headers-date-format "%Y-%m-%d %H:%M")
+  ;; set header fields
+  (setq mu4e-headers-fields
+        '((:date    . 17)
+          (:flags   . 6)
+          (:from    . 32)
+          (:subject . nil)))
+#+END_SRC
+
+We need a helper function to determine what context we're in automatically.
+#+BEGIN_SRC emacs-lisp :tangle no
+  ;; taken from: https://notanumber.io/2016-10-03/better-email-with-mu4e/
+  (defun ic//mu4e-maildir-matches (msg rx)
+    (when rx
+      (if (listp rx)
+            ;; If rx is a list, try each one for a match
+            (or (ic//mu4e-maildir-matches msg (car rx))
+                (ic//mu4e-maildir-matches msg (cdr rx)))
+          ;; Not a list, check rx
+          (string-match rx (mu4e-message-field msg :maildir)))))
+#+END_SRC
+
+Some default gmail setup.
+#+BEGIN_SRC emacs-lisp :tangle no
+  (setq message-send-mail-function 'smtpmail-send-it)
+  ;; (setq smtpmail-default-smtp-server "smtp.gmail.com")
+  (setq smtpmail-smtp-server "smtp.gmail.com")
+  (setq smtpmail-smtp-service 587)
+  ;; (setq smtpmail-stream-type 'starttls)
+  ;; (setq smtpmail-smtp-local-domain "gmail.com")
+#+END_SRC
+
+For each of our gmail accounts we need an application specific password to use
+to send email. To create one go [[https://security.google.com/settings/u/1/security/apppasswords][here]]. Be sure and insert a line into
+=~/.authinfo.gpg= for each account with the following format:
+#+BEGIN_EXAMPLE
+machine smtp.gmail.com port 587 login <user>@gmail.com password <account password>
+#+END_EXAMPLE
+
+Now some account specific setup
+#+BEGIN_SRC emacs-lisp :tangle no
+  ;; This sets up my two different context for my personal and work emails.
+  (setq mu4e-contexts
+        (let ((professional-address (ic/read-secret "gmail-professional" "address"))
+              (professional-name (ic/read-secret "gmail-professional" "name"))
+              (personal-address (ic/read-secret "gmail-personal" "address"))
+              (personal-name (ic/read-secret "gmail-personal" "name")))
+          `( ,(make-mu4e-context
+               :name "professional-gmail"
+               :enter-func `(lambda () (mu4e-message (concat "Switch to " ,professional-address)))
+               :match-func (lambda (msg)
+                             (when msg
+                               (ic//mu4e-maildir-matches msg "^/gmail-professional")))
+               :leave-func (lambda () (mu4e-clear-caches))
+               :vars `((user-mail-address     . ,professional-address)
+                       (user-full-name        . ,professional-name)
+                       (mu4e-sent-folder      . "/gmail-professional/sent")
+                       (mu4e-drafts-folder    . "/gmail-professional/drafts")
+                       (mu4e-trash-folder     . "/gmail-professional/trash")
+                       (mu4e-refile-folder    . "/gmail-professional/inbox") ; XXX What should this be?
+                       (smtpmail-smtp-user    . ,professional-address)
+                       ))
+              ,(make-mu4e-context
+                :name "home-gmail"
+                :enter-func (lambda () `(mu4e-message (concat "Switch to " ,personal-address)))
+                :match-func (lambda (msg)
+                              (when msg
+                                (ic//mu4e-maildir-matches msg "^/gmail-personal")))
+                :leave-func (lambda () (mu4e-clear-caches))
+                :vars `((user-mail-address     . ,personal-address)
+                        (user-full-name        . ,personal-name)
+                        (mu4e-sent-folder      . "/gmail-personal/sent")
+                        (mu4e-drafts-folder    . "/gmail-personal/drafts")
+                        (mu4e-trash-folder     . "/gmail-personal/trash")
+                        (mu4e-refile-folder    . "/gmail-personal/inbox")
+                        (smtpmail-smtp-user    . ,personal-address)
+                        )))))
+
+  ;; compose under the current context
+  (setq mu4e-compose-context-policy nil)
+#+END_SRC
+
+Message composing should be done in =org-mode= format and sent as html.
+#+BEGIN_SRC emacs-lisp :tangle no
+  ;; automatically flow text when sending
+  (setq mu4e-compose-format-flowed t)
+
+  ;; enter org-mode when composing
+  (add-hook 'message-mode-hook 'org-mu4e-compose-org-mode)
+
+  ;; export org-mode into html when sending
+  (setq org-mu4e-convert-to-html t)
+
+  ;; (setq org-mu4e-link-query-in-headers-mode nil)
+#+END_SRC
 ** Recipes
 First, we need to setup some configuration.
 #+BEGIN_SRC emacs-lisp :tangle yes
