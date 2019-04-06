@@ -319,6 +319,19 @@ Add some custom =<X= templates.
   (setq org-catch-invisible-edits 'error)
 #+END_SRC
 *** Exporting
+Let's set some defaults. I don't want to see a table of contents, but I do want
+to see most everything else.
+#+BEGIN_SRC emacs-lisp :tangle yes
+  (setq org-export-with-toc nil)
+  (setq org-export-with-timestamps t)
+  (setq org-babel-default-header-args
+        '((:session . "none")
+          (:results . "replace")
+          (:exports . "both")
+          (:cache   . "no")
+          (:noweb   . "no")))
+#+END_SRC
+
 #+BEGIN_SRC emacs-lisp :tangle yes
   (setq org-publish-project-alist
         '(("recipes"
