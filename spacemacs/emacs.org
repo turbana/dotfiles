@@ -44,6 +44,10 @@ Now let's setup emacs to use =gpg2= and a helper function to read from my secret
   (setq org-outline-path-complete-in-steps nil)
 #+END_SRC
 *** Keybinds
+I want =, r= to refile rather than =, R=.
+#+BEGIN_SRC emacs-lisp :tangle yes
+  (spacemacs/set-leader-keys-for-major-mode 'org-mode "r" 'org-refile)
+#+END_SRC
 **** Agenda
 #+BEGIN_SRC emacs-lisp :tangle yes
   (global-set-key (kbd "M-<f1>") 'org-clock-goto)
