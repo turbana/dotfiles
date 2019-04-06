@@ -1,6 +1,6 @@
 # -*- mode: snippet -*-
 # name: Blank Python Template
-# key: newpy
+# key: pynew
 # --
 """ $0 """
 
@@ -8,8 +8,8 @@ import sys
 
 
 def main(args):
-	pass
+    pass
 
 
 if __name__ == "__main__":
-	sys.exit(main(sys.argv[1:]))
+    sys.exit(main(sys.argv[1:]))
