@@ -638,6 +638,12 @@ Disable search highlighting
 #+BEGIN_SRC emacs-lisp :tangle yes
   (global-evil-search-highlight-persist 0)
 #+END_SRC
+** Customize
+Disable customize by having emacs write customize variables to a file that is
+never loaded.
+#+BEGIN_SRC emacs-lisp :tangle yes
+  (setq custom-file (concat user-emacs-directory "ignore-custom.el"))
+#+END_SRC
 ** Helm
 *** Keybinds
 #+BEGIN_SRC emacs-lisp :tangle yes
