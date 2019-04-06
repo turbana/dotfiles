@@ -31,28 +31,31 @@ values."
    ;; List of configuration layers to load.
    dotspacemacs-configuration-layers
    '(
+     html
      ansible
      (auto-completion :variables
-                      auto-completion-return-key-behavior nil
-                      auto-completion-tab-key-behavior 'complete
-                      auto-completion-complete-with-key-sequence nil
-                      auto-completion-private-snippets-directory "~/.etc/spacemacs/snippets")
-		 colors
-		 ranger
+      auto-completion-return-key-behavior nil
+      auto-completion-tab-key-behavior 'complete
+      auto-completion-complete-with-key-sequence nil
+      auto-completion-enable-snippets-in-popup 1
+      auto-completion-private-snippets-directory "~/.etc/spacemacs/snippets")
+     colors
+     ranger
      (git :variables
-          git-gutter-use-fringe t)
+      git-gutter-use-fringe t)
      evil-commentary
+     evil-snipe
      haskell
      javascript
      ;; mu4e
      org
      python
-		 restclient
+     restclient
      shell
      spell-checking
      syntax-checking
      yaml
-		 themian
+     themian
      )
    ;; List of additional packages that will be installed without being
    ;; wrapped in a layer. If you need some configuration for these
