@@ -16,7 +16,7 @@ to return values from an ini file.
                        (search-forward-regexp "^ *\\[" nil t))
                      (point-max))))
         (search-forward-regexp (concat "^ *" key " *= *") max)
-        (read (buffer-substring (point) (point-at-eol))))))
+        (buffer-substring (point) (point-at-eol)))))
 #+END_SRC
 
 Now let's setup emacs to use =gpg2= and a helper function to read from my secrets file.
