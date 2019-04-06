@@ -70,6 +70,7 @@ FORMAT_MONTH                 = format("base+2", "base-3")
 FORMAT_NORMAL                = format("base+3", "base-3")
 #FORMAT_EVENT                 = format("green")
 FORMAT_EVENT                 = format("yellow")
+FORMAT_LINE_START            = "^pa(_LEFT)^p(250)"
 
 EVENT_TODAY  = format("base+4", "base-2")
 EVENT_WEEK   = format("base+4", "base-3")
