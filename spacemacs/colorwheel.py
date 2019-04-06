@@ -16,40 +16,42 @@ EMACS_COLOR_THEME_MARK = ";;;; THEMIAN-COLORS"
 
 
 # main blue color that all other colors are in reference to
-BASE_BLUE = "#7a90cc"
+BASE_BLUE = "#7596c8"
 
 # hue transformations defined in degrees from BASE_BLUE
 MAIN_COLORS = {
     "blue": 0,
-    "orange": 180,
-    "red": 120,
-    "magenta": 90,
-    "green": -90,
-    "violet": 30,
-    "cyan": -30,
-    "yellow": -150,
+    "orange": 190,
+    "red": 130,
+    "magenta": 100,
+    "green": -100,
+    "violet": 40,
+    "cyan": -40,
+    "yellow": -160,
 }
 
 # gray values in HSL
 GRAYS = (
     # dark theme
-    (0.0, 0.0, 0.15),
-    (0.0, 0.0, 0.20),
-    (0.0, 0.0, 0.40),
-    (0.0, 0.0, 0.50),
-    (0.0, 0.0, 0.60),
-    (0.0, 0.0, 0.70),
-    (0.0, 0.0, 0.80),
-    (0.0, 0.0, 0.85),
+    (0.6, 0.05, 0.07),
+    (0.6, 0.05, 0.10),
+    (0.6, 0.05, 0.15),
+    (0.6, 0.05, 0.25),
+    (0.6, 0.05, 0.40),
+    (0.6, 0.05, 0.60),
+    (0.6, 0.05, 0.75),
+    (0.6, 0.05, 0.85),
+    (0.6, 0.05, 0.90),
     # light theme
+    (0.125, 0.90, 0.93),
     (0.125, 0.70, 0.90),
-    (0.125, 0.50, 0.85),
-    (0.125, 0.40, 0.70),
+    (0.125, 0.50, 0.80),
+    (0.125, 0.40, 0.65),
     (0.125, 0.40, 0.55),
-    (0.125, 0.30, 0.45),
-    (0.125, 0.30, 0.35),
-    (0.125, 0.20, 0.25),
-    (0.125, 0.10, 0.20),
+    (0.125, 0.30, 0.40),
+    (0.125, 0.30, 0.25),
+    (0.125, 0.20, 0.15),
+    (0.125, 0.10, 0.10),
 )
 
 # luminance of cyan for dark-mode diff colors
@@ -102,12 +104,11 @@ def load_diffs(color, dark_lum, light_lum, step):
 def load_colors(base_color):
     def _load_color(c):
         return load_color(c, base_color)
-    gray_names = ["base%+d" % i for i in range(-4, 0) + range(1, 5)]
-    # gray_dark = list(load_grays(DARK_LUM, LIGHT_LUM))
-    # gray_light = list(reversed(gray_dark))
+    gray_names = ["base%+d" % i for i in range(-5, 0) + range(1, 5)]
     grays = list(load_grays())
-    gray_dark = grays[:8]
-    gray_light = grays[8:]
+    half = len(grays) / 2
+    gray_dark = grays[:half]
+    gray_light = grays[half:]
     main_names = list(MAIN_COLORS.keys())
     main_bg_names = [name+"-bg" for name in main_names]
     main_dark = map(_load_color, main_names)
@@ -118,9 +119,6 @@ def load_colors(base_color):
     diff_dark = [x[0] for x in diffs]
     diff_light = [x[1] for x in diffs]
     colors = {
-        # "grays": (gray_names, grays, list(reversed(grays))),
-        # "main": (main_names, main_dark, main_light),
-        # "diff": (diff_names, diff_dark, diff_light),
         "names": gray_names + main_names + main_bg_names + diff_names,
         "dark": gray_dark + main_dark + main_light + diff_dark,
         "light": gray_light + main_light + main_dark + diff_light,
