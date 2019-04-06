@@ -156,13 +156,38 @@ Hide emphasis markers such as *bold*, /italic/, etc.
                   ((org-agenda-overriding-header "Refile tasks:")
                    (org-tags-match-list-sublevels nil)))
             (tags "-refile/"
-                    ((org-agenda-overriding-header "Archive tasks:")
-                     (org-agenda-skip-function 'bh/skip-non-archivable-tasks)
-                     (org-tags-match-list-sublevels nil))))
-           nil)
+                  ((org-agenda-overriding-header "Archive tasks:")
+                   (org-agenda-skip-function 'bh/skip-non-archivable-tasks)
+                   (org-tags-match-list-sublevels nil))))
+           ((org-agenda-block-separator "1")
+            (org-agenda-compact-blocks t)
+            (org-agenda-tag-filter-preset '("-HOME"))
+            ))
+          ("h" "Home agenda"
+           ((agenda "" nil)
+            (tags "refile"
+                  ((org-agenda-overriding-header "\nRefile tasks:")
+                   (org-tags-match-list-sublevels nil)))
+            (tags "-refile/"
+                  ((org-agenda-overriding-header "\nArchive tasks:")
+                   (org-agenda-skip-function 'bh/skip-non-archivable-tasks)
+                   (org-tags-match-list-sublevels nil)))
+            (tags-todo "chores+PRIORITY=\"A\"|jobs+PRIORITY=\"A\""
+                       ((org-agenda-overriding-header "\nImportant Chores:")))
+            (tags-todo "chores|jobs"
+                       ((org-agenda-overriding-header "\nChores:")
+                        (org-agenda-skip-function
+                         '(org-agenda-skip-entry-if 'scheduled 'deadline))))
+            )
+           ((org-agenda-block-separator "1")
+            (org-agenda-compact-blocks t)
+            (org-agenda-tag-filter-preset '("+HOME"))
+            ))
           ))
   ;; don't have a separator between agenda sections
-  (setq org-agenda-block-separator nil)
+  (setq org-agenda-block-separator "2")
+  (setq org-agenda-compact-blocks nil)
+#+END_SRC
 *** Habits
 #+BEGIN_SRC emacs-lisp :tangle yes
   (setq org-habit-preceding-days 7)
