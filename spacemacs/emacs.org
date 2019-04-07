@@ -672,7 +672,7 @@ Some good variable spaced fonts:
   (defvar ic/variable-pitch-font '("Gillius ADF" 13.0))
 
   (defun ic/setup-fonts (fixed-pitch-font variable-pitch-font)
-    (flet ((make-size (size)
+    (cl-flet ((make-size (size)
              (truncate (* 10 size))))
       (let ((fixed-family (first fixed-pitch-font))
             (fixed-height (make-size (second fixed-pitch-font)))
@@ -792,6 +792,33 @@ never loaded.
 #+BEGIN_SRC emacs-lisp :tangle yes
 (define-key helm-map (kbd "C-w") 'backward-kill-word)
 #+END_SRC
+** Quitting
+I want emacs to continue to run as a server whenever I "quit". I should have to
+use an infrequent key sequence to fully kill emacs. Taken from [[https://www.reddit.com/r/spacemacs/comments/6p3w0l/making_q_not_kill_emacs/][here]].
+#+BEGIN_SRC emacs-lisp :tangle yes
+  (defun ic/save-kill-buffer-and-window ()
+    "Save current buffer and kill it along with current window."
+    (interactive)
+    (let ((spacemacs-really-kill-emacs nil))
+      (save-buffer)
+      (kill-buffer-and-window)))
+
+  (defun ic/prompt-kill-emacs ()
+    "Prompt to quit emacs, then save and quit."
+    (interactive)
+    (when (yes-or-no-p "Really quit emacs?")
+      (let ((spacemacs-really-kill-emacs t))
+        (save-buffers-kill-emacs))))
+
+  ;; set spacemacs keys
+  (spacemacs/set-leader-keys "qq" 'spacemacs/frame-killer)
+  (spacemacs/set-leader-keys "qQ" 'ic/prompt-kill-emacs)
+
+  ;; set evil keys
+  (evil-ex-define-cmd "q[uit]" 'kill-buffer-and-window)
+  (evil-ex-define-cmd "wq" 'ic/save-kill-buffer-and-window)
+#+END_SRC
+
 * Refile
 #+BEGIN_SRC emacs-lisp :tangle yes
   (setq create-lockfiles nil)
