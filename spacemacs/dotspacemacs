@@ -135,9 +135,8 @@ values."
    ;; List of themes, the first of the list is loaded when spacemacs starts.
    ;; Press <SPC> T n to cycle to the next theme in the list (works great
    ;; with 2 themes variants, one dark and one light)
-   dotspacemacs-themes '(themian-dark)
-   ;; dotspacemacs-themes '((themian-dark :location local)
-   ;;                       (themian-light :location local))
+   dotspacemacs-themes '(themian-dark
+                         themian-light)
    ;; If non nil the cursor color matches the state color in GUI Emacs.
    dotspacemacs-colorize-cursor-according-to-state nil
    ;; Default font. `powerline-scale' allows to quickly tweak the mode-line
@@ -310,7 +309,10 @@ executes.
  This function is mostly useful for variables that need to be set
 before packages are loaded. If you are unsure, you should try in setting them in
 `dotspacemacs/user-config' first."
-  (add-to-list 'custom-theme-load-path "~/.etc/spacemacs/private-layers/themian/local/themian-theme")
+  ;; XXX spacemacs calls (load-theme) really early in the startup process, long
+  ;; before it loads any custom packages. So force load my custom theme package
+  ;; early so we can use it in `dotspacemacs/themes'.
+  (load-file "~/.etc/spacemacs/private-layers/themian/local/themian-theme/themian-theme.el")
   )
 
 (defun dotspacemacs/user-config ()

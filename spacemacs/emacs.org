@@ -655,10 +655,6 @@ See [[*Exporting][Exporting]].
   (setq lisp-indent-function 'common-lisp-indent-function)
 #+END_SRC
 * Misc
-** Color Themes
-#+BEGIN_SRC emacs-lisp :tangle yes
-  (load-theme 'themian-dark t)
-#+END_SRC
 ** Fonts
 Setup both monospaced and non-monospaced fonts.
 
