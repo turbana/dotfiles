@@ -616,7 +616,6 @@ See [[*Exporting][Exporting]].
            :html-preamble t
            )))
 #+END_SRC
-#+END_SRC
 * Programming
 ** General
 *** Indentation
@@ -790,7 +789,19 @@ never loaded.
 ** Helm
 *** Keybinds
 #+BEGIN_SRC emacs-lisp :tangle yes
-(define-key helm-map (kbd "C-w") 'backward-kill-word)
+  (define-key helm-map (kbd "C-w") 'backward-kill-word)
+#+END_SRC
+** Evil
+*** Keybinds
+When editing an =org-src= block =:w= should save the parent buffer.
+#+BEGIN_SRC emacs-lisp :tangle yes
+  (defun ic/evil-save-src-block-advice (evil-write &rest args)
+    "When edit an org-src block `:w' should call `(org-edit-src-save)'."
+    (if (string-prefix-p "*Org Src" (buffer-name))
+        (org-edit-src-save)
+      (apply evil-write args)))
+
+  (advice-add #'evil-write :around #'ic/evil-save-src-block-advice)
 #+END_SRC
 ** Quitting
 I want emacs to continue to run as a server whenever I "quit". I should have to
