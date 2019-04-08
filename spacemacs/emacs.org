@@ -2,6 +2,11 @@
 #+STARTUP: content
 
 * Initial
+** Lexical binding
+All right-thinking people use lexical binding.
+#+BEGIN_SRC emacs-lisp :tangle yes
+  ;; -*- lexical-binding: t -*-
+#+END_SRC
 ** Secrets
 I'll store my secrets in a gpg encrypted ini file, so we first need a function
 to return values from an ini file.
