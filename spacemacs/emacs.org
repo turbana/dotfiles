@@ -32,6 +32,48 @@ Now let's setup emacs to use =gpg2= and a helper function to read from my secret
   (defun ic/read-secret (section key)
     (ic/read-from-ini ic/secrets-file section key))
 #+END_SRC
+** Debugging
+*** Tracing
+Some functions to trace the changing of variables.
+#+BEGIN_SRC emacs-lisp :tangle yes
+  ;; use when live editing
+  ;; (setq lexical-binding t)
+
+  (defun ic/watch-variable (symbol &rest ops)
+    "Watch for any OPS operations on SYMBOL and call `message'. OPS defaults to '(set), see
+  `add-variable-watcher' for all possible values."
+    (defun watch-variable-call-message (symbol value operation buffer)
+      (message "%s(%s): %s '%s'" symbol buffer operation value))
+    (ic/watch-variable-call-func symbol #'watch-variable-call-message ops))
+
+  (defun ic/watch-variable-raise-debug (symbol &rest ops)
+    "Watch for any changes to SYMBOL and raise on error."
+    (defun watch-variable-raise-error (symbol value operation buffer)
+      (error "symbol %S changed to '%S'" symbol value))
+    (ic/watch-variable-call-func symbol #'watch-variable-raise-debug ops))
+
+  (defvar ic//variable-watchers nil "alist of variable watchers")
+
+  (defun ic/watch-variable-call-func (symbol func &rest ops)
+    "Watch for any OPS on SYMBOL and call FUNC."
+    (unless (assq symbol ic//variable-watchers)
+      (when (equal ops (list nil))
+        (setq ops '(set let unlet makunbound defvaralias)))
+      (defun watch-change (symbol value operation buffer)
+        (when (member operation ops)
+          (apply func (list symbol value operation buffer))))
+      (add-variable-watcher symbol #'watch-change)
+      (push (cons symbol #'watch-change) ic//variable-watchers)))
+
+  (defun ic/unwatch-variable (symbol)
+    "Remove any `ic/watch-variable-*' watchers from SYMBOL."
+    (let ((watcher (alist-get symbol ic//variable-watchers)))
+      (when watcher
+        (remove-variable-watcher symbol watcher)
+        (setq ic//variable-watchers
+              (assq-delete-all symbol ic//variable-watchers))
+        t)))
+#+END_SRC
 * Major Packages
 ** org-mode
 *** Basic Setup
