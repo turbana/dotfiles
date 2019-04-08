@@ -810,10 +810,11 @@ Use system clipboard
   (setq x-select-enable-primary t)
 #+END_SRC
 ** Line Numbers
-Use relative line numbers everywhere.
+Use static line numbers everywhere. I want to use relative, but found a
+significant performance hit when doing so. Using =helm= was especially painful.
 #+BEGIN_SRC emacs-lisp :tangle yes
   (global-linum-mode)
-  (linum-relative-global-mode)
+  (linum-relative-global-mode -1)
 #+END_SRC
 
 ** Text Wrap
