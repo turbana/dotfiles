@@ -74,6 +74,21 @@ Some functions to trace the changing of variables.
               (assq-delete-all symbol ic//variable-watchers))
         t)))
 #+END_SRC
+*** Profiling
+Some profiler keybindings.
+#+BEGIN_SRC emacs-lisp :tangle no
+  (defun ic/start-cpu-profiler ()
+    (interactive)
+    (profiler-start 'cpu))
+  (defun ic/start-mem-profiler ()
+    (interactive)
+    (profiler-start 'mem))
+
+  (global-set-key (kbd "<f3>") 'ic/start-cpu-profiler)
+  (global-set-key (kbd "<f4>") 'profiler-stop)
+  (global-set-key (kbd "<f5>") 'profiler-report)
+  (global-set-key (kbd "<f6>") 'ic/start-mem-profiler)
+#+END_SRC
 * Major Packages
 ** org-mode
 *** Basic Setup
