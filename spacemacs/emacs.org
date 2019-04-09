@@ -248,7 +248,7 @@ Hide emphasis markers such as *bold*, /italic/, etc.
                    (org-tags-match-list-sublevels nil)))
             (tags-todo "chores+PRIORITY=\"A\"|jobs+PRIORITY=\"A\""
                        ((org-agenda-overriding-header "\nImportant Chores:")))
-            (tags-todo "chores|jobs"
+            (tags-todo "chores-PRIORITY=\"A\"|jobs-PRIORITY=\"A\""
                        ((org-agenda-overriding-header "\nChores:")
                         (org-agenda-skip-function
                          '(org-agenda-skip-entry-if 'scheduled 'deadline))))
