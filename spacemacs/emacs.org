@@ -39,32 +39,38 @@ Some functions to trace the changing of variables.
   ;; use when live editing
   ;; (setq lexical-binding t)
 
+  (defvar ic/watch-variable-message-fmt "%s(%s): %s %S"
+    "Format to use when displaying variable changes. Equivalent to
+  `(format ic/watch-variable-message-fmt symbol buffer operation value)'.")
+
   (defun ic/watch-variable (symbol &rest ops)
-    "Watch for any OPS operations on SYMBOL and call `message'. OPS defaults to '(set), see
-  `add-variable-watcher' for all possible values."
+    "Watch for any OPS operations on SYMBOL and call `message'. OPS defaults to
+  '(set), see `add-variable-watcher' for all possible values."
     (defun watch-variable-call-message (symbol value operation buffer)
-      (message "%s(%s): %s %S" symbol buffer operation value))
-    (ic/watch-variable-call-func symbol #'watch-variable-call-message ops))
+      (message (ic//watch-variable-format symbol buffer operation value))
+    (ic/watch-variable-call-func symbol #'watch-variable-call-message ops)))
 
   (defun ic/watch-variable-raise-debug (symbol &rest ops)
     "Watch for any changes to SYMBOL and raise on error."
     (defun watch-variable-raise-debug (symbol value operation buffer)
-      (error "symbol %S changed to %S" symbol value))
+      (let ((msg (ic//watch-variable-format symbol buffer operation value)))
+        (message msg)
+        (debug nil msg)))
     (ic/watch-variable-call-func symbol #'watch-variable-raise-debug ops))
 
   (defun ic/watch-variable-print-stack (symbol &rest ops)
     "Watch for any changes to SYMBOL and print a stack trace."
     (defun watch-variable-print-stack (symbol value operation buffer)
-      (let ((stack-trace (with-output-to-string (backtrace))))
-        (message "%s(%s): %s %S" symbol buffer operation value)
-        (if (not stack-trace)
-            (message "(no stack trace found)")
-          (message ">>>>>>>>>>")
-          (message "%S" stack-trace)
-          (message "<<<<<<<<<<"))))
+      (message (ic//watch-variable-format symbol buffer operation value))
+      (if-let ((stack-trace (with-output-to-string (backtrace))))
+          (progn
+            (message ">>>>>>>>>>")
+            (message "%S" stack-trace)
+            (message "<<<<<<<<<<"))
+        (message "(no stack trace found)")))
     (ic/watch-variable-call-func symbol #'watch-variable-print-stack ops))
 
-  (defvar ic//variable-watchers nil "alist of variable watchers")
+  (defvar ic//variable-watchers nil "a-list of variable watchers")
 
   (defun ic/watch-variable-call-func (symbol func &rest ops)
     "Watch for any OPS on SYMBOL and call FUNC."
@@ -85,6 +91,10 @@ Some functions to trace the changing of variables.
         (setq ic//variable-watchers
               (assq-delete-all symbol ic//variable-watchers))
         t)))
+
+  (defun ic//watch-variable-format (symbol value operation buffer)
+    "Generate printable string."
+    (format "%s(%s): %s %S" symbol buffer operation value))
 #+END_SRC
 *** Profiling
 Some profiler keybindings.
