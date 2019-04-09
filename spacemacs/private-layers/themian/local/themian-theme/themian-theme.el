@@ -85,6 +85,8 @@
        (lazy-highlight (:inherit default))
        (link (:foreground ,orange :underline t))
        (link-visited (:background ,unknown))
+       (line-number (:inherit linum))
+       (line-number-current-line (:inherit linum-relative-current-face))
        (linum
         (:foreground ,base-1 :background ,base-5 :weight normal :slant italic
                      :underline nil :box nil))

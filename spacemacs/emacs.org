@@ -884,11 +884,44 @@ Use system clipboard
   (setq x-select-enable-primary t)
 #+END_SRC
 ** Line Numbers
-Use static line numbers everywhere. I want to use relative, but found a
-significant performance hit when doing so. Using =helm= was especially painful.
+Use relative line numbers, but only in certain text-heavy modes.
 #+BEGIN_SRC emacs-lisp :tangle yes
-  (global-linum-mode)
+  (global-linum-mode -1)
   (linum-relative-global-mode -1)
+  (add-hook 'prog-mode-hook 'linum-relative-mode)
+  (add-hook 'text-mode-hook 'linum-relative-mode)
+#+END_SRC
+
+Use =display-line-numbers= as the backend to =linum-relative= as it's written in C
+rather than elisp that =linum= is. There is a measurable performance increase.
+#+BEGIN_SRC emacs-lisp :tangle yes
+  (setq linum-relative-backend 'display-line-numbers-mode)
+#+END_SRC
+
+Show absolute line number for the current line, relative for others.
+#+BEGIN_SRC emacs-lisp :tangle yes
+  (setq-default display-line-numbers-type 'visual
+                display-line-numbers-current-absolute t)
+#+END_SRC
+
+Ignore folded lines when showing line number.
+#+BEGIN_SRC emacs-lisp :tangle yes
+  (setq-default display-line-numbers-width nil
+                display-line-numbers-widen t)
+#+END_SRC
+
+=linum-relative= this lovely bit of code in =(linum-relative-on)= found at
+=linum-relative.el:215=
+#+BEGIN_SRC emacs-lisp :tangle no
+  (unless (eq linum-relative-user-type 'relative)
+    (setq linum-relative-user-type display-line-numbers-type)
+    (setq display-line-numbers-type 'relative))
+#+END_SRC
+
+So it will clobber our version of =display-line-numbers-type= unless we also set
+=linum-relative-user-type= to ='relative=. Ugh.
+#+BEGIN_SRC emacs-lisp :tangle yes
+  (setq-default linum-relative-user-type 'relative)
 #+END_SRC
 
 ** Text Wrap
