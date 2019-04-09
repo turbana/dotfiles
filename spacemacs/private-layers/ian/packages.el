@@ -14,7 +14,8 @@
 ;;; Code:
 
 (defconst ian-packages
-  '((themian-theme :location local)))
+  '((themian-theme :location local)
+    (recipian :location local)))
 
 (defun ian/init-themian-theme ()
   (use-package themian-theme
@@ -33,7 +34,9 @@
                          (interactive)
                          (load-file "themian-theme.el")
                          (load-file "themian-light-theme.el")
-                         (load-theme 'themian-light t)))
-                      )))
+                        (load-theme 'themian-light t))))))
+
+(defun ian/init-recipian ()
+  (use-package recipian))
 
 ;;; packages.el ends here

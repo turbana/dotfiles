@@ -626,129 +626,15 @@ First, we need to setup some configuration.
 #+BEGIN_SRC emacs-lisp :tangle yes
   (defvar ic/recipes-org-file "~/org/home/recipes/recipes.org")
   (defvar ic/recipes-www-dir "~/www/recipes")
-#+END_SRC
-*** Parsing
-For the export we want to iterate though the org file, looking for recipes,
-export those recipes individually, then build the table of contents.
-#+BEGIN_SRC emacs-lisp :tangle yes
-  (defun ic/recipes-export ()
+
+  (defun ic/generate-recipes ()
     (interactive)
-    (with-temp-buffer
-      (insert-file-contents ic/recipes-org-file)
-      ;; (org-show-subtree)
-      (org-element-map (org-element-parse-buffer) 'headline
-        (lambda (elem)
-          (when (ic//is-recipe-p elem)
-            (ic//recipes-export-single (ic//recipes-parse-recipe elem)))))))
+    ;; XXX force reload of the package during development
+    (load "~/.etc/spacemacs/private-layers/ian/local/recipian/recipian.el")
+    (recipian-generate-static-site ic/recipes-org-file ic/recipes-www-dir))
 
-  ;; XXX temp keybinding while testing
-  (global-set-key (kbd "<f2>") 'ic/recipes-export)
-#+END_SRC
-
-We define a recipe as a headline with two specific child headlines: =Ingredients=
-and =Steps=.
-#+BEGIN_SRC emacs-lisp :tangle yes
-  (defun ic//is-recipe-p (elem)
-    (and (ic/org-element-find-child elem 'headline "Ingredients")
-         (ic/org-element-find-child elem 'headline "Steps")))
-#+END_SRC
-
-Find the immediate children of an element
-#+BEGIN_SRC emacs-lisp :tangle yes
-  (defun ic/org-element-children (elem type)
-    (org-element-map elem type
-      (lambda (child)
-        (let ((parent (org-element-property :parent child)))
-          (when (eq parent elem)
-            child)))))
-
-  (defun ic/org-element-find-child (elem type child-name)
-    (seq-filter
-     (lambda (child)
-       (equal child-name
-              (org-element-property :raw-value child)))
-     (ic/org-element-children elem type)))
-#+END_SRC
-
-For some reason the both the =:tags= property of =org-property= and =org-get-tags=
-only return the local tags for a headline, even when =org-use-tag-inheritance= is
-=t=. I want tag inheritance, so let's define a function to do that.
-#+BEGIN_SRC emacs-lisp :tangle yes
-  (defun ic/org-element-tags (elem)
-    (let ((tags (org-element-property :tags elem))
-          (parent (org-element-property :parent elem)))
-      (if (and org-use-tag-inheritance parent)
-          (delete-dups (append tags (ic/org-element-tags parent)))
-        tags)))
-#+END_SRC
-
-Given an =org= heading we need a function to parse a recipe.
-#+BEGIN_SRC emacs-lisp :tangle yes
-  (defun ic//recipes-parse-recipe (elem)
-    (let ((name (org-element-property :raw-value elem))
-          (tags (ic/org-element-tags elem))
-          (ingredients (ic//recipes-get-child-list
-                        (ic/org-element-find-child elem 'headline "Ingredients")))
-          (steps (ic//recipes-get-child-list
-                  (ic/org-element-find-child elem 'headline "Steps")))
-          )
-      (when (not (and ingredients steps))
-        (error (format "invalid recipe '%s': must have headlines Ingredients and Steps" name)))
-      `((name . ,name)
-        (tags . ,tags)
-        (ingredients . ,ingredients)
-        (steps . ,steps)
-        )))
-
-  ;; (defun ic/org-element-to-text (elem)
-  ;;   (let ((start (org-element-property :contents-begin elem))
-  ;;         (end (org-element-property :contents-end elem)))
-  ;;     (buffer-substring start (- end 1))))
-
-  (defun ic//recipes-get-child-list (elem)
-    (mapcar
-     (lambda (elem)
-       (let ((start (org-element-property :contents-begin elem))
-             (end (org-element-property :contents-end elem)))
-         (buffer-substring start (- end 1))))
-     (org-element-map elem 'item #'identity nil nil 'item)))
-
-  (defun ic//recipes-org-list-to-list (elem)
-    (mapcar
-     (lambda (item) "foo")
-     ;; (lambda (item) (org-element-property :bullet item))
-     (ic/org-element-children elem nil)))
-#+END_SRC
-*** Exporting
-Test for exporting a recipe.
-#+BEGIN_SRC emacs-lisp :tangle yes
-  (defun ic//recipes-export-single (recipe)
-    (message "%S" recipe)
-    )
-#+END_SRC
-*** Old
-TODO: I can't figure out how to get =org-publish= to write each headline to a
-separate html file.
-See [[*Exporting][Exporting]].
-#+BEGIN_SRC emacs-lisp :tangle no
-  (setq org-publish-project-alist
-        '(("recipes"
-           :base-directory "~/org/home/recipes"
-           :base-extension "org"
-           :publishing-directory "~/recipes"
-           :publishing-function org-html-publish-to-html
-           :with-properties t
-           :with-tags t
-           :auto-sitemap t
-           :html-postamble nil
-
-           :exclude "PrivatePage.org"
-           :headline-levels 3
-           :section-numbers nil
-           :with-toc nil
-           :html-head "<link rel=\"stylesheet\" href=\"../other/mystyle.css\" type=\"text/css\"/>"
-           :html-preamble t
-           )))
+  ;; XXX keybind during development
+  (global-set-key (kbd "<f2>") 'ic/generate-recipes)
 #+END_SRC
 * Programming
 ** General
