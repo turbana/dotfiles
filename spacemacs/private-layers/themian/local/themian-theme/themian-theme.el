@@ -118,7 +118,7 @@
        (company-tooltip-annotation-selection (:inherit company-tooltip-annotation))
        (company-tooltip-common (:weight bold))
        (company-tooltip-common-selection (:inherit company-tooltip-common))
-       (company-tooltip-mouse (:foreground ,unknown))
+       (company-tooltip-mouse (:foreground ,blue))
        (company-tooltip-search (:foreground ,unknown))
        (company-tooltip-search-selection (:foreground ,unknown))
        (company-tooltip-selection (:foreground ,blue :background ,base-3))

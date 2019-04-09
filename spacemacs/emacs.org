@@ -819,7 +819,9 @@ fixed width.
     '(company-echo
       company-echo-common
       company-preview
-      company-preview-common
+      ;; keep this variable pitched as it's used on the same line as the input
+      ;; text (which is variable).
+      ;; company-preview-common
       company-preview-search
       company-scrollbar-bg
       company-scrollbar-fg
@@ -986,6 +988,14 @@ use an infrequent key sequence to fully kill emacs. Taken from [[https://www.red
   ;; set evil keys
   (evil-ex-define-cmd "q[uit]" 'kill-buffer-and-window)
   (evil-ex-define-cmd "wq" 'ic/save-kill-buffer-and-window)
+#+END_SRC
+** Garbage Collection
+Spacemacs has a really large value for =gc-cons-threshold= (100mb), let's change
+this back to the default and see how things feel.
+#+BEGIN_SRC emacs-lisp :tangle yes
+  ;; (setq gc-cons-threshold 8000000)
+  ;; TEMP let's see *when* gc occurs
+  (setq garbage-collection-messages t)
 #+END_SRC
 
 * Refile
