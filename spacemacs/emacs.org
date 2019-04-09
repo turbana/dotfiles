@@ -43,14 +43,26 @@ Some functions to trace the changing of variables.
     "Watch for any OPS operations on SYMBOL and call `message'. OPS defaults to '(set), see
   `add-variable-watcher' for all possible values."
     (defun watch-variable-call-message (symbol value operation buffer)
-      (message "%s(%s): %s '%s'" symbol buffer operation value))
+      (message "%s(%s): %s %S" symbol buffer operation value))
     (ic/watch-variable-call-func symbol #'watch-variable-call-message ops))
 
   (defun ic/watch-variable-raise-debug (symbol &rest ops)
     "Watch for any changes to SYMBOL and raise on error."
-    (defun watch-variable-raise-error (symbol value operation buffer)
-      (error "symbol %S changed to '%S'" symbol value))
+    (defun watch-variable-raise-debug (symbol value operation buffer)
+      (error "symbol %S changed to %S" symbol value))
     (ic/watch-variable-call-func symbol #'watch-variable-raise-debug ops))
+
+  (defun ic/watch-variable-print-stack (symbol &rest ops)
+    "Watch for any changes to SYMBOL and print a stack trace."
+    (defun watch-variable-print-stack (symbol value operation buffer)
+      (let ((stack-trace (with-output-to-string (backtrace))))
+        (message "%s(%s): %s %S" symbol buffer operation value)
+        (if (not stack-trace)
+            (message "(no stack trace found)")
+          (message ">>>>>>>>>>")
+          (message "%S" stack-trace)
+          (message "<<<<<<<<<<"))))
+    (ic/watch-variable-call-func symbol #'watch-variable-print-stack ops))
 
   (defvar ic//variable-watchers nil "alist of variable watchers")
 
