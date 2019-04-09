@@ -55,7 +55,7 @@ values."
      spell-checking
      syntax-checking
      yaml
-     themian
+     ian
      )
    ;; List of additional packages that will be installed without being
    ;; wrapped in a layer. If you need some configuration for these
@@ -310,7 +310,7 @@ before packages are loaded. If you are unsure, you should try in setting them in
   ;; XXX spacemacs calls (load-theme) really early in the startup process, long
   ;; before it loads any custom packages. So force load my custom theme package
   ;; early so we can use it in `dotspacemacs/themes'.
-  (load-file "~/.etc/spacemacs/private-layers/themian/local/themian-theme/themian-theme.el")
+  (load-file "~/.etc/spacemacs/private-layers/ian/local/themian-theme/themian-theme.el")
   )
 
 (defun dotspacemacs/user-config ()

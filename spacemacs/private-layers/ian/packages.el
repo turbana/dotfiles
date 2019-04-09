@@ -13,10 +13,10 @@
 
 ;;; Code:
 
-(defconst themian-packages
+(defconst ian-packages
   '((themian-theme :location local)))
 
-(defun themian/init-themian-theme ()
+(defun ian/init-themian-theme ()
   (use-package themian-theme
     :init
     (progn
