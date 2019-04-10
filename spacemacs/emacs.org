@@ -904,6 +904,48 @@ this back to the default and see how things feel.
   (setq garbage-collection-messages t)
 #+END_SRC
 
+** TODO Mode Line
+I'd like to clean up my mode line and only show certain minor-modes, but some
+seem to be having problems. =which-key-mode= in particular sets =minor-mode-alist=
+as it runs clobbering my settings.
+
+#+BEGIN_SRC emacs-lisp :tangle no
+  (defun ic/diminish-minor-mode (mode &optional to-what)
+    "Change MODE in the mode line TO-WHAT."
+    (let ((minor (assq mode minor-mode-alist))
+          (new-val (or to-what "")))
+      (if minor
+          (setcdr minor (list new-val))
+        (error "%s is not a valid minor-mode" mode))))
+
+  (let ((diminish-modes
+         '((buffer-face-mode " vp")
+           (auto-dim-other-buffers-mode)
+           (org-src-mode " OS")
+           (spacemacs-whitespace-cleanup-mode)
+           (smartparens-mode)
+           ;; (which-key-mode)
+           (company-mode)
+           (evil-org-mode "")
+           )))
+    (dolist (mode diminish-modes)
+      (message "%S" mode)
+      (apply #'ic/diminish-minor-mode mode)
+      ;; (diminish-undo (car mode))
+      ;; (apply #'diminish mode)
+      ))
+  ;; (diminish 'buffer-face-mode "vp")
+  ;; (diminish 'auto-dim-other-buffers-mode nil)
+  ;; (diminish 'evil-org-mode nil)
+  ;; (diminish 'which-key-mode "YYY")
+  ;; (diminished-modes)
+
+  ;; (ic/diminish-minor-mode 'which-key-mode)
+  ;; (setcdr (assq 'which-key-mode minor-mode-alist) (list ""))
+  ;; (assq 'which-key-mode minor-mode-alist)
+  ;; (setq-default which-key-lighter "   ")
+#+END_SRC
+
 * Refile
 #+BEGIN_SRC emacs-lisp :tangle yes
   (setq create-lockfiles nil)
