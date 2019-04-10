@@ -290,6 +290,7 @@ Hide emphasis markers such as *bold*, /italic/, etc.
   (setq org-enforce-todo-checkbox-dependencies t)
 #+END_SRC
 *** Logging
+Create a log on certain state changes inside the =LOGBOOK= drawer.
 #+BEGIN_SRC emacs-lisp :tangle yes
   ;; log status changes
   (setq org-log-done 'time)
@@ -770,6 +771,18 @@ fixed width.
 
   (add-hook 'org-mode-hook #'ic/variable-pitch-mode)
 #+END_SRC
+
+** Dim inactive buffers
+Turn on  =auto-dim-other-buffers-mode=. Dim when the frame loses focus, but don't
+dim when the mini buffer is active. See the face =auto-dim-other-buffers-face= for
+color customization.
+
+#+BEGIN_SRC emacs-lisp :tangle yes
+  (auto-dim-other-buffers-mode t)
+  (setq auto-dim-other-buffers-dim-on-focus-out t)
+  (setq auto-dim-other-buffers-dim-on-switch-to-minibuffer nil)
+#+END_SRC
+
 ** Web Browser
 Use whatever we have as =web= as default browser
 #+BEGIN_SRC emacs-lisp :tangle yes
