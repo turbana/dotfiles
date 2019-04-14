@@ -1,7 +1,7 @@
 #!/bin/bash
 
 
-EMACS_COLOR_THEME=~/.etc/spacemacs/private-layers/themian/local/themian-theme/themian-theme.el
+EMACS_COLOR_THEME=~/.etc/spacemacs/private-layers/ian/local/themian-theme/themian-theme.el
 
 color=$1
 shift
