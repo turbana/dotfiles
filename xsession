@@ -1,7 +1,9 @@
 #!/bin/bash
 
-. ~/.etc/bashrc.util
-export PATH="$HOME/.cabal/bin:$HOME/.etc/bin:$PATH"
+source $HOME/.bashrc
+
+# needed for xmonad
+add_path $HOME/.cabal/bin
 
 if at_work; then
 	#VBoxManage setextradata global CustomVideoMode1 1050x1680
@@ -20,8 +22,5 @@ fi
 emacs &
 gnome-terminal &
 
-# start gpg-agent as a daemon
-eval $(gpg-agent --daemon --enable-ssh-support --write-env-file "${HOME}/.gpg-agent-info")
-
 # xmonad config needs our hostname in $HOST
-HOST=$(hostname) exec $HOME/.cabal/bin/xmonad
+HOST=$(hostname) exec xmonad

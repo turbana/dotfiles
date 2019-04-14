@@ -1,0 +1,72 @@
+#!/bin/bash
+
+# quit on non-interactive shell
+[ -z "$PS1" ] && return
+
+# enable custom colors
+if [ -f ~/.dir_colors ]; then
+	eval `dircolors -b ~/.dir_colors`
+elif [ -f /etc/DIR_COLORS ]; then
+	eval `dircolors -b /etc/DIR_COLORS`
+fi
+
+# enable tab completion
+[[ -f /etc/bash_completion ]] && . /etc/bash_completion
+
+# update terminal title
+case ${TERM} in
+	xterm*|rxvt*|Eterm|aterm|kterm|gnome)
+		PROMPT_COMMAND='echo -ne "\033]0;${USER}@${HOSTNAME%%.*}:${PWD/$HOME/~}\007"'
+		;;
+	screen*)
+		PROMPT_COMMAND='echo -ne "\033]0;${PWD/$HOME/~}\033\\"'
+		;;
+esac
+
+# turn off flow control
+stty -ixon
+
+# append to history, do not overwrite
+shopt -s histappend
+
+# some aliases
+_LS_OPTS='--color=yes -h --time-style="+%Y-%m-%d %H:%M"'
+alias ls="ls $_LS_OPTS"
+alias ll='ls -l'
+alias la='ls -lA'
+alias lad='find . -maxdepth 1 -type d ! -name \. -regex "\./\..*" -print0 | xargs -0 ls -ld '$_LS_OPTS
+alias lld='find . -maxdepth 1 -type d ! -name \. ! -regex "\./\..*" -print0 | xargs -0 ls -ld '$_LS_OPTS
+alias emacs=$EDITOR
+alias em=$EDITOR
+alias grep='grep --color=auto'
+
+# fix my misspellings
+alias mc='mv'
+alias vp='cp'
+alias cd..='cd ..'
+alias ci='vi'
+
+
+# colors used in PS1
+e='\[\033'
+black="$e[00;30m\\]"
+red="$e[00;31m\\]"
+green="$e[00;32m\\]"
+yellow="$e[00;33m\\]"
+blue="$e[00;34m\\]"
+magenta="$e[00;35m\\]"
+cyan="$e[00;36m\\]"
+white="$e[00;37m\\]"
+
+b_black="$e[01;30m\\]"
+b_red="$e[01;31m\\]"
+b_green="$e[01;32m\\]"
+b_yellow="$e[01;33m\\]"
+b_blue="$e[01;34m\\]"
+b_magenta="$e[01;35m\\]"
+b_cyan="$e[01;36m\\]"
+b_white="$e[01;37m\\]"
+
+normal="$e[00;00m\\]"
+ps1_user=$white
+ps1_host=$b_yellow

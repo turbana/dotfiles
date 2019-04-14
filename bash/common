@@ -1,0 +1,36 @@
+#!/bin/bash
+
+# setup PATH
+export PATH=
+add_path /bin
+add_path /sbin
+add_path /usr/bin
+add_path /usr/sbin
+add_path /usr/local/bin
+add_path /usr/local/sbin
+add_path $HOME/apps/bin
+add_path $ETC/bin
+add_path $HOME/bin
+
+# by default I want files to be 0750.
+umask 0027
+
+# some general environment variables
+export LESS="-SR"
+export TERM=xterm-256color
+
+# use emacs as editor
+export EDITOR='emacsclient -c -a ""'
+export ALTERNATE_EDITOR=
+
+# colorize grep's matches
+export GREP_COLOR='1;32'
+
+# setup gpg-agent for both gpg and ssh keys
+export GPG_TTY=$(tty)
+gpg-connect-agent updatestartuptty /bye > /dev/null
+export GPG_AGENT_INFO=$(gpgconf --list-dirs agent-socket):0:1
+if [ -n "$(gpgconf --list-options gpg-agent | \
+      awk -F: '/^enable-ssh-support:/{ print $1 }')" ]; then
+    export SSH_AUTH_SOCK=$(gpgconf --list-dirs agent-ssh-socket)
+fi

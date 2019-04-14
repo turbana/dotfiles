@@ -1,0 +1,6 @@
+#!/bin/bash
+
+add_path $HOME/apps/node-v10.15.3-linux-x64/bin
+export GOPATH=~/apps/go
+export ps1_host=$green
+export MAIL=$HOME/.mail/gmail
