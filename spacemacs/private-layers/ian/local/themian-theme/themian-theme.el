@@ -90,7 +90,7 @@
        (linum
         (:foreground ,base-1 :background ,base-5 :weight normal :slant italic
                      :underline nil :box nil))
-       (linum-relative-current-face (:foreground ,base+1 :weight bold :inherit linum))
+       (linum-relative-current-face (:foreground ,base+1 :background ,base-4 :weight bold :inherit linum))
        (minibuffer-prompt (:weight bold))
        (region (:background ,base-3 :box (:line-width -1 :color ,blue)))
        (secondary-selection (:background ,base-2))
