@@ -625,17 +625,59 @@ Message composing should be done in =org-mode= format and sent as html.
 *** Configuration
 First, we need to setup some configuration.
 #+BEGIN_SRC emacs-lisp :tangle yes
-  (defvar ic/recipes-org-file "~/org/home/recipes/recipes.org")
-  (defvar ic/recipes-www-dir "~/www/recipes")
+  (setq ic/recipes-org-file "~/org/home/recipes/recipes.org")
+  (setq ic/recipian-web-root "~/src/recipian-web/")
+  (setq ic/github-pages-root "~/src/turbana.github.io")
+  (setq ic/recipian-recipes-json (concat ic/recipian-web-root
+                                           "src/assets/recipes.json"))
+  (setq ic/node-bin-dir "~/apps/node-v10.15.3-linux-x64/bin/")
+  (setq ic/github-pages-url "https://turbana.github.io")
 
-  (defun ic/generate-recipes ()
+  (defun ic/generate-recipes-site ()
     (interactive)
-    ;; XXX force reload of the package during development
-    (load "~/.etc/spacemacs/private-layers/ian/local/recipian/recipian.el")
-    (recipian-generate-static-site ic/recipes-org-file ic/recipes-www-dir))
+    (let ((debug-on-error t)
+          (default-directory ic/recipian-web-root) ; needed for vc-git
+          (process-environment (append (list (concat "PATH="
+                                                     (getenv "PATH")
+                                                     ":"
+                                                     (expand-file-name ic/node-bin-dir)))
+                                       process-environment))
+          needs-rebuild)
+      ;; XXX force reload of the package during development
+      (load "~/.etc/spacemacs/private-layers/ian/local/recipian/recipian.el")
+      ;; generate recipes.json
+      (recipian-write-json ic/recipian-recipes-json
+                           (recipian-parse-recipes ic/recipes-org-file))
+      ;; commit to git
+      (when (eq (vc-git-state ic/recipian-recipes-json)
+                'edited)
+        (message "commiting recipes.json")
+        (vc-git-checkin (list ic/recipian-recipes-json) "updated recipes.json"))
+      ;; rebuild prod angular
+      (message "rebuilding angular...")
+      (call-process (concat ic/node-bin-dir "ng")
+                    nil "*AngularBuild*" t
+                    "build" "--prod"
+                    "--base-href" ic/github-pages-url)
+      ;; build github pages
+      (message "angular ghpages...")
+      (call-process (concat ic/node-bin-dir "npx")
+                    nil "*AngularBuild*" t
+                    "angular-cli-ghpages"
+                    "--dir" "dist/recipian-web"
+                    "--repo" (expand-file-name ic/github-pages-root)
+                    "--branch" "master"
+                    "--no-silent")
+      ;; commit prod to github-pages
+      (message "pushing to github pages...")
+      (let ((default-directory ic/github-pages-root))
+        (vc-git-push nil))
+      (message "Recipe site generated")
+      ))
+
 
   ;; XXX keybind during development
-  (global-set-key (kbd "<f2>") 'ic/generate-recipes)
+  (global-set-key (kbd "<f2>") 'ic/generate-recipes-site)
 #+END_SRC
 * Programming
 ** General
