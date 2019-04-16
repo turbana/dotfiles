@@ -100,17 +100,22 @@ Some functions to trace the changing of variables.
 Some profiler keybindings.
 #+BEGIN_SRC emacs-lisp :tangle no
   (defun ic/start-cpu-profiler ()
+    "Start the CPU profiler."
     (interactive)
     (profiler-start 'cpu))
+
   (defun ic/start-mem-profiler ()
+    "Start the memory profiler."
     (interactive)
     (profiler-start 'mem))
 
-  (global-set-key (kbd "<f3>") 'ic/start-cpu-profiler)
-  (global-set-key (kbd "<f4>") 'profiler-stop)
-  (global-set-key (kbd "<f5>") 'profiler-report)
-  (global-set-key (kbd "<f6>") 'ic/start-mem-profiler)
+  (spacemacs/declare-prefix "E" "emacs")
+  (spacemacs/set-leader-keys "Ec" #'ic/start-cpu-profiler)
+  (spacemacs/set-leader-keys "Em" #'ic/start-mem-profiler)
+  (spacemacs/set-leader-keys "Es" #'profiler-stop)
+  (spacemacs/set-leader-keys "Er" #'profiler-report)
 #+END_SRC
+
 * Major Packages
 ** org-mode
 *** Basic Setup
