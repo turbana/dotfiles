@@ -123,6 +123,7 @@ Some profiler keybindings.
   (setq org-agenda-files '("~/org" "~/org/home"))
   (setq org-default-notes-file "~/org/refile.org")
   (setq org-archive-location "%s_archive::")
+  (setq ic/org-capture-template-dir "~/.etc/spacemacs/org-capture-templates/")
 #+END_SRC
 *** Refile
 #+BEGIN_SRC emacs-lisp :tangle yes
@@ -309,8 +310,15 @@ Create a log on certain state changes inside the =LOGBOOK= drawer.
   (setq org-reverse-note-order nil)
   (setq ic/org-clock-in nil)
   (setq ic/org-clock-resume nil)
+
+  (defun ic/org-capture-prompt (prompt symbol choices)
+    "Call `(completing-read PROMPT CHOICES)' and save into SYMBOL.
+  Inspired from: http://storax.github.io/blog/2016/05/02/org-capture-tricks/"
+    (make-local-variable symbol)
+    (set symbol (completing-read prompt choices)))
+
   (setq org-capture-templates
-        '(("t" "todo" entry (file org-default-notes-file)
+        `(("t" "todo" entry (file org-default-notes-file)
            "* TODO %?\n%u\n"
            :clock-in ic/org-clock-in :clock-resume ic/org-clock-resume)
           ("r" "respond" entry (file org-default-notes-file)
@@ -328,13 +336,17 @@ Create a log on certain state changes inside the =LOGBOOK= drawer.
           ("H" "habit" entry (file org-default-notes-file)
            "* TODO %?\n%u\nscheduled: %(format-time-string \"<%y-%m-%d %a .+1d/3d>\")\n:properties:\n:style: habit\n:repeat_to_state: next\n:end:\n")
           ("R" "recipe" entry (file org-default-notes-file)
-           "* %^{name} :uncooked::\n:properties:\n:source: %^{source}\n:image: %^{image}\n:serving: %^{serving}\n:type: %^{type}\n:end:\n** ingredients\n   | %? | |\n** procedure\n   1.\n** log")
+           "* %^{name}\n:PROPERTIES:\n:SOURCE: %^{source}\n:SERVINGS: %^{servings}\n:END:\n%U\n** Ingredients\n- %?\n** Steps\n-\n** Notes")
           ("J" "job" entry (file org-default-notes-file)
            "* TOAPPLY %^{company} - %^{title}\n%U\n[[%^{url}][Submission]]\n%?\n** Description\n%^{description}\n** Contact Info\n** Log\n")
+          ("P" "meal plan" entry (file+olp+datetree ic/recipes-plan-file "Planning")
+           (file ,(concat ic/org-capture-template-dir "meal-plan.org"))
+           :immediate-finish t
+           :time-prompt t
+           :tree-type week)
           ))
   (add-hook 'org-capture-mode-hook 'evil-insert-state)
 #+END_SRC
-
 **** Full Frame
 The standard =org-capture= behavior is to split the window before capturing a
 task. When this is started from outside emacs a random buffer occupies half the
