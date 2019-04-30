@@ -717,6 +717,37 @@ And some keybinds to run them.
   (spacemacs/set-leader-keys "BR" #'ic/recipian-generate-push-production)
 #+END_SRC
 
+*** Refiling
+I keep cooking tasks in a date tree. When rescheduling the date tree becomes out
+of sync with it's schedule. The following will automatically refile a
+rescheduled entry to where it needs to go.
+
+Inspired by [[https://stackoverflow.com/questions/26648731/refile-existing-entry-to-different-location-in-org-mode-date-tree][this stackoverflow post]].
+
+#+BEGIN_SRC emacs-lisp :tangle yes
+  (defun ic/org-schedule-refile-meal-plans (&rest args)
+    "Automatically refile meal plans to the correct datetree after rescheduling."
+    (interactive "P")
+    (let ((buffer-file-name (expand-file-name (buffer-file-name)))
+          (plan-file-name (expand-file-name ic/recipes-plan-file)))
+      (when (equal buffer-file-name plan-file-name)
+        (org-with-wide-buffer
+         (let* ((datetree-date (org-entry-get nil "SCHEDULED" t))
+                (date (org-date-to-gregorian datetree-date))
+                (pos (save-excursion
+                       (org-datetree-find-iso-week-create date)
+                       (point))))
+           (org-refile nil nil
+                       (list nil buffer-file-name nil pos)
+                       "Updated datetree")))
+        (org-refile-goto-last-stored)
+        ;; we have to update the note marker here so org will write :LOGBOOK:
+        ;; entries in the right place
+        (move-marker org-log-note-marker (point)))))
+
+  (advice-add 'org-schedule :after #'ic/org-schedule-refile-meal-plans)
+#+END_SRC
+
 * Programming
 ** General
 *** Indentation
