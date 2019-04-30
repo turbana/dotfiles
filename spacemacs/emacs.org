@@ -947,6 +947,26 @@ fixed width.
   (add-hook 'org-mode-hook #'ic/variable-pitch-mode)
 #+END_SRC
 
+** Ediff
+I want to press =d= and remove all diff formats from buffer =C=. This is helpful
+when merging in git to take both branches.
+
+#+BEGIN_SRC emacs-lisp :tangle yes
+  (defun ic/ediff-copy-both-to-c ()
+    "Copy both sets of changes from `A' and `B' into `C'."
+    (interactive)
+    (ediff-copy-diff
+     ediff-current-difference nil 'C nil
+     (concat
+      (ediff-get-region-contents ediff-current-difference 'A ediff-control-buffer)
+      (ediff-get-region-contents ediff-current-difference 'B ediff-control-buffer))))
+
+  (defun ic/add-custom-keys-to-ediff ()
+    (define-key ediff-mode-map "c" 'ic/ediff-copyy-both-to-c))
+
+  (add-hook 'ediff-keymap-setup-hook 'ic/add-custom-keys-to-ediff)
+#+END_SRC
+
 ** Dim inactive buffers
 Turn on  =auto-dim-other-buffers-mode=. Dim when the frame loses focus, but don't
 dim when the mini buffer is active. See the face =auto-dim-other-buffers-face= for
