@@ -730,7 +730,9 @@ Inspired by [[https://stackoverflow.com/questions/26648731/refile-existing-entry
     (interactive "P")
     (let ((buffer-file-name (expand-file-name (buffer-file-name)))
           (plan-file-name (expand-file-name ic/recipes-plan-file)))
-      (when (equal buffer-file-name plan-file-name)
+      (when (and (equal buffer-file-name plan-file-name)
+                 (member (org-get-todo-state)
+                         (list "PREP" "COOK")))
         (org-with-wide-buffer
          (let* ((datetree-date (org-entry-get nil "SCHEDULED" t))
                 (date (org-date-to-gregorian datetree-date))
