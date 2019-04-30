@@ -748,6 +748,67 @@ Inspired by [[https://stackoverflow.com/questions/26648731/refile-existing-entry
   (advice-add 'org-schedule :after #'ic/org-schedule-refile-meal-plans)
 #+END_SRC
 
+*** Meal Planning
+#+BEGIN_SRC emacs-lisp :tangle yes
+  (defun ic//meal-plan (date)
+    "Bring up the meal plan for the week containing DATE."
+    (interactive "P")
+    (let* ((date-iso (calendar-iso-from-absolute
+                      (calendar-absolute-from-gregorian
+                       date)))
+           (year (nth 2 date-iso))
+           (week (nth 0 date-iso))
+           (groceries (calendar-gregorian-from-absolute
+                       (calendar-iso-to-absolute
+                        (list (1- week) 7 year)))))
+      ;; open meal plan file
+      (find-file ic/recipes-plan-file)
+      (widen)
+      (goto-char (point-min))
+      ;; move to the week node and create it, if it doesn't exist
+      (condition-case nil
+          (re-search-forward (format "^*+ %d-W%s$" year week))
+        ((search-failed e)
+         ;; create each date entry
+         (dotimes (day 7)
+           (let* ((date-iso (list week (1+ day) year))
+                  (date (calendar-gregorian-from-absolute
+                         (calendar-iso-to-absolute date-iso))))
+             (org-datetree-find-iso-week-create date)))
+         ;; go to the parent week
+         (org-up-element)
+         (org-end-of-line)
+         ;; add an empty grocery list
+         (save-excursion
+           (org-insert-subheading "")
+           (insert "TODO Groceries\n")
+           (org-schedule nil (calendar-date-string groceries))
+           (insert "| Item | Amount |\n")
+           (insert "|------+--------|\n")
+           (insert "|      |        |\n"))))
+      ;; narrow to week
+      (org-narrow-to-subtree)))
+
+
+  (defun ic/meal-plan-this-week ()
+    "Bring up the meal plan for this week."
+    (interactive)
+    (ic//meal-plan (calendar-current-date)))
+
+
+
+  (defun ic/meal-plan-next-week ()
+    "Bring up the meal plan for the upcoming week."
+    (interactive)
+    (save-window-excursion
+    (ic//meal-plan (calendar-current-date 7)))
+    )
+
+
+  (spacemacs/set-leader-keys "aop" 'ic/meal-plan-this-week)
+  (spacemacs/set-leader-keys "aoP" 'ic/meal-plan-next-week)
+#+END_SRC
+
 * Programming
 ** General
 *** Indentation
