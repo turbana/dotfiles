@@ -655,9 +655,9 @@ First, we need to setup some configuration.
   (setq ic/recipian-web-root "~/src/recipian-web/")
   (setq ic/github-pages-repo "git@github.com:turbana/turbana.github.io.git")
   (setq ic/recipian-recipes-json (concat ic/recipian-web-root
-                                           "src/assets/recipes.json"))
-  (setq ic/recipian-plan-json (concat ic/recipian-web-root
-                                      "src/assets/plan.json"))
+                                         "src/assets/recipes.json"))
+  (setq ic/recipian-plans-json (concat ic/recipian-web-root
+                                       "src/assets/plans.json"))
   (setq ic/node-bin-dir "~/apps/node-v10.15.3-linux-x64/bin/")
   (setq ic/github-pages-url "https://turbana.github.io")
 #+END_SRC
@@ -673,20 +673,15 @@ the angular site.
       (when (eq 'edited (vc-git-state filename))
         (let ((short-name (file-name-nondirectory filename)))
           (message "git commit %s" short-name)
-          (vc-git-checkin (list filename) "updated %s" short-name))))
+          (vc-git-checkin (list filename) (format "updated %s" short-name)))))
     (let ((debug-on-error t)
           (default-directory ic/recipian-web-root) ; needed for vc-git
-          ;; (process-environment (append (list (concat "PATH="
-          ;;                                            (getenv "PATH")
-          ;;                                            ":"
-          ;;                                            (expand-file-name ic/node-bin-dir)))
-          ;;                              process-environment))
           needs-rebuild)
       ;; generate json files
       (ic/recipian-generate-asset-files)
       ;; commit to git
       (git-commit-maybe ic/recipian-recipes-json)
-      (git-commit-maybe ic/recipian-plan-json)
+      (git-commit-maybe ic/recipian-plans-json)
       ;; rebuild prod angular
       (message "rebuilding angular...")
       (call-process (concat ic/node-bin-dir "ng")
@@ -714,7 +709,7 @@ the angular site.
     (recipian-write-json ic/recipian-recipes-json
                          (recipian-parse-recipes ic/recipes-org-file))
     ;; generate plan.json
-    (recipian-write-json ic/recipian-plan-json
+    (recipian-write-json ic/recipian-plans-json
                          (recipian-parse-plans ic/recipes-plan-file))
     (message "Generated assets for recipian-web"))
 #+END_SRC
