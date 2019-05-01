@@ -323,19 +323,24 @@ Create a log on certain state changes inside the =LOGBOOK= drawer.
   (setq org-capture-templates
         `(("t" "todo" entry (file org-default-notes-file)
            "* TODO %?\n%u\n"
-           :clock-in ic/org-clock-in :clock-resume ic/org-clock-resume)
+           ;; :clock-in ic/org-clock-in :clock-resume ic/org-clock-resume
+           )
           ("r" "respond" entry (file org-default-notes-file)
            "* TODO respond to %:from on %:subject\nscheduled: %t\n%u\n%a\n"
-           :clock-in ic/org-clock-in :clock-resume ic/org-clock-resume :immediate-finish t)
+           ;; :clock-in ic/org-clock-in :clock-resume ic/org-clock-resume
+           )
           ("n" "note" entry (file org-default-notes-file)
            "* %? :note:\n%u\n"
-           :clock-in ic/org-clock-in :clock-resume ic/org-clock-resume)
+           ;; :clock-in ic/org-clock-in :clock-resume ic/org-clock-resume
+           )
           ("m" "meeting" entry (file org-default-notes-file)
            "* MEETING with %? :meeting:\n%u"
-           :clock-in ic/org-clock-in :clock-resume ic/org-clock-resume)
+           ;; :clock-in ic/org-clock-in :clock-resume ic/org-clock-resume
+           )
           ("p" "phone call" entry (file org-default-notes-file)
            "* PHONE %? :phone:\n%u"
-           :clock-in ic/org-clock-in :clock-resume ic/org-clock-resume)
+           ;; :clock-in ic/org-clock-in :clock-resume ic/org-clock-resume
+           )
           ("H" "habit" entry (file org-default-notes-file)
            "* TODO %?\n%u\nscheduled: %(format-time-string \"<%y-%m-%d %a .+1d/3d>\")\n:properties:\n:style: habit\n:repeat_to_state: next\n:end:\n")
           ("R" "recipe" entry (file org-default-notes-file)
