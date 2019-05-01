@@ -285,6 +285,9 @@ Hide emphasis markers such as *bold*, /italic/, etc.
   (setq org-habit-graph-column 2)
   (setq org-habit-show-habits-only-for-today t)
   (setq org-habit-show-all-today t)
+
+  ;; only show the first occurrence of a repeating task
+  (setq org-agenda-show-future-repeats 'next)
 #+END_SRC
 *** Todo
 #+BEGIN_SRC emacs-lisp :tangle yes
