@@ -1,6 +1,2 @@
-* %(ic/org-capture-prompt "Recipe: " 'recipe-name (recipian-all-names ic/recipes-org-file))
+* %^{Type|COOK|PREP} %(ic/org-capture-prompt "Recipe: " 'recipe-name (recipian-all-names ic/recipes-org-file))
 SCHEDULED: %t
-:PROPERTIES:
-:ISMEALPLAN: t
-:END:
-[[%(concat \"file:\" ic/recipes-org-file \"::*\" recipe-name)][Recipe]]
