@@ -1157,6 +1157,15 @@ use an infrequent key sequence to fully kill emacs. Taken from [[https://www.red
   (evil-ex-define-cmd "q[uit]" 'kill-buffer-and-window)
   (evil-ex-define-cmd "wq" 'ic/save-kill-buffer-and-window)
 #+END_SRC
+** Spelling
+*** Auto correct previous word
+When typing in insert mode I want to hit =C-e= to automatically correct the
+previous misspelled word.
+
+#+BEGIN_SRC emacs-lisp :tangle yes
+  (define-key evil-insert-state-map (kbd "C-e") #'flyspell-auto-correct-previous-word)
+  (define-key evil-normal-state-map (kbd "C-e") #'flyspell-auto-correct-previous-word)
+#+END_SRC
 ** Frame title
 Set the frame title to something meaningful. =[layout name] :: [buffer name]=.
 
