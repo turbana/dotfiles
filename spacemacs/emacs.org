@@ -452,6 +452,22 @@ Add some custom =<X= templates.
   ;; catch modifying collapsed text
   (setq org-catch-invisible-edits 'error)
 #+END_SRC
+*** Code Execution
+Don't prompt for code execution if we're in a file in certain locations.
+
+#+BEGIN_SRC emacs-lisp :tangle yes
+  (setq ic/allow-babel-evaluate-directories
+        '("~/org" "~/.etc"))
+
+  (defun ic/org-confirm-babel-evaluate (lang body)
+    (not (any
+          (mapcar (lambda (dir)
+                    (string-prefix-p (expand-file-name dir)
+                                     (buffer-file-name)))
+                  ic/allow-babel-evaluate-directories))))
+
+  (setq org-confirm-babel-evaluate #'ic/org-confirm-babel-evaluate)
+#+END_SRC
 *** Exporting
 Let's set some defaults. I don't want to see a table of contents, but I do want
 to see most everything else.
