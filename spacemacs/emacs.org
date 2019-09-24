@@ -115,7 +115,38 @@ Some profiler keybindings.
   (spacemacs/set-leader-keys "Es" #'profiler-stop)
   (spacemacs/set-leader-keys "Er" #'profiler-report)
 #+END_SRC
+** Functional
+Let's have some functional functions.
 
+#+BEGIN_SRC emacs-lisp :tangle yes
+  (defun any (seq)
+    (reduce (lambda (x y) (or x y))
+            seq
+            :initial-value nil))
+
+  (defun all (seq)
+    ;; NOTE: we need to guard against an empty list as `(reduce :initial-value t)'
+    ;; will return `t' when given an empty list.
+    (when seq
+      (reduce (lambda (x y) (and x y))
+              seq)))
+#+END_SRC
+*** Tests
+#+BEGIN_SRC emacs-lisp :tangle yes
+  (ert-deftest ic-test-any ()
+    (should (eql (any '()) nil))
+    (should (eql (any '(t)) t))
+    (should (eql (any '(nil)) nil))
+    (should (eql (any '(nil t)) t))
+    (should (eql (any '(t t)) t)))
+
+  (ert-deftest ic-test-all ()
+    (should (eql (all '()) nil))
+    (should (eql (all '(t)) t))
+    (should (eql (all '(nil)) nil))
+    (should (eql (all '(nil t)) nil))
+    (should (eql (all '(t t)) t)))
+#+END_SRC
 * Major Packages
 ** org-mode
 *** Basic Setup
