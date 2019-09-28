@@ -1100,17 +1100,6 @@ there's no way around it currently. See [[https://www.reddit.com/r/emacs/comment
   (add-hook 'text-mode-hook 'turn-on-auto-fill)
 #+END_SRC
 ** Spaceline
-First we need to be able to load an icon with the correct font lock properties
-#+BEGIN_SRC emacs-lisp :tangle yes
-  (defun ic/icon (name &optional group)
-    (setq group (or group "alltheicon"))
-    (let ((icon (funcall (intern (format "all-the-icons-%s" group)) name))
-          (family (funcall (intern (format "all-the-icons-%s-family" group)))))
-      (propertize icon
-                  'face `(:family ,family :inherit)
-                  'display '(raise 0.1))))
-#+END_SRC
-
 I want to see a VC icon along with branch name and status of current file.
 #+BEGIN_SRC emacs-lisp :tangle yes
   (defun ic//vc-icon-git ()
@@ -1118,9 +1107,9 @@ I want to see a VC icon along with branch name and status of current file.
           (project-name (second (nreverse (split-string (projectile-project-root) "/")))))
       (concat
        (if (string= branch "master")
-           (ic/icon "git")
+           (all-the-icons-alltheicon "git" :height 0.9  :v-adjust 0.1)
          (concat
-          (ic/icon "git-branch" 'octicon)
+          (all-the-icons-octicon "git-branch" :height 0.9  :v-adjust 0.1)
           " "
           branch))
        " "
