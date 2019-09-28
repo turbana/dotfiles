@@ -1099,6 +1099,86 @@ there's no way around it currently. See [[https://www.reddit.com/r/emacs/comment
   (setq-default fill-column 80)
   (add-hook 'text-mode-hook 'turn-on-auto-fill)
 #+END_SRC
+** Spaceline
+First we need to be able to load an icon with the correct font lock properties
+#+BEGIN_SRC emacs-lisp :tangle yes
+  (defun ic/icon (name &optional group)
+    (setq group (or group "alltheicon"))
+    (let ((icon (funcall (intern (format "all-the-icons-%s" group)) name))
+          (family (funcall (intern (format "all-the-icons-%s-family" group)))))
+      (propertize icon
+                  'face `(:family ,family :inherit)
+                  'display '(raise 0.1))))
+#+END_SRC
+
+I want to see a VC icon along with branch name and status of current file.
+#+BEGIN_SRC emacs-lisp :tangle yes
+  (defun ic//vc-icon-git ()
+    (let ((branch (cadr (split-string vc-mode "Git[:-]")))
+          (project-name (second (nreverse (split-string (projectile-project-root) "/")))))
+      (concat
+       (if (string= branch "master")
+           (ic/icon "git")
+         (concat
+          (ic/icon "git-branch" 'octicon)
+          " "
+          branch))
+       " "
+       (pcase (vc-state (buffer-file-name))
+         ('up-to-date "-")
+         ('edited "*")
+         ('added "^")
+         ('removed' "v")
+         ('conflict "!")
+         ('missing "m")
+         ('ignored "i")
+         ('unregistered "x")
+         (t "?")))))
+
+  (spaceline-define-segment
+      ic-vc-icon "A segment for the Version Control icon"
+      (when vc-mode
+        (cond ((string-match "Git[:-]" vc-mode) (ic//vc-icon-git))
+              (t (propertize (format "%s" vc-mode))))))
+#+END_SRC
+
+Set the mode line.
+#+BEGIN_SRC emacs-lisp :tangle yes
+  (spaceline-compile
+   'main
+   ;; left side
+   '((window-number
+      :priority 100
+      :fallback evil-state
+      :face highlight-face)
+     ((buffer-modified
+       all-the-icons-mode-icon
+       remote-host)
+      :priority 95)
+     ((buffer-id)
+       :priority 96)
+     ((anzu
+       selection-info)
+      :priority 90)
+     ((flycheck-error
+       flycheck-warning
+       flycheck-info)
+      :priority 85)
+     ((ic-vc-icon)
+      :priority 87)
+     all-the-icons-git-status
+     process)
+
+   ;; right side
+   '(((buffer-encoding-abbrev buffer-size
+       input-method)
+      :priority 5)
+     (buffer-position
+      :priority 91)))
+
+  (setq-default mode-line-format '("%e" (:eval (spaceline-ml-main))))
+  ;; (setq mode-line-format '("%e" (:eval (spaceline-ml-main))))
+#+END_SRC
 ** Fill Column
 #+BEGIN_SRC emacs-lisp :tangle yes
   (turn-on-fci-mode)

@@ -319,13 +319,13 @@
        (mode-line
         (:background ,base-3 :foreground ,base+2
                      :box (:line-width -1 :color ,base-3 :style released-button)))
-       (mode-line-buffer-id (:foreground ,base+4 :background ,base-3
+       (mode-line-buffer-id (:foreground ,base+4 :background ,base-4
                                          :inherit mode-line))
        (mode-line-emphasis (:foreground ,yellow :background ,base-3
                                         :weight bold))
        (mode-line-highlight (:foreground ,base-4 :background ,yellow))
        (mode-line-inactive
-        (:background ,base-3 :foreground ,base+1 :inherit mode-line))
+        (:background ,base-3 :foreground ,base-1 :inherit mode-line))
        (mu4e-attach-number-face (:foreground ,blue :weight bold))
        (mu4e-cited-1-face (:foreground ,cyan))
        (mu4e-cited-2-face (:foreground ,unknown))
