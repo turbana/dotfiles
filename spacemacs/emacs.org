@@ -1100,16 +1100,36 @@ there's no way around it currently. See [[https://www.reddit.com/r/emacs/comment
   (add-hook 'text-mode-hook 'turn-on-auto-fill)
 #+END_SRC
 ** Spaceline
-I want to see a VC icon along with branch name and status of current file.
+By default =all-the-icons= returns an object without an =:inherit= property. You can
+pass a face to inherit from, but can't specify a bare =:inherit=. This has the
+issue where an icon has the wrong background color based on which section of the
+modeline it occupies. So we need a function that will both apply a bare =:inherit=
+property along with some default scaling values.
+#+BEGIN_SRC emacs-lisp :tangle yes
+  (defun ic/icon (name &optional group)
+    (setf group (or group 'alltheicon))
+    (let* ((icon (funcall (intern (format "all-the-icons-%s" group))
+                          name))
+           (family (plist-get (plist-get (text-properties-at 0 icon)
+                                         'face)
+                              :family))
+           (face `(:family ,family :inherit)))
+      (propertize icon 'face face 'font-lock-face face 'display '(raise 0.1))))
+#+END_SRC
+
+For the version control segment I would like the see the git icon along with the
+current file's status if we're in the master branch. If we're in a non-master
+branch I want to see the git branch icon along with the branch name and current
+file's status.
 #+BEGIN_SRC emacs-lisp :tangle yes
   (defun ic//vc-icon-git ()
     (let ((branch (cadr (split-string vc-mode "Git[:-]")))
           (project-name (second (nreverse (split-string (projectile-project-root) "/")))))
       (concat
        (if (string= branch "master")
-           (all-the-icons-alltheicon "git" :height 0.9  :v-adjust 0.1)
+           (ic/icon "git")
          (concat
-          (all-the-icons-octicon "git-branch" :height 0.9  :v-adjust 0.1)
+          (ic/icon "git-branch 'octicon")
           " "
           branch))
        " "
