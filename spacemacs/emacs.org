@@ -1188,6 +1188,21 @@ Set the mode line.
   (setq-default mode-line-format '("%e" (:eval (spaceline-ml-main))))
   ;; (setq mode-line-format '("%e" (:eval (spaceline-ml-main))))
 #+END_SRC
+** Neotree
+#+BEGIN_SRC emacs-lisp :tangle yes
+  ;; when opening neotree jump to the current file
+  (setq neo-smart-open t)
+
+  ;; swap neotree root when changing projects
+  (setq projectile-switch-project-action 'neotree-projectile-action)
+
+  ;; use all-the-icons
+  (setq neo-theme 'icons)
+
+  ;; show version control status
+  (setq neo-vc-integration '(char))
+  ;; (setq neo-vc-integration nil)
+#+END_SRC
 ** Fill Column
 #+BEGIN_SRC emacs-lisp :tangle yes
   (turn-on-fci-mode)
