@@ -729,6 +729,7 @@ First, we need to setup some configuration.
 *** Site Generation
 Now I need a build script to generate the supporting files, build, and then push
 the angular site.
+
 #+BEGIN_SRC emacs-lisp :tangle yes
   (defun ic/recipian-generate-push-production ()
     "Generate recipian-web and push to production."
@@ -746,7 +747,7 @@ the angular site.
       ;; commit to git
       (git-commit-maybe ic/recipian-recipes-json)
       (git-commit-maybe ic/recipian-plans-json)
-      ;; rebuild prod angular
+      ;; build prod angular
       (message "rebuilding angular...")
       (call-process (concat ic/node-bin-dir "ng")
                     nil "*AngularBuild*" t
@@ -869,9 +870,7 @@ Inspired by [[https://stackoverflow.com/questions/26648731/refile-existing-entry
   (defun ic/meal-plan-next-week ()
     "Bring up the meal plan for the upcoming week."
     (interactive)
-    (save-window-excursion
     (ic//meal-plan (calendar-current-date 7)))
-    )
 
 
   (spacemacs/set-leader-keys "aop" 'ic/meal-plan-this-week)
