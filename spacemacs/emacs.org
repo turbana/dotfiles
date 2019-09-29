@@ -1180,6 +1180,8 @@ file's status.
 
 Set the mode line.
 #+BEGIN_SRC emacs-lisp :tangle yes
+  (spaceline-all-the-icons-theme)
+
   (spaceline-compile
    'main
    ;; left side
