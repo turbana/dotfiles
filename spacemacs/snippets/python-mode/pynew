@@ -1,6 +1,6 @@
 # -*- mode: snippet -*-
 # name: Blank Python Template
-# key: pynew
+# key: pynew>
 # --
 """ $0 """
 

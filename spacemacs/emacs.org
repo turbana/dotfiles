@@ -495,6 +495,34 @@ to see most everything else.
            )))
   (add-hook 'org-export-before-parsing-hook 'ic/org-export-filter-recipes)
 #+END_SRC
+*** Snippets
+By convention I title most of my snippets ={snippet}>= so I would like the =>= key
+to try and expand snippets automatically. When no snippet is found a regular =>=
+should be entered.
+#+BEGIN_SRC emacs-lisp :tangle yes
+  (defun ic/yas-expand-> ()
+    (interactive)
+    (insert ">")
+    (let ((yas-fallback-behavior 'return-nil))
+      (yas-expand)))
+
+  (define-key evil-insert-state-map (kbd ">") #'ic/yas-expand->)
+#+END_SRC
+
+Based on [[https://emacs.stackexchange.com/questions/29758/yasnippets-and-org-mode-yas-next-field-or-maybe-expand-does-not-expand][this]] stackexchange post =org-mode= binds the tab key in such a way that
+=yas-snippets= can't use it. So we need the following to allow =TAB= to expand
+snippets while in =org-mode=.
+#+BEGIN_SRC emacs-lisp :tangle yes
+  (defun yas-org-very-safe-expand ()
+    (let ((yas-fallback-behavior 'return-nil))
+      (yas-expand)))
+
+  (add-hook 'org-mode-hook
+            (lambda ()
+              (add-to-list 'org-tab-first-hook 'yas-org-very-safe-expand)
+              (define-key yas-keymap [tab] 'yas-next-field)))
+#+END_SRC
+
 *** TODO Functions
 Need to clean these up
 #+BEGIN_SRC emacs-lisp :tangle yes
