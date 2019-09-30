@@ -1169,7 +1169,7 @@ file's status.
          ('missing "m")
          ('ignored "i")
          ('unregistered "x")
-         (t "?")))))
+         (_ "?")))))
 
   (spaceline-define-segment
       ic-vc-icon "A segment for the Version Control icon"
