@@ -1156,7 +1156,7 @@ file's status.
        (if (string= branch "master")
            (ic/icon "git")
          (concat
-          (ic/icon "git-branch 'octicon")
+          (ic/icon "git-branch" 'octicon)
           " "
           branch))
        " "
