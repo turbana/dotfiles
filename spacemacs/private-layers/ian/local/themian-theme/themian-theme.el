@@ -97,6 +97,7 @@
        (shadow (:foreground ,blue))
        (tooltip (:background ,unknown))
        (trailing-whitespace (:background ,yellow))
+       (vertical-border (:foreground ,base-1))
        (warning (:foreground ,orange :weight bold))
 
        (auto-dim-other-buffers-face (:background ,base-5))
