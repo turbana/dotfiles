@@ -130,10 +130,11 @@ myScratchPads = [
 
 layoutHooks =
   avoidStruts $
-  onHost hostHome (tall ||| Full) $              -- Home layouts (below this are work layouts)
-  onWorkspace "2" (Mirror tallLarge ||| Full) $
-  reflectVert tile ||| Full
+  onHost hostHome (tall ||| full) $              -- Home layouts (below this are work layouts)
+  onWorkspace "2" (Mirror tallLarge ||| full) $
+  reflectVert tile ||| full
   where
+    full       = noBorders Full
     tall       = Tall      nmaster delta 0.50
     tallLarge  = Tall      nmaster delta 0.70
     tile       = StackTile nmaster delta 0.57
