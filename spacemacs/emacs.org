@@ -1310,9 +1310,10 @@ Set the frame title to something meaningful.
         name)))
 
   (setq frame-title-format
-        '((:eval (ic/short-persp-name (get-frame-persp)))
-          " :: "
-          (:eval (buffer-name (window-buffer (minibuffer-selected-window))))))
+        '((:eval (buffer-name (window-buffer (minibuffer-selected-window))))
+          " <"
+          (:eval (ic/short-persp-name (get-frame-persp)))
+          ">"))
 #+END_SRC
 ** Garbage Collection
 Spacemacs has a really large value for =gc-cons-threshold= (100mb), let's change
