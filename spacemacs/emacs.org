@@ -961,7 +961,7 @@ Some good variable spaced fonts:
 
   (defun ic/setup-fonts (fixed-pitch-font variable-pitch-font)
     (cl-flet ((make-size (size)
-             (truncate (* 10 size))))
+                (truncate (* 10 size))))
       (let ((fixed-family (first fixed-pitch-font))
             (fixed-height (make-size (second fixed-pitch-font)))
             (variable-family (first variable-pitch-font))
@@ -970,8 +970,7 @@ Some good variable spaced fonts:
          'user
          `(default ((t (:family ,fixed-family :height ,fixed-height))))
          `(fixed-pitch ((t (:family ,fixed-family :height ,fixed-height))))
-         `(variable-pitch ((t (:family ,variable-family :height ,variable-height))))
-         ))))
+         `(variable-pitch ((t (:family ,variable-family :height ,variable-height))))))))
   (ic/setup-fonts ic/fixed-pitch-font ic/variable-pitch-font)
 #+END_SRC
 
@@ -1300,7 +1299,7 @@ previous misspelled word.
   (define-key evil-normal-state-map (kbd "C-e") #'flyspell-auto-correct-previous-word)
 #+END_SRC
 ** Frame title
-Set the frame title to something meaningful. =[layout name] :: [buffer name]=.
+Set the frame title to something meaningful.
 
 #+BEGIN_SRC emacs-lisp :tangle yes
   (defun ic/short-persp-name (persp)
