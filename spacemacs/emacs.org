@@ -1075,7 +1075,7 @@ color customization.
 Use whatever we have as =web= as default browser
 #+BEGIN_SRC emacs-lisp :tangle yes
   (setq browse-url-browser-function 'browse-url-generic
-        browse-url-generic-program "web")
+        browse-url-generic-program "firefox")
 #+END_SRC
 ** Clipboard
 Use system clipboard
