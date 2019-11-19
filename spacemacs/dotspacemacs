@@ -31,6 +31,9 @@ values."
    ;; List of configuration layers to load.
    dotspacemacs-configuration-layers
    '(
+     csv
+     markdown
+     typescript
      html
      ansible
      (auto-completion :variables
@@ -61,7 +64,7 @@ values."
    ;; wrapped in a layer. If you need some configuration for these
    ;; packages, then consider creating a layer. You can also put the
    ;; configuration in `dotspacemacs/user-config'.
-   dotspacemacs-additional-packages '(auto-dim-other-buffers all-the-icons spaceline-all-the-icons)
+   dotspacemacs-additional-packages '(auto-dim-other-buffers all-the-icons spaceline-all-the-icons org-sticky-header)
    ;; A list of packages that cannot be updated.
    dotspacemacs-frozen-packages '()
    ;; A list of packages that will not be installed and loaded.
