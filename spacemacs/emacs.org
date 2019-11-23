@@ -186,8 +186,24 @@ Add ability to jump to any org heading with SPC-aoj
 #+END_SRC
 **** Normal mode navigation
 #+BEGIN_SRC emacs-lisp :tangle yes
-  (evil-define-key 'normal org-mode-map (kbd "<left>") 'outline-up-heading)
-  (evil-define-key 'normal org-mode-map (kbd "<up>") 'org-backward-heading-same-level)
+  (defun ic/outline-current-heading-or-up ()
+    "When point is on an org-mode heading: move to parent heading;
+  otherwise: move to current heading."
+    (interactive)
+    (call-interactively (if (org-at-heading-p)
+                            'outline-up-heading
+                          'outline-previous-heading)))
+
+  (defun ic/outline-current-heading-or-backward ()
+    "when point is on an org-mode heading: move to previous heading;
+  otherwise: move to previous heading"
+    (interactive)
+    (call-interactively (if (org-at-heading-p)
+                            'org-backward-heading-same-level
+                          'outline-previous-heading)))
+
+  (evil-define-key 'normal org-mode-map (kbd "<left>") 'ic/outline-current-heading-or-up)
+  (evil-define-key 'normal org-mode-map (kbd "<up>") 'ic/outline-current-heading-or-backward)
   (evil-define-key 'normal org-mode-map (kbd "<down>") 'org-forward-heading-same-level)
   (evil-define-key 'normal org-mode-map (kbd "<right>") 'outline-next-visible-heading)
 
