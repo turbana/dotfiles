@@ -1107,6 +1107,11 @@ color customization.
   (setq auto-dim-other-buffers-dim-on-switch-to-minibuffer nil)
 #+END_SRC
 
+** Dates
+Use ISO dates
+#+BEGIN_SRC emacs-lisp :tangle yes
+  (setq calendar-date-style 'iso)
+#+END_SRC
 ** Web Browser
 Use whatever we have as =web= as default browser
 #+BEGIN_SRC emacs-lisp :tangle yes
