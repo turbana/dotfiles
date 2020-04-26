@@ -1193,13 +1193,6 @@ file's status.
     (let ((branch (cadr (split-string vc-mode "Git[:-]")))
           (project-name (second (nreverse (split-string (projectile-project-root) "/")))))
       (concat
-       (if (string= branch "master")
-           (ic/icon "git")
-         (concat
-          (ic/icon "git-branch" 'octicon)
-          " "
-          branch))
-       " "
        (pcase (vc-state (buffer-file-name))
          ('up-to-date "-")
          ('edited "*")
@@ -1209,7 +1202,14 @@ file's status.
          ('missing "m")
          ('ignored "i")
          ('unregistered "x")
-         (_ "?")))))
+         (_ "?"))
+       " "
+       (if (string= branch "master")
+           (ic/icon "git")
+         (concat
+          (ic/icon "git-branch" 'octicon)
+          " "
+          branch)))))
 
   (spaceline-define-segment
       ic-vc-icon "A segment for the Version Control icon"
