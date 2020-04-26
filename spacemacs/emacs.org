@@ -1190,26 +1190,25 @@ branch I want to see the git branch icon along with the branch name and current
 file's status.
 #+BEGIN_SRC emacs-lisp :tangle yes
   (defun ic//vc-icon-git ()
-    (let ((branch (cadr (split-string vc-mode "Git[:-]")))
-          (project-name (second (nreverse (split-string (projectile-project-root) "/")))))
-      (concat
-       (pcase (vc-state (buffer-file-name))
-         ('up-to-date "-")
-         ('edited "*")
-         ('added "^")
-         ('removed' "v")
-         ('conflict "!")
-         ('missing "m")
-         ('ignored "i")
-         ('unregistered "x")
-         (_ "?"))
-       " "
-       (if (string= branch "master")
-           (ic/icon "git")
-         (concat
-          (ic/icon "git-branch" 'octicon)
-          " "
-          branch)))))
+    (let* ((branch (cadr (split-string vc-mode "Git[:-]")))
+           (project-name (second (nreverse (split-string (projectile-project-root) "/"))))
+           (vc-state-icon (pcase (vc-state (buffer-file-name))
+                            ('up-to-date "-")
+                            ('edited "*")
+                            ('added "^")
+                            ('removed' "v")
+                            ('conflict "!")
+                            ('missing "m")
+                            ('ignored "i")
+                            ('unregistered "x")
+                            (_ "?")))
+           (branch-icon (if (string= branch "master")
+                            (ic/icon "git")
+                          (concat
+                           (ic/icon "git-branch" 'octicon)
+                           " "
+                           branch))))
+      (concat vc-state-icon " " branch-icon)))
 
   (spaceline-define-segment
       ic-vc-icon "A segment for the Version Control icon"
