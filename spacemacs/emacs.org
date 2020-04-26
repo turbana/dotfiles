@@ -275,28 +275,41 @@ Hide emphasis markers such as *bold*, /italic/, etc.
 #+BEGIN_SRC emacs-lisp :tangle yes
   (setq org-hide-emphasis-markers t)
 #+END_SRC
-*** Agenda
+*** Agenda Appearance
 #+BEGIN_SRC emacs-lisp :tangle yes
   ;; don't show completed DEADLINE and SCHEDULED in agenda
   (setq org-agenda-skip-scheduled-if-done t)
   (setq org-agenda-skip-deadline-if-done t)
   (setq org-agenda-skip-deadline-prewarning-if-scheduled 't)
+
   ;; first day in agenda should be today
   (setq org-agenda-start-on-weekday nil)
+
   ;; show weekly agenda by default
   (setq org-agenda-span 'week)
+
+  ;; don't have a separator between agenda sections
+  (setq org-agenda-compact-blocks t)
+#+END_SRC
+*** Agenda
+#+BEGIN_SRC emacs-lisp :tangle yes
   ;; custom agenda views
   (setq org-agenda-custom-commands
-        '(("a" "Agenda"
+        '(
+          ;; work agenda
+          ("w" "Work Agenda"
            ((agenda "" nil)
             (tags "refile"
                   ((org-agenda-overriding-header "Refile tasks:")
                    (org-tags-match-list-sublevels nil)))
-            (tags "-refile/"
-                  ((org-agenda-overriding-header "Archive tasks:")
-                   (org-agenda-skip-function 'bh/skip-non-archivable-tasks)
-                   (org-tags-match-list-sublevels nil))))
+            ;; (tags "-refile/"
+            ;;       ((org-agenda-overriding-header "Archive tasks:")
+            ;;        (org-agenda-skip-function 'bh/skip-non-archivable-tasks)
+            ;;        (org-tags-match-list-sublevels nil)))
+            )
            ((org-agenda-tag-filter-preset '("-HOME"))))
+
+          ;; home agenda
           ("h" "Home agenda"
            ((agenda ""
                     ((org-agenda-skip-function 'ic/skip-old-meal-plans)))
@@ -314,9 +327,16 @@ Hide emphasis markers such as *bold*, /italic/, etc.
                         (org-agenda-skip-function
                          '(org-agenda-skip-entry-if 'scheduled 'deadline)))))
            ((org-agenda-tag-filter-preset '("+HOME"))))
+
+          ;; archives
+          ("a" . "Archiving")
+          ("ah" "Home archive"
+           ((tags "+HOME-noarchive/DONE|CANCELLED|APPLIED"
+                  ((org-agenda-overriding-header "Archive Tasks (*B$ to archive all):")))))
+          ("aw" "Work archive"
+           ((tags "-HOME-noarchive+TIMESTAMP_IA<=\"<-2w>\"/DONE|CANCELLED"
+                  ((org-agenda-overriding-header "Archive Tasks (*B$ to archive all):")))))
           ))
-  ;; don't have a separator between agenda sections
-  (setq org-agenda-compact-blocks t)
 #+END_SRC
 *** Habits
 #+BEGIN_SRC emacs-lisp :tangle yes
