@@ -508,7 +508,7 @@
                      :inherit powerline-active1))
        (undo-tree-visualizer-active-branch-face
         (:foreground ,base+4 :weight bold))
-       (undo-tree-visualizer-current-face (:foreground ,cyan :weight bold))
+       (undo-tree-visualizer-current-face (:foreground ,blue :weight bold))
        (undo-tree-visualizer-default-face (:foreground ,base+2 :slant italic))
        (undo-tree-visualizer-register-face (:foreground ,unknown))
        (undo-tree-visualizer-unmodified-face (:foreground ,green))
