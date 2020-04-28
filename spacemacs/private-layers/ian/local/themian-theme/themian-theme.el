@@ -512,6 +512,13 @@
        (undo-tree-visualizer-default-face (:foreground ,base+2 :slant italic))
        (undo-tree-visualizer-register-face (:foreground ,unknown))
        (undo-tree-visualizer-unmodified-face (:foreground ,green))
+       (which-key-key-face (:foreground ,green))
+       (which-key-separator-face (:foreground ,base-1))
+       (which-key-note-face (:foreground ,base+1 :slant italic))
+       (which-key-special-key-face (:inherit which-key-key-face :inverse-video t :weight bold)) ; default
+       (which-key-group-description-face (:foreground ,yellow))
+       (which-key-command-description-face (:foreground ,blue))
+       (which-key-local-map-description-face (:foreground ,blue))
        (whitespace-empty (:foreground ,unknown))
        (whitespace-hspace (:foreground ,unknown))
        (whitespace-indentation (:inherit whitespace-space :weight bold))
