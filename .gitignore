@@ -4,3 +4,4 @@ offlineimaprc.work
 emacs.el
 themian-theme-impl.el
 secrets
+bin/secretc
