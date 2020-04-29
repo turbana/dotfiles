@@ -29,7 +29,7 @@ DELAY          = 2.0
 SHOW_CPU_TOTAL = False
 
 XBM_DIR      = os.path.expanduser("~/.xmonad/dzen2")
-INBOX        = os.path.expanduser("~/.mail/eastern/INBOX/new")
+INBOX        = os.path.expanduser("~/mail/gmail-professional/inbox/new")
 EVENTS       = os.path.expanduser("~/.cal")
 IMAP_LOG     = os.path.expanduser("~/.offlineimap/stdout.log")
 

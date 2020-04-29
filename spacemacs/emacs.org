@@ -761,6 +761,21 @@ Message composing should be done in =org-mode= format and sent as html.
 
   ;; (setq org-mu4e-link-query-in-headers-mode nil)
 #+END_SRC
+
+Setup some bookmarks
+#+BEGIN_SRC emacs-lisp :tangle yes
+  (setq mu4e-bookmarks
+        (list
+         (make-mu4e-bookmark
+          :name "All Inboxes"
+          :query "maildir:/gmail-professional/inbox"
+          :key ?i)
+         (make-mu4e-bookmark
+          :name "All Unread"
+          :query "flag:unread and not maildir:/gmail-professional/spam and not maildir:/gmail-professional/trash"
+          :key ?u)
+         ))
+#+END_SRC
 ** Cooking
 *** Configuration
 First, we need to setup some configuration.
