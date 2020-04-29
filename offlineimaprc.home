@@ -29,11 +29,12 @@ nametrans = lambda folder: {'drafts':  '[Gmail]/Drafts',
 
 [Repository gmail-professional-remote]
 type = Gmail
-auth_mechanisms = XOAUTH2
-remoteusereval = secret("gmail-professional", "address")
-oauth2_client_id_eval = secret("gmail-professional", "client_id")
-oauth2_client_secret_eval = secret("gmail-professional", "client_secret")
-oauth2_refresh_token_eval = secret("gmail-professional", "refresh_token")
+# auth_mechanisms = XOAUTH2
+remoteusereval = secret("email.professional.address")
+remotepasseval = secret("email.professional.password")
+# oauth2_client_id_eval = secret("email.professional.client-id")
+# oauth2_client_secret_eval = secret("email.professional.client-secret")
+# oauth2_refresh_token_eval = secret("email.professional.refresh-token")
 sslcacertfile = /etc/ssl/certs/ca-certificates.crt
 realdelete = no
 folderfilter = lambda folder: folder[8:] not in ["All Mail", "Important", "Starred"]
