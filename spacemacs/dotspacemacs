@@ -50,7 +50,7 @@ values."
      evil-snipe
      haskell
      javascript
-     ;; mu4e
+     mu4e
      org
      python
      restclient

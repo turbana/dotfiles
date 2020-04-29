@@ -629,7 +629,7 @@ So we can see how much crap there is.
 #+END_SRC
 ** mu4e
 First, setup mu.
-#+BEGIN_SRC emacs-lisp :tangle no
+#+BEGIN_SRC emacs-lisp :tangle yes
   (setq mail-user-agent 'mu4e-user-agent)
   (setq mu4e-maildir "~/mail")
   ;; (setq mu4e-mu-binary "/usr/local/bin/mu")
@@ -642,12 +642,12 @@ Make sure your mail app isn't set to check for new email too frequently. If your
 #+END_QUOTE
 More information [[https://support.google.com/mail/answer/7126229?p=BadCredentials&visit_id=636868193607658613-796315695&rd=2#cantsignin][here]].
 
-#+BEGIN_SRC emacs-lisp :tangle no
+#+BEGIN_SRC emacs-lisp :tangle yes
   (setq mu4e-update-interval 600)
 #+END_SRC
 
 Then, some common variables.
-#+BEGIN_SRC emacs-lisp :tangle no
+#+BEGIN_SRC emacs-lisp :tangle yes
   ;; show images inline
   (setq mu4e-view-show-images t)
   (setq mu4e-show-images t)
@@ -664,7 +664,7 @@ Then, some common variables.
 #+END_SRC
 
 Have a slightly different layout when showing an inbox.
-#+BEGIN_SRC emacs-lisp :tangle no
+#+BEGIN_SRC emacs-lisp :tangle yes
   ;; different date format
   (setq mu4e-headers-date-format "%Y-%m-%d %H:%M")
   ;; set header fields
@@ -676,7 +676,7 @@ Have a slightly different layout when showing an inbox.
 #+END_SRC
 
 We need a helper function to determine what context we're in automatically.
-#+BEGIN_SRC emacs-lisp :tangle no
+#+BEGIN_SRC emacs-lisp :tangle yes
   ;; taken from: https://notanumber.io/2016-10-03/better-email-with-mu4e/
   (defun ic//mu4e-maildir-matches (msg rx)
     (when rx
@@ -689,7 +689,7 @@ We need a helper function to determine what context we're in automatically.
 #+END_SRC
 
 Some default gmail setup.
-#+BEGIN_SRC emacs-lisp :tangle no
+#+BEGIN_SRC emacs-lisp :tangle yes
   (setq message-send-mail-function 'smtpmail-send-it)
   ;; (setq smtpmail-default-smtp-server "smtp.gmail.com")
   (setq smtpmail-smtp-server "smtp.gmail.com")
@@ -706,7 +706,7 @@ machine smtp.gmail.com port 587 login <user>@gmail.com password <account passwor
 #+END_EXAMPLE
 
 Now some account specific setup
-#+BEGIN_SRC emacs-lisp :tangle no
+#+BEGIN_SRC emacs-lisp :tangle yes
   ;; This sets up my two different context for my personal and work emails.
   (setq mu4e-contexts
         (let ((professional-address (ic/get-secret "email.professional.address"))
@@ -725,7 +725,7 @@ Now some account specific setup
                        (mu4e-sent-folder      . "/gmail-professional/sent")
                        (mu4e-drafts-folder    . "/gmail-professional/drafts")
                        (mu4e-trash-folder     . "/gmail-professional/trash")
-                       (mu4e-refile-folder    . "/gmail-professional/inbox") ; XXX What should this be?
+                       (mu4e-refile-folder    . "/gmail-professional/archive")
                        (smtpmail-smtp-user    . ,professional-address)
                        ))
               ,(make-mu4e-context
@@ -740,7 +740,7 @@ Now some account specific setup
                         (mu4e-sent-folder      . "/gmail-personal/sent")
                         (mu4e-drafts-folder    . "/gmail-personal/drafts")
                         (mu4e-trash-folder     . "/gmail-personal/trash")
-                        (mu4e-refile-folder    . "/gmail-personal/inbox")
+                        (mu4e-refile-folder    . "/gmail-personal/archive")
                         (smtpmail-smtp-user    . ,personal-address)
                         )))))
 
@@ -749,7 +749,7 @@ Now some account specific setup
 #+END_SRC
 
 Message composing should be done in =org-mode= format and sent as html.
-#+BEGIN_SRC emacs-lisp :tangle no
+#+BEGIN_SRC emacs-lisp :tangle yes
   ;; automatically flow text when sending
   (setq mu4e-compose-format-flowed t)
 
