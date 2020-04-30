@@ -12,11 +12,11 @@ localrepository = gmail-personal-local
 remoterepository = gmail-personal-remote
 synclabels = yes
 labelsheader = X-Keywords
-postsynchook = mu index --maildir ~/mail/gmail-personal
+postsynchook = mu index --maildir ~/mail/per
 
 [Repository gmail-personal-local]
 type = GmailMaildir
-localfolders = ~/mail/gmail-personal
+localfolders = ~/mail/per
 nametrans = lambda folder: {'drafts':  '[Gmail]/Drafts',
                             'sent':    '[Gmail]/Sent Mail',
                             'flagged': '[Gmail]/Starred',
@@ -48,11 +48,11 @@ localrepository = gmail-professional-local
 remoterepository = gmail-professional-remote
 synclabels = yes
 labelsheader = X-Keywords
-postsynchook = mu index --maildir ~/mail/gmail-professional
+postsynchook = mu index --maildir ~/mail/pro
 
 [Repository gmail-professional-local]
 type = GmailMaildir
-localfolders = ~/mail/gmail-professional
+localfolders = ~/mail/pro
 nametrans = lambda folder: {'drafts':  '[Gmail]/Drafts',
                             'sent':    '[Gmail]/Sent Mail',
                             'flagged': '[Gmail]/Starred',

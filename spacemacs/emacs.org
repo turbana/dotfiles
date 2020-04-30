@@ -710,8 +710,8 @@ was taken from [[https://github.com/djcb/mu/issues/1355][github]] and modified t
         (mu4e~headers-thread-subject msg)
         'face 'font-lock-doc-face))
       ((:maildir :path :message-id)
-       (let* ((replacements '(("/gmail-professional/" . "pro/")
-                              ("/gmail-personal/" . "per/")))
+       (let* ((replacements '(("/pro/" . "pro/")
+                              ("/per/" . "per/")))
               (maildir (seq-reduce
                         (lambda (s replace)
                           (s-replace (car replace) (cdr replace) s))
@@ -795,14 +795,14 @@ Now some account specific setup
                :enter-func `(lambda () (mu4e-message (concat "Switch to " ,professional-address)))
                :match-func (lambda (msg)
                              (when msg
-                               (ic//mu4e-maildir-matches msg "^/gmail-professional")))
+                               (ic//mu4e-maildir-matches msg "^/pro")))
                :leave-func (lambda () (mu4e-clear-caches))
                :vars `((user-mail-address     . ,professional-address)
                        (user-full-name        . ,professional-name)
-                       (mu4e-sent-folder      . "/gmail-professional/sent")
-                       (mu4e-drafts-folder    . "/gmail-professional/drafts")
-                       (mu4e-trash-folder     . "/gmail-professional/trash")
-                       (mu4e-refile-folder    . "/gmail-professional/archive")
+                       (mu4e-sent-folder      . "/pro/sent")
+                       (mu4e-drafts-folder    . "/pro/drafts")
+                       (mu4e-trash-folder     . "/pro/trash")
+                       (mu4e-refile-folder    . "/pro/archive")
                        (smtpmail-smtp-user    . ,professional-address)
                        ))
               ,(make-mu4e-context
@@ -810,14 +810,14 @@ Now some account specific setup
                 :enter-func (lambda () `(mu4e-message (concat "Switch to " ,personal-address)))
                 :match-func (lambda (msg)
                               (when msg
-                                (ic//mu4e-maildir-matches msg "^/gmail-personal")))
+                                (ic//mu4e-maildir-matches msg "^/per")))
                 :leave-func (lambda () (mu4e-clear-caches))
                 :vars `((user-mail-address     . ,personal-address)
                         (user-full-name        . ,personal-name)
-                        (mu4e-sent-folder      . "/gmail-personal/sent")
-                        (mu4e-drafts-folder    . "/gmail-personal/drafts")
-                        (mu4e-trash-folder     . "/gmail-personal/trash")
-                        (mu4e-refile-folder    . "/gmail-personal/archive")
+                        (mu4e-sent-folder      . "/per/sent")
+                        (mu4e-drafts-folder    . "/per/drafts")
+                        (mu4e-trash-folder     . "/per/trash")
+                        (mu4e-refile-folder    . "/per/archive")
                         (smtpmail-smtp-user    . ,personal-address)
                         )))))
 
@@ -862,15 +862,15 @@ Setup some bookmarks
         (list
          (make-mu4e-bookmark
           :name "All Inboxes"
-          :query "maildir:/gmail-personal/inbox or maildir:/gmail-professional/inbox"
+          :query "maildir:/per/inbox or maildir:/pro/inbox"
           :key ?i)
          (make-mu4e-bookmark
           :name "All Unread"
           :query (concat "flag:unread"
-                         " and not maildir:/gmail-personal/spam"
-                         " and not maildir:/gmail-personal/trash"
-                         " and not maildir:/gmail-professional/spam"
-                         " and not maildir:/gmail-professional/trash")
+                         " and not maildir:/per/spam"
+                         " and not maildir:/per/trash"
+                         " and not maildir:/pro/spam"
+                         " and not maildir:/pro/trash")
           :key ?u)
          ))
 #+END_SRC
