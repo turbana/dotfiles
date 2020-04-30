@@ -672,9 +672,9 @@ Have a slightly different layout when showing an inbox.
   (setq mu4e-headers-time-format "%H:%M")
   ;; set header fields
   (setq mu4e-headers-fields
-        '((:human-date . 17)
+        '((:maildir    . 12)
           (:flags      . 6)
-          (:maildir    . 12)
+          (:human-date . 17)
           (:from       . 20)
           (:subject    . nil)))
 #+END_SRC
@@ -710,20 +710,14 @@ was taken from [[https://github.com/djcb/mu/issues/1355][github]] and modified t
         (mu4e~headers-thread-subject msg)
         'face 'font-lock-doc-face))
       ((:maildir :path :message-id)
-       (let* ((replacements '(("/pro/" . "pro/")
-                              ("/per/" . "per/")))
-              (maildir (seq-reduce
-                        (lambda (s replace)
-                          (s-replace (car replace) (cdr replace) s))
-                        replacements
-                        val))
-              (parts (split-string maildir "/"))
-              )
-         (concat (propertize (concat (car parts) "/")
+       (let* ((parts (split-string val "/")))
+         (concat (propertize "/"
+                             'face 'mu4e-maildirs-extension-maildir-face)
+                 (propertize (cadr parts)
                              'face 'mu4e-maildirs-extension-maildir-hl-face)
-                 (propertize (mapconcat #'identity (cdr parts) "/")
-                             'face 'mu4e-maildirs-extension-maildir-face))
-         ))
+                 (propertize (concat "/" (mapconcat #'identity (cddr parts) "/"))
+                             'face 'mu4e-maildirs-extension-maildir-face)))
+       )
       ((:to :from :cc :bcc)
        (propertize
         (mu4e~headers-contact-str val)
@@ -731,8 +725,7 @@ was taken from [[https://github.com/djcb/mu/issues/1355][github]] and modified t
       (:from-or-to (mu4e~headers-from-or-to msg))
       (:date
        (propertize
-        ;; (format-time-string mu4e-headers-date-format val)
-        val
+        (format-time-string mu4e-headers-date-format val)
         'face 'mu4e-system-face))
       (:mailing-list (mu4e~headers-mailing-list val))
       (:human-date
@@ -754,20 +747,6 @@ was taken from [[https://github.com/djcb/mu/issues/1355][github]] and modified t
       (t (mu4e~headers-custom-field msg field))))
 #+END_SRC
 
-In order
-#+BEGIN_SRC emacs-lisp :tangle yes
-  (defface ic/mu4e-test '((t :inherit default)) "doc" :group 'basic-faces)
-
-  ;; different date format
-  (setq mu4e-headers-date-format "%Y-%m-%d %H:%M")
-  ;; set header fields
-  (setq mu4e-headers-fields
-        '((:date    . 17)
-          (:flags   . 6)
-          (:from    . 32)
-          (:subject . nil)))
-#+END_SRC
-
 *** Contexts
 We need a helper function to determine what context we're in automatically.
 #+BEGIN_SRC emacs-lisp :tangle yes
@@ -780,6 +759,11 @@ We need a helper function to determine what context we're in automatically.
                 (ic//mu4e-maildir-matches msg (cdr rx)))
           ;; Not a list, check rx
           (string-match rx (mu4e-message-field msg :maildir)))))
+#+END_SRC
+
+Choose the first context when starting =mu4e=.
+#+BEGIN_SRC emacs-lisp :tangle yes
+  (setq mu4e-context-policy 'pick-first)
 #+END_SRC
 
 Now some account specific setup
@@ -795,7 +779,7 @@ Now some account specific setup
                :enter-func `(lambda () (mu4e-message (concat "Switch to " ,professional-address)))
                :match-func (lambda (msg)
                              (when msg
-                               (ic//mu4e-maildir-matches msg "^/pro")))
+                               (ic//mu4e-maildir-matches msg "^/pro/")))
                :leave-func (lambda () (mu4e-clear-caches))
                :vars `((user-mail-address     . ,professional-address)
                        (user-full-name        . ,professional-name)
@@ -810,7 +794,7 @@ Now some account specific setup
                 :enter-func (lambda () `(mu4e-message (concat "Switch to " ,personal-address)))
                 :match-func (lambda (msg)
                               (when msg
-                                (ic//mu4e-maildir-matches msg "^/per")))
+                                (ic//mu4e-maildir-matches msg "^/per/")))
                 :leave-func (lambda () (mu4e-clear-caches))
                 :vars `((user-mail-address     . ,personal-address)
                         (user-full-name        . ,personal-name)
@@ -820,9 +804,6 @@ Now some account specific setup
                         (mu4e-refile-folder    . "/per/archive")
                         (smtpmail-smtp-user    . ,personal-address)
                         )))))
-
-  ;; compose under the current context
-  (setq mu4e-compose-context-policy nil)
 #+END_SRC
 
 *** Sending mail
@@ -843,6 +824,9 @@ machine smtp.gmail.com port 587 login <user>@gmail.com password <account passwor
 *** Composing
 Message composing should be done in =org-mode= format and sent as html.
 #+BEGIN_SRC emacs-lisp :tangle yes
+  ;; compose under the current context
+  (setq mu4e-compose-context-policy nil)
+
   ;; automatically flow text when sending
   (setq mu4e-compose-format-flowed t)
 
@@ -872,6 +856,14 @@ Setup some bookmarks
                          " and not maildir:/pro/spam"
                          " and not maildir:/pro/trash")
           :key ?u)
+         (make-mu4e-bookmark
+          :name "Sent"
+          :query "maildir:/per/sent or maildir:/pro/sent"
+          :key ?s)
+         (make-mu4e-bookmark
+          :name "Spam"
+          :query "maildir:/per/spam or maildir:/pro/spam"
+          :key ?S)
          ))
 #+END_SRC
 ** Cooking
