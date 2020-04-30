@@ -768,11 +768,15 @@ Setup some bookmarks
         (list
          (make-mu4e-bookmark
           :name "All Inboxes"
-          :query "maildir:/gmail-professional/inbox"
+          :query "maildir:/gmail-personal/inbox or maildir:/gmail-professional/inbox"
           :key ?i)
          (make-mu4e-bookmark
           :name "All Unread"
-          :query "flag:unread and not maildir:/gmail-professional/spam and not maildir:/gmail-professional/trash"
+          :query (concat "flag:unread"
+                         " and not maildir:/gmail-personal/spam"
+                         " and not maildir:/gmail-personal/trash"
+                         " and not maildir:/gmail-professional/spam"
+                         " and not maildir:/gmail-professional/trash")
           :key ?u)
          ))
 #+END_SRC

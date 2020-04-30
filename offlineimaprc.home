@@ -1,11 +1,46 @@
 # -*- mode:conf-unix -*-
 
 [general]
-#accounts = gmail-personal, gmail-professional
-accounts = gmail-professional
+accounts = gmail-personal, gmail-professional
 pythonfile = ~/.etc/bin/secret
 fsync = True
 socktimeout = 60
+
+
+[Account gmail-personal]
+localrepository = gmail-personal-local
+remoterepository = gmail-personal-remote
+synclabels = yes
+labelsheader = X-Keywords
+postsynchook = mu index --maildir ~/mail/gmail-personal
+
+[Repository gmail-personal-local]
+type = GmailMaildir
+localfolders = ~/mail/gmail-personal
+nametrans = lambda folder: {'drafts':  '[Gmail]/Drafts',
+                            'sent':    '[Gmail]/Sent Mail',
+                            'flagged': '[Gmail]/Starred',
+                            'trash':   '[Gmail]/Trash',
+                            'spam':    '[Gmail]/Spam',
+                            'inbox':   'INBOX',
+                            'archive': '[Gmail]/All Mail',
+                            }.get(folder, folder)
+
+[Repository gmail-personal-remote]
+type = Gmail
+remoteusereval = secret("email.personal.address")
+remotepasseval = secret("email.personal.password")
+sslcacertfile = /etc/ssl/certs/ca-certificates.crt
+folderfilter = lambda folder: folder[8:] not in ["All Mail", "Important", "Starred"]
+trashfolder = [Gmail]/Trash
+nametrans = lambda folder: {'[Gmail]/Drafts':    'drafts',
+                            '[Gmail]/Sent Mail': 'sent',
+                            '[Gmail]/Starred':   'flagged',
+                            '[Gmail]/Trash':     'trash',
+                            '[Gmail]/Spam':      'spam',
+                            'INBOX':             'inbox',
+                            '[Gmail]/All Mail':  'archive',
+                            }.get(folder, folder)
 
 
 [Account gmail-professional]
@@ -29,14 +64,9 @@ nametrans = lambda folder: {'drafts':  '[Gmail]/Drafts',
 
 [Repository gmail-professional-remote]
 type = Gmail
-# auth_mechanisms = XOAUTH2
 remoteusereval = secret("email.professional.address")
 remotepasseval = secret("email.professional.password")
-# oauth2_client_id_eval = secret("email.professional.client-id")
-# oauth2_client_secret_eval = secret("email.professional.client-secret")
-# oauth2_refresh_token_eval = secret("email.professional.refresh-token")
 sslcacertfile = /etc/ssl/certs/ca-certificates.crt
-realdelete = no
 folderfilter = lambda folder: folder[8:] not in ["All Mail", "Important", "Starred"]
 trashfolder = [Gmail]/Trash
 nametrans = lambda folder: {'[Gmail]/Drafts':    'drafts',
