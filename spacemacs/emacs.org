@@ -628,6 +628,7 @@ So we can see how much crap there is.
   (use-package disk-usage)
 #+END_SRC
 ** mu4e
+*** Initial setup
 First, setup mu.
 #+BEGIN_SRC emacs-lisp :tangle yes
   (setq mail-user-agent 'mu4e-user-agent)
@@ -663,8 +664,100 @@ Then, some common variables.
   (setq mu4e-confirm-quit nil)
 #+END_SRC
 
+*** Header view
 Have a slightly different layout when showing an inbox.
 #+BEGIN_SRC emacs-lisp :tangle yes
+  ;; different date format
+  (setq mu4e-headers-date-format "%Y-%m-%d %H:%M")
+  (setq mu4e-headers-time-format "%H:%M")
+  ;; set header fields
+  (setq mu4e-headers-fields
+        '((:human-date . 17)
+          (:flags      . 6)
+          (:maildir    . 12)
+          (:from       . 20)
+          (:subject    . nil)))
+#+END_SRC
+
+I like having each section of the header view it's own color. The following code
+was taken from [[https://github.com/djcb/mu/issues/1355][github]] and modified to my taste.
+#+BEGIN_SRC emacs-lisp :tangle yes
+  (defun mu4e~headers-line-apply-flag-face (msg line)
+    line)
+
+  (defun mu4e~headers-field-apply-basic-properties (msg field val width)
+    (case field
+      (:subject
+       (propertize
+        (concat
+         (mu4e~headers-thread-prefix (mu4e-message-field msg :thread))
+         (truncate-string-to-width val 600))
+        'face
+        (let ((flags (mu4e-message-field msg :flags))
+              (spam (string-suffix-p "spam" (mu4e-message-field msg :maildir)))
+              (trash (string-suffix-p "trash" (mu4e-message-field msg :maildir))))
+          (cond
+           ((or (memq 'trashed flags) spam trash) 'mu4e-trashed-face)
+           ((memq 'draft flags) 'mu4e-draft-face)
+           ((or (memq 'unread flags) (memq 'new flags))
+            'mu4e-unread-face)
+           ((memq 'flagged flags) 'mu4e-flagged-face)
+           ((memq 'replied flags) 'mu4e-replied-face)
+           ((memq 'passed flags) 'mu4e-forwarded-face)
+           (t 'mu4e-header-face)))))
+      (:thread-subject
+       (propertize
+        (mu4e~headers-thread-subject msg)
+        'face 'font-lock-doc-face))
+      ((:maildir :path :message-id)
+       (let* ((replacements '(("/gmail-professional/" . "pro/")
+                              ("/gmail-personal/" . "per/")))
+              (maildir (seq-reduce
+                        (lambda (s replace)
+                          (s-replace (car replace) (cdr replace) s))
+                        replacements
+                        val))
+              (parts (split-string maildir "/"))
+              )
+         (concat (propertize (concat (car parts) "/")
+                             'face 'mu4e-maildirs-extension-maildir-hl-face)
+                 (propertize (mapconcat #'identity (cdr parts) "/")
+                             'face 'mu4e-maildirs-extension-maildir-face))
+         ))
+      ((:to :from :cc :bcc)
+       (propertize
+        (mu4e~headers-contact-str val)
+        'face 'mu4e-contact-face))
+      (:from-or-to (mu4e~headers-from-or-to msg))
+      (:date
+       (propertize
+        ;; (format-time-string mu4e-headers-date-format val)
+        val
+        'face 'mu4e-system-face))
+      (:mailing-list (mu4e~headers-mailing-list val))
+      (:human-date
+       (propertize
+        (mu4e~headers-human-date msg)
+        'help-echo (format-time-string
+                    mu4e-headers-long-date-format
+                    (mu4e-msg-field msg :date))
+        'face 'mu4e-system-face))
+      (:flags
+       (propertize (mu4e~headers-flags-str val)
+                   'help-echo (format "%S" val)
+                   'face 'font-lock-type-face))
+      (:tags
+       (propertize
+        (mapconcat 'identity val ", ")
+        'face 'font-lock-builtin-face))
+      (:size (mu4e-display-size val))
+      (t (mu4e~headers-custom-field msg field))))
+#+END_SRC
+
+In order
+#+BEGIN_SRC emacs-lisp :tangle yes
+  (defface ic/mu4e-test '((t :inherit default)) "doc" :group 'basic-faces)
+
   ;; different date format
   (setq mu4e-headers-date-format "%Y-%m-%d %H:%M")
   ;; set header fields
@@ -675,6 +768,7 @@ Have a slightly different layout when showing an inbox.
           (:subject . nil)))
 #+END_SRC
 
+*** Contexts
 We need a helper function to determine what context we're in automatically.
 #+BEGIN_SRC emacs-lisp :tangle yes
   ;; taken from: https://notanumber.io/2016-10-03/better-email-with-mu4e/
@@ -687,23 +781,6 @@ We need a helper function to determine what context we're in automatically.
           ;; Not a list, check rx
           (string-match rx (mu4e-message-field msg :maildir)))))
 #+END_SRC
-
-Some default gmail setup.
-#+BEGIN_SRC emacs-lisp :tangle yes
-  (setq message-send-mail-function 'smtpmail-send-it)
-  ;; (setq smtpmail-default-smtp-server "smtp.gmail.com")
-  (setq smtpmail-smtp-server "smtp.gmail.com")
-  (setq smtpmail-smtp-service 587)
-  ;; (setq smtpmail-stream-type 'starttls)
-  ;; (setq smtpmail-smtp-local-domain "gmail.com")
-#+END_SRC
-
-For each of our gmail accounts we need an application specific password to use
-to send email. To create one go [[https://security.google.com/settings/u/1/security/apppasswords][here]]. Be sure and insert a line into
-=~/.authinfo.gpg= for each account with the following format:
-#+BEGIN_EXAMPLE
-machine smtp.gmail.com port 587 login <user>@gmail.com password <account password>
-#+END_EXAMPLE
 
 Now some account specific setup
 #+BEGIN_SRC emacs-lisp :tangle yes
@@ -748,6 +825,22 @@ Now some account specific setup
   (setq mu4e-compose-context-policy nil)
 #+END_SRC
 
+*** Sending mail
+Some default gmail setup.
+#+BEGIN_SRC emacs-lisp :tangle yes
+  (setq message-send-mail-function 'smtpmail-send-it)
+  (setq smtpmail-smtp-server "smtp.gmail.com")
+  (setq smtpmail-smtp-service 587)
+#+END_SRC
+
+For each of our gmail accounts we need an application specific password to use
+to send email. To create one go [[https://security.google.com/settings/u/1/security/apppasswords][here]]. Be sure and insert a line into
+=~/.authinfo.gpg= for each account with the following format:
+#+BEGIN_EXAMPLE
+machine smtp.gmail.com port 587 login <user>@gmail.com password <account password>
+#+END_EXAMPLE
+
+*** Composing
 Message composing should be done in =org-mode= format and sent as html.
 #+BEGIN_SRC emacs-lisp :tangle yes
   ;; automatically flow text when sending
@@ -762,6 +855,7 @@ Message composing should be done in =org-mode= format and sent as html.
   ;; (setq org-mu4e-link-query-in-headers-mode nil)
 #+END_SRC
 
+*** Bookmarks
 Setup some bookmarks
 #+BEGIN_SRC emacs-lisp :tangle yes
   (setq mu4e-bookmarks
