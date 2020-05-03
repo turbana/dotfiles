@@ -135,6 +135,116 @@ Let's have some functional functions.
     (should (eql (all '(t t)) t)))
 #+END_SRC
 * Major Packages
+** elfeed
+*** Config
+
+#+BEGIN_SRC emacs-lisp :tangle yes
+  (elfeed-org)
+  (setq rmh-elfeed-org-files (list "~/org/home/elfeed.org"))
+
+  (setq elfeed-search-title-max-width 400)
+  (setq elfeed-search-title-min-width 16)
+  (setq elfeed-search-trailing-width 50)
+  ;; (clrhash elfeed-search--header-cache)
+
+  (elfeed-goodies/setup)
+
+  ;; show elfeed-goodies pane on bottom
+  (setq elfeed-goodies/entry-pane-position 'bottom)
+  (setq elfeed-goodies/wide-threshold 0.33)
+
+  ;; stay on entry when performing a command
+  ;; TODO change this to only when using a sidebar
+  (setq elfeed-search-remain-on-entry t)
+
+  ;; (setq elfeed-curl-extra-arguments '("-HUser-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101 Firefox/60.0"))
+  ;; (setq elfeed-curl-extra-arguments nil)
+#+END_SRC
+
+*** Custom search display
+I don't like the layout of either vanilla ~elfeed~ or ~elfeed-goodies~ so I'm going
+to copy the display function form ~elfeed-goodies~ and customize it to my taste.
+
+**** Custom Entry
+#+BEGIN_SRC emacs-lisp :tangle yes
+  (defun ic/elfeed-search-print-entry (entry)
+    "Print ENTRY to the buffer."
+    (let* ((date (elfeed-search-format-date (elfeed-entry-date entry)))
+           (title (or (elfeed-meta entry :title) (elfeed-entry-title entry) ""))
+           (title-faces (elfeed-search--faces (elfeed-entry-tags entry)))
+           (feed (elfeed-entry-feed entry))
+           (feed-title
+            (when feed
+              (or (elfeed-meta feed :title) (elfeed-feed-title feed))))
+           (tags (mapcar #'symbol-name (elfeed-entry-tags entry)))
+           (tags-str (mapconcat 'identity tags ","))
+           (title-width (- (window-width) elfeed-goodies/feed-source-column-width
+                           elfeed-goodies/tag-column-width ic/elfeed-date-width 3))
+           (title-column (elfeed-format-column
+                          title (elfeed-clamp elfeed-search-title-min-width
+                                              title-width
+                                              title-width)
+                          :left))
+           (tag-column (elfeed-format-column
+                        tags-str (elfeed-clamp (length tags-str)
+                                               elfeed-goodies/tag-column-width
+                                               elfeed-goodies/tag-column-width)
+                        :left))
+           (feed-column (elfeed-format-column
+                         feed-title (elfeed-clamp elfeed-goodies/feed-source-column-width
+                                                  elfeed-goodies/feed-source-column-width
+                                                  elfeed-goodies/feed-source-column-width)
+                         :left)))
+
+      (if (>= (window-width) (* (frame-width) elfeed-goodies/wide-threshold))
+          (progn
+            (insert (propertize date 'face 'elfeed-search-date-face) " ")
+            (insert (propertize feed-column 'face 'elfeed-search-feed-face) " ")
+            (insert (propertize title-column 'face title-faces 'kbd-help title) " ")
+            (insert (propertize tag-column 'face 'elfeed-search-tag-face)))
+        (insert (propertize title 'face title-faces 'kbd-help title)))))
+
+  (setq ic/elfeed-date-width 10)
+  (setq elfeed-search-print-entry-function #'ic/elfeed-search-print-entry)
+  (setq elfeed-goodies/powerline-default-separator powerline-default-separator)
+#+END_SRC
+
+**** Custom Header
+#+BEGIN_SRC emacs-lisp :tangle yes
+  (defun search-header/draw-wide (separator-left separator-right search-filter stats db-time)
+    (let* ((update (format-time-string "%Y-%m-%d %H:%M:%S %z" db-time))
+           (lhs (list
+                 (powerline-raw (-pad-string-to "Date" (- ic/elfeed-date-width 5)) 'powerline-active0 'l)
+                 (funcall separator-left 'powerline-active0 'powerline-active1)
+                 (powerline-raw (-pad-string-to "Feed" (- elfeed-goodies/feed-source-column-width 5)) 'powerline-active1 'l)
+                 (funcall separator-right 'powerline-active1 'powerline-active2)
+                 (powerline-raw "Subject" 'mode-line 'l)
+                 ;; (funcall separator-left 'powerline-active2 'mode-line)
+                 ))
+           (rhs (list
+                 (funcall separator-right 'powerline-active2 'powerline-active1)
+                 (powerline-raw (concat " " search-filter) 'powerline-active1 'r)
+                 (funcall separator-left 'powerline-active1 'powerline-active0)
+                 (cl-destructuring-bind (unread entry-count feed-count) stats
+                   (let ((content (format " %d/%d:%d " unread entry-count feed-count)))
+                     (when url-queue
+                       (cl-destructuring-bind (total-feeds queue-length in-progress) (-elfeed/queue-stats)
+                         (setf content (concat content (format " (* %.0f%%%%)"
+                                                               (* (/ (- total-feeds (+ queue-length
+                                                                                       in-progress))
+                                                                     total-feeds 1.0) 100))))))
+                     (propertize content
+                                 'face 'powerline-active0)))
+                 ;; (funcall separator-right 'powerline-active1 'powerline-active0)
+                 ;; (powerline-raw (concat " " update) 'powerline-active0 'r)
+                 (funcall separator-right 'powerline-active0 'powerline-active1)
+                 (powerline-raw (-pad-string-to "Tags" (- elfeed-goodies/tag-column-width 3)) 'powerline-active1 'l)
+                 )))
+      (concat (powerline-render lhs)
+              (powerline-fill 'powerline-active2 (powerline-width rhs))
+              (powerline-render rhs))))
+#+END_SRC
+
 ** org-mode
 *** Basic Setup
 #+BEGIN_SRC emacs-lisp :tangle yes
