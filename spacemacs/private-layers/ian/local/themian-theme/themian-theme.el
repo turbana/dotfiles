@@ -368,7 +368,7 @@
        (mu4e-title-face (:foreground ,yellow :weight bold))
        (mu4e-trashed-face (:foreground ,base+1 :slant italic))
        (mu4e-unread-face (:foreground ,blue))
-       (mu4e-url-number-face (:foreground ,unknown))
+       (mu4e-url-number-face (:foreground ,yellow))
        (mu4e-view-body-face (:inherit default))
        (mu4e-warning-face (:foreground ,unknown))
        (org-agenda-calendar-event (:inherit default))

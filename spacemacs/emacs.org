@@ -836,7 +836,7 @@ was taken from [[https://github.com/djcb/mu/issues/1355][github]] and modified t
       (:date
        (propertize
         (format-time-string mu4e-headers-date-format val)
-        'face 'mu4e-system-face))
+        'face 'org-sexp-date))
       (:mailing-list (mu4e~headers-mailing-list val))
       (:human-date
        (propertize
@@ -844,11 +844,11 @@ was taken from [[https://github.com/djcb/mu/issues/1355][github]] and modified t
         'help-echo (format-time-string
                     mu4e-headers-long-date-format
                     (mu4e-msg-field msg :date))
-        'face 'mu4e-system-face))
+        'face 'org-sexp-date))
       (:flags
        (propertize (mu4e~headers-flags-str val)
                    'help-echo (format "%S" val)
-                   'face 'font-lock-type-face))
+                   'face 'mu4e-url-number-face))
       (:tags
        (propertize
         (mapconcat 'identity val ", ")
