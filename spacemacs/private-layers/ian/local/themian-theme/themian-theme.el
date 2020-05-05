@@ -367,7 +367,7 @@
        (mu4e-system-face (:foreground ,base+1 :slant italic))
        (mu4e-title-face (:foreground ,yellow :weight bold))
        (mu4e-trashed-face (:foreground ,base+1 :slant italic))
-       (mu4e-unread-face (:foreground ,blue))
+       (mu4e-unread-face (:foreground ,base+3 :weight bold))
        (mu4e-url-number-face (:foreground ,yellow))
        (mu4e-view-body-face (:inherit default))
        (mu4e-warning-face (:foreground ,unknown))

@@ -482,8 +482,9 @@ Create a log on certain state changes inside the =LOGBOOK= drawer.
            "* TODO %?\n%u\n"
            ;; :clock-in ic/org-clock-in :clock-resume ic/org-clock-resume
            )
-          ("r" "respond" entry (file org-default-notes-file)
-           "* TODO respond to %:from on %:subject\nscheduled: %t\n%u\n%a\n"
+          ("r" "reply" entry (file org-default-notes-file)
+           "* TODO Reply to %:from on %:subject\nSCHEDULED: %t\n%u\n%a\n"
+           :immediate-finish t
            ;; :clock-in ic/org-clock-in :clock-resume ic/org-clock-resume
            )
           ("n" "note" entry (file org-default-notes-file)
@@ -975,6 +976,29 @@ Setup some bookmarks
           :query "maildir:/per/spam or maildir:/pro/spam"
           :key ?S)
          ))
+#+END_SRC
+
+*** Org capture
+I want to be able to save a TODO item for the current email and archive in one swoop.
+#+BEGIN_SRC emacs-lisp :tangle yes
+  (defun ic//org-capture-email ()
+    "For email at point: call `org-capture' and mark for refile."
+    (interactive)
+    (org-store-link nil)
+    (org-capture nil "r")
+    (cond ((eq major-mode 'mu4e-headers-mode)
+           (mu4e-headers-mark-for-refile))
+          ((eq major-mode 'mu4e-view-mode)
+           (mu4e-view-mark-for-refile))))
+#+END_SRC
+
+*** Keybindings
+#+BEGIN_SRC emacs-lisp :tangle yes
+  (define-key 'mu4e-headers-mode-map "a" #'mu4e-headers-mark-for-refile)
+  (define-key 'mu4e-headers-mode-map "r" #'ic//org-capture-email)
+
+  (define-key 'mu4e-view-mode-map "a" #'mu4e-view-mark-for-refile)
+  (define-key 'mu4e-view-mode-map "r" #'ic//org-capture-email)
 #+END_SRC
 ** Cooking
 *** Configuration
