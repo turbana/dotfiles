@@ -1,0 +1,205 @@
+#+TITLE: Emacs Config
+#+STARTUP: content
+
+* Initial
+** Lexical binding
+All right-thinking people use lexical binding.
+
+#+BEGIN_SRC emacs-lisp :tangle yes
+  ;; -*- lexical-binding: t -*-
+#+END_SRC
+
+** Disable cruft
+Turn off some default emacs settings I don't like, such as the menu bar, scroll
+bar, etc.
+
+#+BEGIN_SRC emacs-lisp :tangle yes
+  ;; disable some unwanted UI modes
+  (tool-bar-mode -1)
+  (menu-bar-mode -1)
+  (scroll-bar-mode -1)
+
+  ;; don't show the initial emacs screen
+  (setq inhibit-startup-screen t)
+  ;; start in the *Messages* buffer
+  (setq initial-buffer-choice (lambda () (get-buffer "*Messages*")))
+#+END_SRC
+
+** Secrets
+I keep certain information out of source control: email addresses, account
+information, etc. I have a small python program called =secret= that I use to
+retrieve these secrets, let's expose that to emacs.
+
+#+BEGIN_SRC emacs-lisp :tangle yes
+  (setq ic/secret-cmd "secret")
+
+  (defun ic/get-secret (secret)
+    "Retrieve `secret' using the `ic/secret-cmd' program."
+    (first (process-lines ic/secret-cmd secret)))
+#+END_SRC
+
+** Debugging
+*** Tracing
+Some functions to trace the changing of variables.
+
+#+BEGIN_SRC emacs-lisp :tangle yes
+  ;; use when live editing
+  ;; (setq lexical-binding t)
+
+  (defvar ic/watch-variable-message-fmt "%s(%s): %s %S"
+    "Format to use when displaying variable changes. Equivalent to
+  `(format ic/watch-variable-message-fmt symbol buffer operation value)'.")
+
+  (defun ic/watch-variable (symbol &rest ops)
+    "Watch for any OPS operations on SYMBOL and call `message'. OPS defaults to
+  '(set), see `add-variable-watcher' for all possible values."
+    (defun watch-variable-call-message (symbol value operation buffer)
+      (message (ic//watch-variable-format symbol buffer operation value))
+    (ic/watch-variable-call-func symbol #'watch-variable-call-message ops)))
+
+  (defun ic/watch-variable-raise-debug (symbol &rest ops)
+    "Watch for any changes to SYMBOL and raise on error."
+    (defun watch-variable-raise-debug (symbol value operation buffer)
+      (let ((msg (ic//watch-variable-format symbol buffer operation value)))
+        (message msg)
+        (debug nil msg)))
+    (ic/watch-variable-call-func symbol #'watch-variable-raise-debug ops))
+
+  (defun ic/watch-variable-print-stack (symbol &rest ops)
+    "Watch for any changes to SYMBOL and print a stack trace."
+    (defun watch-variable-print-stack (symbol value operation buffer)
+      (message (ic//watch-variable-format symbol buffer operation value))
+      (if-let ((stack-trace (with-output-to-string (backtrace))))
+          (progn
+            (message ">>>>>>>>>>")
+            (message "%S" stack-trace)
+            (message "<<<<<<<<<<"))
+        (message "(no stack trace found)")))
+    (ic/watch-variable-call-func symbol #'watch-variable-print-stack ops))
+
+  (defvar ic//variable-watchers nil "a-list of variable watchers")
+
+  (defun ic/watch-variable-call-func (symbol func &rest ops)
+    "Watch for any OPS on SYMBOL and call FUNC."
+    (unless (assq symbol ic//variable-watchers)
+      (when (equal ops (list nil))
+        (setq ops '(set let unlet makunbound defvaralias)))
+      (defun watch-change (symbol value operation buffer)
+        (when (member operation ops)
+          (apply func (list symbol value operation buffer))))
+      (add-variable-watcher symbol #'watch-change)
+      (push (cons symbol #'watch-change) ic//variable-watchers)))
+
+  (defun ic/unwatch-variable (symbol)
+    "Remove any `ic/watch-variable-*' watchers from SYMBOL."
+    (let ((watcher (alist-get symbol ic//variable-watchers)))
+      (when watcher
+        (remove-variable-watcher symbol watcher)
+        (setq ic//variable-watchers
+              (assq-delete-all symbol ic//variable-watchers))
+        t)))
+
+  (defun ic//watch-variable-format (symbol value operation buffer)
+    "Generate printable string."
+    (format "%s(%s): %s %S" symbol buffer operation value))
+#+END_SRC
+
+*** TODO Profiling
+Some profiler keybindings.
+
+#+BEGIN_SRC emacs-lisp :tangle no
+  (defun ic/start-cpu-profiler ()
+    "Start the CPU profiler."
+    (interactive)
+    (profiler-start 'cpu))
+
+  (defun ic/start-mem-profiler ()
+    "Start the memory profiler."
+    (interactive)
+    (profiler-start 'mem))
+
+  (spacemacs/declare-prefix "E" "emacs")
+  (spacemacs/set-leader-keys "Ec" #'ic/start-cpu-profiler)
+  (spacemacs/set-leader-keys "Em" #'ic/start-mem-profiler)
+  (spacemacs/set-leader-keys "Es" #'profiler-stop)
+  (spacemacs/set-leader-keys "Er" #'profiler-report)
+#+END_SRC
+
+** Functional
+Let's have some functional functions.
+
+#+BEGIN_SRC emacs-lisp :tangle yes
+  (defun any (seq)
+    (reduce (lambda (x y) (or x y))
+            seq
+            :initial-value nil))
+
+  (defun all (seq)
+    ;; NOTE: we need to guard against an empty list as `(reduce :initial-value t)'
+    ;; will return `t' when given an empty list.
+    (when seq
+      (reduce (lambda (x y) (and x y))
+              seq)))
+#+END_SRC
+
+*** TODO Tests
+#+BEGIN_SRC emacs-lisp :tangle no
+  (ert-deftest ic-test-any ()
+    (should (eql (any '()) nil))
+    (should (eql (any '(t)) t))
+    (should (eql (any '(nil)) nil))
+    (should (eql (any '(nil t)) t))
+    (should (eql (any '(t t)) t)))
+
+  (ert-deftest ic-test-all ()
+    (should (eql (all '()) nil))
+    (should (eql (all '(t)) t))
+    (should (eql (all '(nil)) nil))
+    (should (eql (all '(nil t)) nil))
+    (should (eql (all '(t t)) t)))
+#+END_SRC
+
+* Packages
+** evil-mode
+#+BEGIN_SRC emacs-lisp :tangle yes
+  (use-package evil
+      :ensure evil
+      :config
+    (evil-mode 1))
+#+END_SRC
+
+** org-mode
+=org-mode= is a large part of my daily emacs usage so it takes a large amount of
+my configuration as well. Let's go.
+
+*** Head
+#+BEGIN_SRC emacs-lisp :tangle yes
+  (use-package org
+      :mode (("\\.org$" . org-mode))
+      :ensure org-plus-contrib
+      :config
+      ;; NOTE: we're not closing the `use-packge' s-exp here
+#+END_SRC
+
+*** Config
+#+BEGIN_SRC emacs-lisp :tangle yes
+
+#+END_SRC
+
+*** Bind
+
+*** Tail
+#+BEGIN_SRC emacs-lisp :tangle yes
+  ;; close the `use-package' s-exp
+  )
+#+END_SRC
+
+** themian
+Load my custom theme.
+
+#+BEGIN_SRC emacs-lisp :tangle yes
+  (use-package themian-theme
+      :load-path "/home/ian/.etc/spacemacs/private-layers/ian/local/themian-theme/"
+      :config
+      (load-theme 'themian-dark t))
+#+END_SRC
