@@ -1,0 +1,42 @@
+#!/bin/bash
+
+# try and find the external IP for our router
+
+set -e
+
+ROUTERIP=192.168.1.1
+PYTHON=/usr/bin/python3
+EXPECT=/usr/bin/expect
+
+# find username and password from netrc
+VARS=$($PYTHON <<EOF
+import netrc
+import sys
+values = netrc.netrc().authenticators("$ROUTERIP")
+if not values:
+    sys.stderr.write("error: could not find host '$ROUTERIP' in .netrc\n")
+    sys.exit(1)
+print("username={0}\npassword={2}".format(*values))
+EOF
+)
+
+# and load them into shell variables
+export $VARS
+
+# try to log into router and print default route
+$EXPECT <<EOF | tail -n2 | head -n1
+set timeout 5
+match_max 100000
+
+spawn telnet $ROUTERIP
+
+expect -nocase "login: "
+send -- "$username\r"
+
+expect -nocase "Password: "
+send -- "$password\r"
+
+expect "# "
+send -- "ip r | grep default | cut -f3 -d' '\r"
+expect "# "
+EOF
