@@ -37,6 +37,13 @@ expect -nocase "Password: "
 send -- "$password\r"
 
 expect "# "
-send -- "ip r | grep default | cut -f3 -d' '\r"
+send -- {dev=\`ip route | grep default | cut -f5 -d' '\`}
+send -- "\r"
+
+
+expect "# "
+send -- {ip route | grep \$dev | tail -n1 | cut -f12 -d' '}
+send -- "\r"
+
 expect "# "
 EOF
