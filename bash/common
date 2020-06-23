@@ -10,6 +10,7 @@ add_path /usr/local/bin
 add_path /usr/local/sbin
 add_path /opt/ghc/bin
 add_path $HOME/apps/bin
+add_path $HOME/.local/bin
 add_path $ETC/bin
 add_path $HOME/bin
 
