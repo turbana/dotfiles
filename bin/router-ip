@@ -24,7 +24,7 @@ EOF
 export $VARS
 
 # try to log into router and print default route
-$EXPECT <<EOF | tail -n2 | head -n1
+$EXPECT <<EOF | tail -n2 | head -n1 | tr -d '\015'
 set timeout 5
 match_max 100000
 
