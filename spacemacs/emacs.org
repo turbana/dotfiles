@@ -1596,3 +1596,40 @@ this back to the default and see how things feel.
   (setq magit-diff-refine-hunk 'all)
   (setq powerline-default-separator 'contour)
 #+END_SRC
+
+* Migrate
+I plan on migrating from spacemacs to plain emacs. This section will facilitate that.
+
+** Keybindings
+Create an =org-mode= buffer containing all the current ky bind tables.
+
+#+BEGIN_SRC emacs-lisp :tangle yes
+  (defun ic//show-keybind-map (keymap keymap-name)
+    "Print `map' to the current buffer as an `org-mode' table."
+    ;; (unless (eq 'keymap (car map))
+    ;;   (error "`map' must be a keymap"))
+    (insert (format "* %s\n" keymap-name))
+    (insert "| Key | Action |\n")
+    (insert "|-----+--------|\n")
+    (map-keymap
+     (lambda (event value)
+       (insert
+        (format "| %s | %s |\n" (prin1-to-string event) value)))
+     keymap)
+    (org-table-align)
+    )
+
+  (defun ic//show-all-keybinds ()
+    "Open the buffer `*ic-keybind-maps*' and display all key binding maps as
+  `org-mode' tables."
+    (interactive)
+    (with-current-buffer (get-buffer-create "*ic-keybind-map*")
+      (erase-buffer)
+      (org-mode)
+      (ic//show-keybind-map recentf-dialog-mode-map "recentf-dialog-mode-map")
+      (switch-to-buffer-other-window "*ic-keybind-map*" t)
+      )
+    )
+  (ic//show-all-keybinds)
+  (local-set-key (kbd "<f7>") #'ic//show-all-keybinds)
+#+END_SRC
