@@ -1367,17 +1367,22 @@ text-heavy modes.
 I want relative line numbers that count only what's seen on the screen. I also
 want to minimize any changing of the screen width.
 #+BEGIN_SRC emacs-lisp :tangle yes
-  ;; use lines displayed on screen rather than new line characters
+  ;; use lines displayed on screen rather than new line characters; so folds work
   (setq-default display-line-numbers-type 'visual)
   ;; show the current line as absolute
   (setq-default display-line-numbers-current-absolute t)
   ;; ignore folding when determining relative lines
   (setq-default display-line-numbers-widen t)
-  ;; start with a width of 2 ...
-  (setq-default display-line-numbers-width 2)
-  ;; ... and allow it grow, but not shrink
-  (setq-default display-line-numbers-grow-only t)
+  ;; start with a width of 3 ...
+  (setq-default display-line-numbers-width 3)
+  ;; ... and allow it to shrink :(
+  (setq-default display-line-numbers-grow-only nil)
 #+END_SRC
+
+I would really like to set =display-line-numbers-grow-only= to =t= so that it only
+grows and prevents shrinkage, but it seems there is a significant performance
+cost associated with it. I've increased the default width slightly to offset it,
+but that will waste a bit more space on small files.
 
 *** Note on fringe
 =display-line-numbers= doesn't use the =display-margin= to show line numbers like
