@@ -85,7 +85,7 @@ Some functions to trace the changing of variables.
 #+END_SRC
 *** Profiling
 Some profiler keybindings.
-#+BEGIN_SRC emacs-lisp :tangle no
+#+BEGIN_SRC emacs-lisp :tangle yes
   (defun ic/start-cpu-profiler ()
     "Start the CPU profiler."
     (interactive)
