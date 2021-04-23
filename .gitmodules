@@ -1,3 +1,6 @@
 [submodule "recipian"]
 	path = spacemacs/private-layers/ian/local/recipian
 	url = git@github.com:turbana/recipian.git
+[submodule "spacemacs/private-layers/ian/local/themian-theme"]
+	path = spacemacs/private-layers/ian/local/themian-theme
+	url = git@github.com:turbana/themian.git
