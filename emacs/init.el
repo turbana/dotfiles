@@ -10,32 +10,36 @@
 ;;; License: GPLv3
 
 
-;;; setup emac's package manager
-(require 'package)
-(setq package-archives '(("melpa" . "https://melpa.org/packages/")
-                         ("org" . "https://orgmode.org/elpa/")
-                         ("gnu" . "https://elpa.gnu.org/packages/")))
-(package-initialize)
+;;; bootstrap straight.el
+(defvar bootstrap-version)
+(let ((bootstrap-file
+       (expand-file-name "straight/repos/straight.el/bootstrap.el" user-emacs-directory))
+      (bootstrap-version 5))
+  (unless (file-exists-p bootstrap-file)
+    (with-current-buffer
+        (url-retrieve-synchronously
+         "https://raw.githubusercontent.com/raxod502/straight.el/develop/install.el"
+         'silent 'inhibit-cookies)
+      (goto-char (point-max))
+      (eval-print-last-sexp)))
+  (load bootstrap-file nil 'nomessage))
 
+;;; prevent package.el from loading packages
+(when (>= emacs-major-version 27)
+  (setq package-enable-at-startup nil))
 
 ;;; setup use-package
-(package-install 'use-package t)
-(eval-when-compile
-  (require 'use-package))
-;; (setq use-package-always-ensure t)
-;; (require 'diminish)
-;; (require 'bind-key)
-
+(setq straight-use-package-by-default t)
+(straight-use-package 'use-package)
 
 ;;; setup org
-(package-install 'org t)
-(require 'org)
-
+(straight-use-package 'org)
 
 ;;; tangle/load the real config
 (load-file
  (let* ((org-file (expand-file-name "~/.etc/emacs/emacs.org"))
         (el-file (concat (substring org-file 0 -4) ".el")))
-   (if (file-newer-than-file-p org-file el-file)
-       (car (org-babel-tangle-file org-file el-file))
-     el-file)))
+   (when (file-newer-than-file-p org-file el-file)
+     (require 'ob-tangle)
+     (org-babel-tangle-file org-file))
+   el-file))

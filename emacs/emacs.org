@@ -185,7 +185,7 @@ Let's have some functional functions.
       )
 #+END_SRC
 
-*** evil-init
+*** Init
 :PROPERTIES:
 :header-args: :noweb-ref evil-init
 :END:
@@ -211,7 +211,7 @@ Let's have some functional functions.
     "Base keymap for all ic leader key commands.")
 #+END_SRC
 
-*** evil-config
+*** Config
 :PROPERTIES:
 :header-args: :noweb-ref evil-config
 :END:
@@ -377,27 +377,27 @@ modified it to fit my naming conventions.
 =org-mode= is a large part of my daily emacs usage so it takes a large amount of
 my configuration as well. Let's go.
 
-*** Head
-#+BEGIN_SRC emacs-lisp
-  (use-package org
+*** use-package
+#+BEGIN_SRC emacs-lisp :tangle no
+(use-package org
       :mode (("\\.org$" . org-mode))
       :ensure org-plus-contrib
+      :init
+      <<org-init>
       :config
-      ;; NOTE: we're not closing the `use-packge' s-exp here
+      <<org-config>>
+      )
 #+END_SRC
+
+*** Init
+:PROPERTIES:
+:header-args: :noweb-ref org-init
+:END:
 
 *** Config
-#+BEGIN_SRC emacs-lisp
-
-#+END_SRC
-
-*** Bind
-
-*** Tail
-#+BEGIN_SRC emacs-lisp
-  ;; close the `use-package' s-exp
-  )
-#+END_SRC
+:PROPERTIES:
+:header-args: :noweb-ref org-config
+:END:
 
 ** themian
 Load my custom theme.
@@ -405,6 +405,7 @@ Load my custom theme.
 #+BEGIN_SRC emacs-lisp
   (use-package themian-theme
     :load-path "/home/ian/.etc/spacemacs/private-layers/ian/local/themian-theme/"
+    :straight '(:type built-in)
     :config
     (load-theme 'themian-dark t))
 #+END_SRC
