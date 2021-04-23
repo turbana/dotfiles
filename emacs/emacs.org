@@ -165,6 +165,11 @@ Let's have some functional functions.
 #+END_SRC
 
 * Packages
+** all-the-icons
+#+BEGIN_SRC emacs-lisp
+  (use-package all-the-icons)
+#+END_SRC
+
 ** bind-map
 
 #+BEGIN_SRC emacs-lisp
@@ -180,7 +185,6 @@ Let's have some functional functions.
           :override-mode-name ic-leader-override-mode)
   )
 #+END_SRC
-
 ** evil
 *** use-package
 #+BEGIN_SRC emacs-lisp :noweb yes
@@ -386,26 +390,740 @@ modified it to fit my naming conventions.
 my configuration as well. Let's go.
 
 *** use-package
-#+BEGIN_SRC emacs-lisp :tangle no
-(use-package org
-      :mode (("\\.org$" . org-mode))
-      :ensure org-plus-contrib
-      :init
-      <<org-init>
-      :config
-      <<org-config>>
-      )
+#+BEGIN_SRC emacs-lisp :noweb yes
+  (use-package org
+        :mode (("\\.org$" . org-mode))
+        :ensure org-plus-contrib
+        :after (all-the-icons yasnippet)
+        :config
+        <<org-config>>
+        )
 #+END_SRC
-
-*** Init
-:PROPERTIES:
-:header-args: :noweb-ref org-init
-:END:
 
 *** Config
 :PROPERTIES:
 :header-args: :noweb-ref org-config
 :END:
+
+**** Basic Setup
+#+BEGIN_SRC emacs-lisp
+  (setq org-agenda-files '("~/org" "~/org/home"))
+  (setq org-default-notes-file "~/org/refile.org")
+  (setq org-archive-location "%s_archive::")
+  (setq ic/org-capture-template-dir "~/.etc/spacemacs/org-capture-templates/")
+#+END_SRC
+**** Refile
+#+BEGIN_SRC emacs-lisp
+  (setq org-refile-targets
+        '((nil :maxlevel . 6)
+          (org-agenda-files :maxlevel . 2)))
+  (setq org-refile-use-outline-path 'file)
+  (setq org-outline-path-complete-in-steps nil)
+#+END_SRC
+**** Keybinds
+I want =, r= to refile rather than =, R=.
+#+BEGIN_SRC emacs-lisp
+  (ic/set-leader-keys-for-major-mode 'org-mode "r" 'org-refile)
+#+END_SRC
+***** Agenda
+#+BEGIN_SRC emacs-lisp
+  (global-set-key (kbd "M-<f1>") 'org-clock-goto)
+  (global-set-key (kbd "<f12>") 'org-agenda)
+#+END_SRC
+***** Refile jump
+Add ability to jump to any org heading with SPC-aoj
+#+BEGIN_SRC emacs-lisp
+  (defun ic/org-refile ()
+    "call C-u `org-refile'"
+    (interactive)
+    (setq current-prefix-arg '(1))
+    (call-interactively 'org-refile))
+  (ic/set-leader-keys "aoj" 'ic/org-refile)
+#+END_SRC
+***** Normal mode navigation
+#+BEGIN_SRC emacs-lisp
+  (defun ic/outline-current-heading-or-up ()
+    "When point is on an org-mode heading: move to parent heading;
+  otherwise: move to current heading."
+    (interactive)
+    (call-interactively (if (org-at-heading-p)
+                            'outline-up-heading
+                          'outline-previous-heading)))
+
+  (defun ic/outline-current-heading-or-backward ()
+    "when point is on an org-mode heading: move to previous heading;
+  otherwise: move to previous heading"
+    (interactive)
+    (call-interactively (if (org-at-heading-p)
+                            'org-backward-heading-same-level
+                          'outline-previous-heading)))
+
+  (evil-define-key 'normal org-mode-map (kbd "<left>") 'ic/outline-current-heading-or-up)
+  (evil-define-key 'normal org-mode-map (kbd "<up>") 'ic/outline-current-heading-or-backward)
+  (evil-define-key 'normal org-mode-map (kbd "<down>") 'org-forward-heading-same-level)
+  (evil-define-key 'normal org-mode-map (kbd "<right>") 'outline-next-visible-heading)
+
+  (evil-define-key 'normal org-mode-map (kbd "S-<left>") 'org-promote-subtree)
+  (evil-define-key 'normal org-mode-map (kbd "S-<up>") 'org-move-subtree-up)
+  (evil-define-key 'normal org-mode-map (kbd "S-<down>") 'org-move-subtree-down)
+  (evil-define-key 'normal org-mode-map (kbd "S-<right>") 'org-demote-subtree)
+
+  (evil-define-key 'normal org-mode-map (kbd "C-S-<left>") 'org-do-promote)
+  (evil-define-key 'normal org-mode-map (kbd "C-S-<right>") 'org-do-demote)
+#+END_SRC
+**** Appearance
+Basic heading setup
+#+BEGIN_SRC emacs-lisp
+  (setq org-startup-indented t)
+  (setq org-startup-folded nil)
+  (setq org-hide-leading-stars t)
+  (setq org-odd-levels-only nil)
+
+  (setq org-adapt-indentation t)
+  (setq org-indent-indentation-per-level 2)
+
+  (setq org-fontify-whole-heading-line t)
+  (setq org-fontify-done-headline nil)
+  (setq org-fontify-quote-and-verse-blocks t)
+#+END_SRC
+
+Let's use some fancy LaTeX symbols.
+Example: E \equal{} \gamma{}mc^2
+#+BEGIN_SRC emacs-lisp
+  (setq org-pretty-entities t)
+#+END_SRC
+
+Use =visual-line-mode= as =org-mode= is mostly prose.
+#+BEGIN_SRC emacs-lisp
+  (add-hook 'org-mode-hook #'visual-line-mode)
+#+END_SRC
+
+Change some characters to unicode icons. Some good icons [[http://csbruce.com/software/utf-8.html][here]].
+#+BEGIN_SRC emacs-lisp
+  ;; ⚫•⦾⦿—⬎⌄⌵
+  (setq org-bullets-bullet-list '("•"))
+  (setq org-ellipsis " ⌵")
+  (setq ic/org-list-icon "—")
+  (font-lock-add-keywords
+   'org-mode
+   '(("^ *\\([-]\\) "
+      (0 (prog1 ()
+           (compose-region (match-beginning 1)
+                           (match-end 1)
+                           ic/org-list-icon))))))
+#+END_SRC
+
+XXX what do these do?
+#+BEGIN_SRC emacs-lisp
+  (setq org-completion-use-ido t)
+  (setq org-return-follows-link t)
+  ;; (setq org-blank-before-new-entry nil)
+#+END_SRC
+
+Use current window to edit =org-src= blocks. Don't indent.
+#+BEGIN_SRC emacs-lisp
+  (setq org-src-preserve-indentation nil)
+  (setq org-edit-src-content-indentation 2)
+  (setq org-src-window-setup 'current-window)
+#+END_SRC
+
+Hide emphasis markers such as *bold*, /italic/, etc.
+#+BEGIN_SRC emacs-lisp
+  (setq org-hide-emphasis-markers t)
+#+END_SRC
+**** Agenda
+***** Setup
+#+BEGIN_SRC emacs-lisp
+  ;; custom agenda views
+  (setq org-agenda-custom-commands
+        '(
+          ;; work agenda
+          ("w" "Work Agenda"
+           ((agenda "" nil)
+            (tags "refile"
+                  ((org-agenda-overriding-header "Refile tasks:")
+                   (org-tags-match-list-sublevels nil)))
+            ;; (tags "-refile/"
+            ;;       ((org-agenda-overriding-header "Archive tasks:")
+            ;;        (org-agenda-skip-function 'bh/skip-non-archivable-tasks)
+            ;;        (org-tags-match-list-sublevels nil)))
+            )
+           ((org-agenda-tag-filter-preset '("-HOME"))))
+
+          ;; home agenda
+          ("h" "Home agenda"
+           ((agenda ""
+                    ((org-agenda-skip-function 'ic/skip-old-meal-plans)))
+            (tags "refile"
+                  ((org-agenda-overriding-header "\nRefile tasks:")
+                   (org-tags-match-list-sublevels nil)))
+            ;; (tags "-refile"
+            ;;       ((org-agenda-overriding-header "\nArchive tasks:")
+            ;;        (org-agenda-skip-function 'ic/skip-non-archivable-tasks)
+            ;;        (org-tags-match-list-sublevels nil)))
+            (tags-todo "chores+PRIORITY=\"A\"|jobs+PRIORITY=\"A\""
+                       ((org-agenda-overriding-header "\nImportant Chores:")))
+            (tags-todo "chores-PRIORITY=\"A\"|jobs-PRIORITY=\"A\""
+                       ((org-agenda-overriding-header "\nChores:")
+                        (org-agenda-skip-function
+                         '(org-agenda-skip-entry-if 'scheduled 'deadline))
+                        ))
+            (tags "+HOME"
+                  ((org-agenda-overriding-header "\nStuck Projects")
+                   (org-agenda-skip-function 'ic/org-skip-nonstuck-projects
+                    )))
+            )
+           ((org-agenda-tag-filter-preset '("+HOME"))))
+
+          ;; archives
+          ("a" . "Archiving")
+          ("ah" "Home archive"
+           ((tags "+HOME-noarchive/DONE|CANCELLED|APPLIED"
+                  ((org-agenda-overriding-header "Archive Tasks (*B$ to archive all):")))))
+          ("aw" "Work archive"
+           ((tags "-HOME-noarchive+TIMESTAMP_IA<=\"<-2w>\"/DONE|CANCELLED"
+                  ((org-agenda-overriding-header "Archive Tasks (*B$ to archive all):")))))
+          ))
+#+END_SRC
+***** Appearance
+#+BEGIN_SRC emacs-lisp
+  ;; don't show completed DEADLINE and SCHEDULED in agenda
+  (setq org-agenda-skip-scheduled-if-done t)
+  (setq org-agenda-skip-deadline-if-done t)
+  (setq org-agenda-skip-deadline-prewarning-if-scheduled 't)
+
+  ;; first day in agenda should be today
+  (setq org-agenda-start-on-weekday nil)
+
+  ;; show weekly agenda by default
+  (setq org-agenda-span 'week)
+
+  ;; don't have a separator between agenda sections
+  (setq org-agenda-compact-blocks t)
+
+  ;; show agenda icons
+  (setq org-agenda-prefix-format "  %i %?-2 t%s")
+
+  ;; (setq org-agenda-mode-hook nil)
+  ;; (add-hook 'org-agenda-mode-hook
+  ;;           (lambda ()
+  ;;             (setq tab-width 2)
+  ;;                                         ; (setq tab-stop-list '(2 3 5))
+  ;;             ))
+
+  (require 'all-the-icons)
+
+  ;; (let ((font (find-font (font-spec :name "FontAwesome"))))
+  ;;   (font-put font :spacing 100)
+  ;;   (font-get font :spacing)
+  ;;   )
+
+  (defun ic/org-agenda-icon (family icon-name)
+    (let* ((icon-func (cdr (assoc family
+                                  '((ati . all-the-icons-alltheicon)
+                                    (faicon . all-the-icons-faicon)
+                                    (fileicon . all-the-icons-fileicon)
+                                    (octicon . all-the-icons-octicon)
+                                    (wicon . all-the-icons-wicon)))))
+           (face-func (cdr (assoc family
+                                  '((ati . all-the-icons-icon-family)
+                                    (faicon . all-the-icons-faicon-family)
+                                    (fileicon . all-the-icons-fileicon-family)
+                                    (octicon . all-the-icons-octicon-family)
+                                    (wicon . all-the-icons-wicon-family)))))
+           (all-the-icons-scale-factor 1.0)
+           ;; (font (concat (apply face-func nil) ":spacing=monospace"))
+           (font "FontAwesomeMono:spacing=100")
+           ;; (font (apply face-func nil))
+           (face `(:family ,font :height 1.0))
+           ;; (icon (apply icon-func (list icon-name :face 'default)))
+           (icon (cdr (assoc icon-name all-the-icons-data/fa-icon-alist)))
+           )
+      (propertize icon
+                  'face face
+                  'font-lock-face face
+                  ;; 'display '(space :width (50) :height 7)
+                  ;; 'display '(space-width 5)
+                  'rear-nonsticky t
+                  )
+      ))
+
+  ;; (ic/org-agenda-icon 'faicon "calendar")
+
+  (let ((icon (all-the-icons-faicon "calendar")))
+    (string-to-char icon))
+
+  ;; setup agenda icons
+  (setq org-agenda-category-icon-alist
+        (let ((icon-mapping
+               '(
+                 ("annivers" faicon "calendar")
+                 ("birthdays" faicon "birthday-cake")
+                 ("chores" faicon "home")
+                 ("computer" faicon "keyboard-o")
+                 ("cpu" faicon "fax")
+                 ("holidays" faicon "calendar-o")
+                 ("cooking" faicon "cutlery")
+                 ("health" faicon "heartbeat")
+                 ("jobs" faicon "building-o")
+                 ("life" faicon "male")
+                 )))
+          (mapcar (lambda (config)
+                    ;; `(,(car config) (list ,(apply #'ic/org-agenda-icon (cdr config)) :width (50)) nil nil :ascent center :mask heuristic))
+                    `(,(car config) (list ,(apply #'ic/org-agenda-icon (cdr config)))))
+                  icon-mapping
+                  )))
+
+  (defun blaenk/set-char-widths (alist)
+    (while (char-table-parent char-width-table)
+      (setq char-width-table (char-table-parent char-width-table)))
+    (dolist (pair alist)
+      (let ((width (car pair))
+            (chars (cdr pair))
+            (table (make-char-table nil)))
+        (dolist (char chars)
+          (set-char-table-range table char width))
+        (optimize-char-table table)
+        (set-char-table-parent table char-width-table)
+        (setq char-width-table table))))
+
+  (defconst old-char-width-table char-width-table)
+
+  ;; argument is an alist of width and list of RANGEs,
+  ;; which is the same as the RANGE that set-char-table-range accepts
+  ;; (blaenk/set-char-widths
+  ;;  `((5 . (,(string-to-char (all-the-icons-faicon "male"))
+  ;;           ,(string-to-char (all-the-icons-faicon "home"))
+  ;;           ,(string-to-char (all-the-icons-faicon "building-o"))
+  ;;           ))))
+
+  ;; (setq org-agenda-mode-hook nil)
+  ;; (add-hook 'org-agenda-mode-hook
+  ;;           (lambda ()
+  ;;             (message "set-char-widths")
+  ;;             (blaenk/set-char-widths
+  ;;              `((5 . (,(string-to-char (all-the-icons-faicon "male"))
+  ;;                       ,(string-to-char (all-the-icons-faicon "home"))
+  ;;                       ,(string-to-char (all-the-icons-faicon "building-o"))
+  ;;                       ))))
+  ;;                            ))
+
+
+
+
+  ;; setup agenda icons
+  ;; (setq org-agenda-category-icon-alist
+  ;;       (let ((icon-mapping
+  ;;              '(
+  ;;                ("annivers" (all-the-icons-faicon "calendar"))
+  ;;                ("birthdays" (all-the-icons-faicon "birthday-cake"))
+  ;;                ("chores" (all-the-icons-faicon "home"))
+  ;;                ("computer" (all-the-icons-faicon "keyboard-o"))
+  ;;                ("cpu" (all-the-icons-faicon "fax"))
+  ;;                ("holidays" (all-the-icons-faicon "calendar-o"))
+  ;;                ("cooking" (all-the-icons-faicon "cutlery"))
+  ;;                ("health" (all-the-icons-faicon "heartbeat"))
+  ;;                ("jobs" (all-the-icons-faicon "building-o"))
+  ;;                ("life" (all-the-icons-faicon "male"))
+  ;;                )))
+  ;;         (mapcar (lambda (config)
+  ;;                   (let ((category (car config))
+  ;;                         (icon (apply (caadr config) (cdadr config))))
+  ;;                     `(,category (list ,icon :width (100)) nil nil :ascent center :mask heuristic :width (100))))
+  ;;                 icon-mapping)))
+
+
+
+  ;; ;; setup agenda icons
+  ;; (setq org-agenda-category-icon-alist
+  ;;       (let ((icon-mapping-alist
+  ;;              '(
+  ;;                ("annivers" 'faicon "calendar")
+  ;;                ("birthdays" 'faicon "birthday-cake")
+  ;;                ("chores" 'faicon "home")
+  ;;                ("computer" 'faicon "keyboard-o")
+  ;;                ("cpu" 'faicon "fax")
+  ;;                ("holidays" 'faicon "calendar-o")
+  ;;                ("cooking" 'faicon "cutlery")
+  ;;                ("health" 'faicon "heartbeat")
+  ;;                ("jobs" 'faicon "building-o")
+  ;;                ("life" 'faicon "male")
+  ;;                )))
+  ;;         (mapcar (lambda (config)
+  ;;                   (let ((category (first config))
+  ;;                         (icon-family (second config))
+  ;;                         (icon-name (third config))
+  ;;                         (ati-family-alist
+  ;;                          '(('ati . all-the-icons-alltheicon)
+  ;;                            ('faicon . all-the-icons-faicon)
+  ;;                            ('fileicon . all-the-icons-fileicon)
+  ;;                            ('octicon . all-the-icons-octicon)
+  ;;                            ('wicon . all-the-icons-wicon))))
+  ;;                 `(,category (list ,(apply (cdr (assoc icon-family ati-family-alist)) (list icon-name :height 0.9 :v-adjust 0))) nil nil :ascent center :mask heuristic)))
+  ;;                   icon-mapping-alist)))
+#+END_SRC
+***** Functions
+****** Stuck Projects
+An org heading is considered a stuck project if it satisfies all the following:
+
+- It has a todo state and it's parent does not
+- It has one or more immediate children with todo state
+- It has no descendants with a NEXT todo state
+
+#+BEGIN_SRC emacs-lisp
+  (defun ic/org-is-active-task-p ()
+    "Returns `t' if the current task is a member of `org-not-done-keywords'."
+    (member (org-get-todo-state) org-not-done-keywords))
+
+
+  (defun ic/org-any-active-parent-p ()
+    "Return `t' if any parent task is an active task."
+    (save-excursion)
+    (widen)
+    (let (active-parent)
+      (while (org-up-heading-safe)
+        (when (ic/org-is-active-task-p)
+          (setq active-parent t)))
+      active-parent))
+
+  (defun ic/org-stuck-project-p ()
+    (save-excursion
+      (let (
+            ;; (parent-is-active (save-excursion
+            ;;                     (when (org-up-heading-safe)
+            ;;                       (ic/org-is-active-task-p))))
+            (has-next-children
+             (save-excursion
+               (let ((subtree-end (save-excursion (org-end-of-subtree t))))
+                 (re-search-forward "^\\*+ NEXT " subtree-end t)))))
+        ;; (message (concat (org-get-heading) " :: " (org-get-todo-state) " " (prin1-to-string org-not-done-keywords)))
+        ;; (prin1 (ic/org-is-active-task-p))
+        ;; (prin1 (not parent-is-active))
+        ;; (prin1 has-next-children)
+        (and (ic/org-is-active-task-p)
+             (not (ic/org-any-active-parent-p))
+             (not has-next-children))
+        )))
+
+
+  (defun ic/test (args)
+    (interactive "P")
+    (message (if (ic/org-stuck-project-p)
+                 "stuck"
+               "non-stuck")))
+  (define-key org-mode-map (kbd "C-=") 'ic/test)
+
+
+  (defun ic/org-skip-nonstuck-projects ()
+    (let ((debug-on-error t))
+      (save-excursion
+        (widen)
+        (unless (ic/org-stuck-project-p)
+          (or (outline-next-heading) (point-max))))
+      ))
+#+END_SRC
+****** TODO Test stuck
+******* TODO child task
+******* NEXT next task
+
+**** Habits
+#+BEGIN_SRC emacs-lisp
+  (setq org-habit-preceding-days 7)
+  (setq org-habit-following-days 1)
+  (setq org-habit-graph-column 2)
+  (setq org-habit-show-habits-only-for-today t)
+  (setq org-habit-show-all-today t)
+
+  ;; only show the first occurrence of a repeating task
+  (setq org-agenda-show-future-repeats 'next)
+#+END_SRC
+**** Todo
+#+BEGIN_SRC emacs-lisp
+  (setq org-todo-keywords
+  '((sequence "TODO(t)" "NEXT(n)" "|" "DONE(d!)")
+    (sequence "WAIT(a@/!)" "HOLD(h@/!)" "|"
+              "CANCELLED(c@/!)" "PHONE" "MEETING" "HABIT(a)")))
+  (setq org-enforce-todo-dependencies t)
+  (setq org-enforce-todo-checkbox-dependencies t)
+#+END_SRC
+**** Logging
+Create a log on certain state changes inside the =LOGBOOK= drawer.
+#+BEGIN_SRC emacs-lisp
+  ;; log status changes
+  (setq org-log-done 'time)
+  (setq org-log-redeadline 'time)
+  (setq org-log-reschedule 'time)
+  (setq org-log-into-drawer "LOGBOOK")
+#+END_SRC
+**** Capture
+***** Templates
+#+BEGIN_SRC emacs-lisp
+  (setq org-reverse-note-order nil)
+  (setq ic/org-clock-in nil)
+  (setq ic/org-clock-resume nil)
+
+  (defun ic/org-capture-prompt (prompt symbol choices)
+    "Call `(completing-read PROMPT CHOICES)' and save into SYMBOL.
+  Inspired from: http://storax.github.io/blog/2016/05/02/org-capture-tricks/"
+    (make-local-variable symbol)
+    (set symbol (completing-read prompt choices)))
+
+  (setq org-capture-templates
+        `(("t" "todo" entry (file org-default-notes-file)
+           "* TODO %?\n%u\n"
+           ;; :clock-in ic/org-clock-in :clock-resume ic/org-clock-resume
+           )
+          ("r" "reply" entry (file org-default-notes-file)
+           "* TODO Reply to %:from on %:subject\nSCHEDULED: %t\n%u\n%a\n"
+           :immediate-finish t
+           ;; :clock-in ic/org-clock-in :clock-resume ic/org-clock-resume
+           )
+          ("n" "note" entry (file org-default-notes-file)
+           "* %? :note:\n%u\n"
+           ;; :clock-in ic/org-clock-in :clock-resume ic/org-clock-resume
+           )
+          ("m" "meeting" entry (file org-default-notes-file)
+           "* MEETING with %? :meeting:\n%u"
+           ;; :clock-in ic/org-clock-in :clock-resume ic/org-clock-resume
+           )
+          ("p" "phone call" entry (file org-default-notes-file)
+           "* PHONE %? :phone:\n%u"
+           ;; :clock-in ic/org-clock-in :clock-resume ic/org-clock-resume
+           )
+          ("H" "habit" entry (file org-default-notes-file)
+           "* TODO %?\n%u\nscheduled: %(format-time-string \"<%y-%m-%d %a .+1d/3d>\")\n:properties:\n:style: habit\n:repeat_to_state: next\n:end:\n")
+          ("R" "recipe" entry (file org-default-notes-file)
+           "* %^{name}\n:PROPERTIES:\n:SOURCE: %^{source}\n:SERVINGS: %^{servings}\n:END:\n%U\n** Ingredients\n- %?\n** Steps\n-\n** Notes")
+          ("J" "job" entry (file org-default-notes-file)
+           "* TOAPPLY %^{company} - %^{title}\n%U\n[[%^{url}][Submission]]\n%?\n** Description\n%^{description}\n** Contact Info\n** Log\n")
+          ("P" "meal plan" entry (file+datetree ic/recipes-plan-file)
+           (file ,(concat ic/org-capture-template-dir "meal-plan.org"))
+           :immediate-finish t
+           :time-prompt t
+           :tree-type week)
+          ))
+  (add-hook 'org-capture-mode-hook 'evil-insert-state)
+#+END_SRC
+***** Full Frame
+The standard =org-capture= behavior is to split the window before capturing a
+task. When this is started from outside emacs a random buffer occupies half the
+frame. What I want is the capture buffer to take the full frame when starting
+the capture from outside emacs. My window manager will start the capture task
+with a frame name of =OrgCapture=. Because =org-capture= doesn't provide a hook
+where it splits the frame we'll need to advise it to ~(delete-other-windows)~
+when our frame is =OrgCapture= and one of the following:
+
+1. When choosing the capture template (buffer name: =*Org Select*=)
+2. When inside the capture task (buffer name: =CAPTURE-<filename>=)
+
+Finally, call ~(delete-frame)~ after the capture is finalized.
+
+#+BEGIN_SRC emacs-lisp
+  (defun ic/maybe-org-capture-delete-other-windows (buf)
+    "Maximize frame when starting an external org-capture"
+    (let* ((buffer-name (if (bufferp buf) (buffer-name buf) buf))
+           (is-capture-frame (equal "OrgCapture" (frame-parameter nil 'name)))
+           (is-capture-buffer (or (equal "*Org Select*" buffer-name)
+                                  (string-match "^CAPTURE-" buffer-name))))
+      (when (and is-capture-frame is-capture-buffer)
+        (delete-other-windows))))
+  (advice-add 'org-switch-to-buffer-other-window :after #'ic/maybe-org-capture-delete-other-windows)
+
+  (defun ic/maybe-org-capture-delete-frame ()
+    "Close the frame when finalizing an external org-capture"
+    (when (equal "OrgCapture" (frame-parameter nil 'name))
+      (delete-frame)))
+  (add-hook 'org-capture-after-finalize-hook #'ic/maybe-org-capture-delete-frame)
+#+END_SRC
+**** Clocking (disabled)
+#+BEGIN_SRC emacs-lisp :tangle no
+  ;; resolve open clocks for any amount of time
+  (setq org-clock-idle-time nil)
+  ;; start new clocking immediatly after clocking out
+  (setq org-clock-continuously t)
+  ;; save current clock when emacs exits
+  (setq org-clock-persist t)
+  ;; change to NEXT state when starting a clock
+  (setq org-clock-in-switch-to-state "NEXT")
+  ;; change to TODO state when leaving a clock
+  (setq org-clock-out-switch-to-state "TODO")
+  ;; continue an open clock when checking into task
+  (setq org-clock-in-resume t)
+  ;; include current clock in reports
+  (setq org-clock-report-include-clocking-task t)
+  ;; save all clocks in the LOGBOOK drawer
+  (setq org-clock-into-drawer "LOGBOOK")
+  ;; show current clock in the modeline
+  (setq spacemacs-mode-line-org-clock-current-taskp t)
+  ;; only show today's clock in the modeline
+  (setq org-clock-mode-line-total 'today)
+  (org-clock-persistence-insinuate)
+#+END_SRC
+**** Misc
+Add some custom =<X= templates.
+#+BEGIN_SRC emacs-lisp
+  (mapc
+   (lambda (struct)
+     (push struct org-structure-template-alist))
+   (list
+    '("e" "#+BEGIN_SRC emacs-lisp\n?\n#+END_SRC")
+    '("y" "#+BEGIN_SRC yaml\n?\n#+END_SRC")
+    ))
+#+END_SRC
+
+#+BEGIN_SRC emacs-lisp
+  ;; don't modify the task state when archiving
+  (setq org-archive-mark-done nil)
+  ;; catch modifying collapsed text
+  (setq org-catch-invisible-edits 'error)
+#+END_SRC
+**** Code Execution
+Don't prompt for code execution if we're in a file in certain locations.
+
+#+BEGIN_SRC emacs-lisp
+  (setq ic/allow-babel-evaluate-directories
+        '("~/org" "~/.etc"))
+
+  (defun ic/org-confirm-babel-evaluate (lang body)
+    (not (any
+          (mapcar (lambda (dir)
+                    (string-prefix-p (expand-file-name dir)
+                                     (buffer-file-name)))
+                  ic/allow-babel-evaluate-directories))))
+
+  (setq org-confirm-babel-evaluate #'ic/org-confirm-babel-evaluate)
+#+END_SRC
+**** Exporting
+Let's set some defaults. I don't want to see a table of contents, but I do want
+to see most everything else.
+#+BEGIN_SRC emacs-lisp
+  (setq org-export-with-toc nil)
+  (setq org-export-with-timestamps t)
+  (setq org-babel-default-header-args
+        '((:session . "none")
+          (:results . "replace")
+          (:exports . "both")
+          (:cache   . "no")
+          (:noweb   . "no")))
+#+END_SRC
+
+#+BEGIN_SRC emacs-lisp
+  (setq org-publish-project-alist
+        '(("recipes"
+           :base-directory "~/org/home/food/"
+           :base-extension "org"
+           :publishing-directory "~/food/"
+           :recursive t
+           :publishing-function org-html-publish-to-html
+           :headline-levels 4
+           :auto-preamble t
+           )))
+  (add-hook 'org-export-before-parsing-hook 'ic/org-export-filter-recipes)
+#+END_SRC
+**** Snippets
+By convention I title most of my snippets ={snippet}>= so I would like the =>= key
+to try and expand snippets automatically. When no snippet is found a regular =>=
+should be entered.
+#+BEGIN_SRC emacs-lisp
+  (defun ic/yas-expand-> ()
+    (interactive)
+    (insert ">")
+    (let ((yas-fallback-behavior 'return-nil))
+      (yas-expand)))
+
+  (define-key evil-insert-state-map (kbd ">") #'ic/yas-expand->)
+#+END_SRC
+
+Based on [[https://emacs.stackexchange.com/questions/29758/yasnippets-and-org-mode-yas-next-field-or-maybe-expand-does-not-expand][this]] stackexchange post =org-mode= binds the tab key in such a way that
+=yas-snippets= can't use it. So we need the following to allow =TAB= to expand
+snippets while in =org-mode=.
+#+BEGIN_SRC emacs-lisp
+  (defun yas-org-very-safe-expand ()
+    (let ((yas-fallback-behavior 'return-nil))
+      (yas-expand)))
+
+  (add-hook 'org-mode-hook
+            (lambda ()
+              (add-to-list 'org-tab-first-hook 'yas-org-very-safe-expand)
+              (define-key yas-keymap [tab] 'yas-next-field)))
+#+END_SRC
+
+**** TODO Functions
+Need to clean these up
+#+BEGIN_SRC emacs-lisp
+  ;;; functions taken from http://doc.norang.ca/org-mode.html
+
+  (defun bh/skip-non-archivable-tasks ()
+    "Skip trees that are not available for archiving"
+    (save-restriction
+      (widen)
+      ;; Consider only tasks with done todo headings as archivable candidates
+      (let ((next-headline (save-excursion (or (outline-next-heading) (point-max))))
+            (subtree-end (save-excursion (org-end-of-subtree t))))
+        (if (member (org-get-todo-state) org-todo-keywords-1)
+            (if (member (org-get-todo-state) org-done-keywords)
+                (let* ((daynr (string-to-number (format-time-string "%d" (current-time))))
+                       (a-month-ago (* 60 60 24 (+ daynr 1)))
+                       (last-month (format-time-string "%Y-%m-" (time-subtract (current-time) (seconds-to-time a-month-ago))))
+                       (this-month (format-time-string "%Y-%m-" (current-time)))
+                       (subtree-is-current (save-excursion
+                                             (forward-line 1)
+                                             (and (< (point) subtree-end)
+                                                  (re-search-forward (concat last-month "\\|" this-month) subtree-end t)))))
+                  (if subtree-is-current
+                      subtree-end ; Has a date in this month or last month, skip it
+                    nil))  ; available to archive
+              (or subtree-end (point-max)))
+          next-headline))))
+
+
+  (defun ic/skip-non-archivable-tasks ()
+    "Skip tasks that I don't want to archive"
+    (or (ic/skip-old-meal-plans)
+        (bh/skip-non-archivable-tasks)))
+
+
+  (defun ic/skip-old-meal-plans ()
+    "Skip over a task if it's 1) a meal plan and 2) scheduled before today."
+    (save-restriction
+      (widen)
+      (let* ((tags (org-get-tags))
+             (subtree-end (save-excursion (org-end-of-subtree t)))
+             (scheduled (org-get-scheduled-time (point)))
+             (yesterday (* 60 60 24 1))
+             ;; HACK we check 24 hours ago rather than previous midnight
+             (now (time-subtract (current-time) (seconds-to-time yesterday))))
+        (if (and (member "cooking" tags)
+                 (member "plan" tags)
+                 scheduled
+                 (time-less-p scheduled now))
+            subtree-end
+          nil))))
+
+
+  (defun ic/org-recipe-publish-to-html (plist org-filename target-dir)
+    "Export ORG-FILENAME as html. Similar to `org-html-publish-to-html', but only exporting certain sections"
+    (interactive)
+    (let* ((base-name (file-name-sans-extension (file-name-nondirectory org-filename)))
+           (target-filename (concat target-dir base-name ".html")))
+      (with-temp-file target-filename
+        (insert-file-contents org-filename)
+        (goto-char (point-min))
+        )
+      )
+    )
+
+
+  (defun ic/org-export-filter-recipes (backend)
+    "Filter out unwanted elements from org-mode recipes, but only when export as HTML."
+    (when (equal backend 'html)
+      (org-map-entries
+       (lambda ()
+         )
+       ;; (lambda () (delete-region (point) (progn (forward-line) (point)))))
+      )
+    ))
+#+END_SRC
 
 ** variable-pitch
 =org-mode= should be mostly variable pitch with only code and =company-mode= being
@@ -478,6 +1196,11 @@ fixed width.
   (use-package which-key
       :config
     (which-key-mode 1))
+#+END_SRC
+
+** yasnippet
+#+BEGIN_SRC emacs-lisp
+  (use-package yasnippet)
 #+END_SRC
 
 * Misc
