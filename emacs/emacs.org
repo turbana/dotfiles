@@ -14,11 +14,8 @@ All right-thinking people use lexical binding.
 Load my custom theme early so if we have errors emacs still looks pretty.
 
 #+BEGIN_SRC emacs-lisp
-  (use-package themian-theme
-    :load-path "/home/ian/.etc/spacemacs/private-layers/ian/local/themian-theme/"
-    :straight '(:type built-in)
-    :config
-    (load-theme 'themian-dark t))
+  (straight-use-package '(themian :type git :host github :repo "turbana/themian"))
+  (load-theme 'themian-dark t)
 #+END_SRC
 
 ** Disable cruft
