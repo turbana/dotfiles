@@ -202,6 +202,16 @@ Let's have some functional functions.
 :header-args: :noweb-ref evil-init
 :END:
 
+**** Misc
+The following are needed for =evil-collection=.
+
+#+BEGIN_SRC emacs-lisp
+  ;; needed for evil-collection
+  (setq evil-want-integration t)
+  (setq evil-want-keybinding nil)
+#+END_SRC
+
+**** Leader Keys
 #+BEGIN_SRC emacs-lisp
   (defvar ic-leader-key "SPC"
     "The leader key.")
@@ -368,6 +378,14 @@ modified it to fit my naming conventions.
           (define-key (symbol-value map) (kbd key) def)
           (setq key (pop bindings) def (pop bindings))))))
   (put 'ic/set-leader-keys-for-minor-mode 'lisp-indent-function 'defun)
+#+END_SRC
+
+** evil-collection
+#+BEGIN_SRC emacs-lisp
+  (use-package evil-collection
+      :after evil
+      :config
+      (evil-collection-init))
 #+END_SRC
 
 ** helm
