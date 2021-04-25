@@ -308,7 +308,7 @@ modified it to fit my naming conventions.
     (while key
       (define-key ic-default-map (kbd key) def)
       (setq key (pop bindings) def (pop bindings))))
-  (put 'ic/set-leader-keys 'lisp-indent-function 'defun)
+  (put 'ic/set-leader-keys 'lisp-indent-function 0)
 
   (defalias 'evil-leader/set-key 'ic/set-leader-keys)
 
@@ -391,7 +391,7 @@ modified it to fit my naming conventions.
 ** helm
 #+BEGIN_SRC emacs-lisp
   (use-package helm
-      :ensure t
+      :diminish t
       ;; some temp key bindings
       :bind (("M-x" . helm-M-x)
              ("C-x C-f" . helm-find-files)
@@ -1269,26 +1269,146 @@ Some good variable spaced fonts:
 #+END_SRC
 
 * Keybindings
+Here we copy the spacemacs keybindings, more or less.
 
-** f :: Files
+** TODO keybinding funcs
+
+*** TODO Most functions under f
+- copy-file
+- delete-current-buffer-file
+- sudo-edit
+- rename-current-buffer-file
+- show-and-copy-buffer-filename
+
+** main
 #+BEGIN_SRC emacs-lisp
-  (ic/declare-prefix "f" "files")
-  (ic/set-leader-keys "ff" 'helm-find-files)
-  (ic/set-leader-keys "fr" 'helm-recentf)
+  (ic/set-leader-keys
+    "TAB" 'evil-switch-to-windows-last-buffer
+    "u" 'universal-argument)
+
+  ;; Make <escape> quit as much as possible
+  ;;; from spacemacs/layers/+distributions/spacemacs-base/keybindings.el
+  (define-key minibuffer-local-map (kbd "<escape>") 'keyboard-escape-quit)
+  (define-key minibuffer-local-ns-map (kbd "<escape>") 'keyboard-escape-quit)
+  (define-key minibuffer-local-completion-map (kbd "<escape>") 'keyboard-escape-quit)
+  (define-key minibuffer-local-must-match-map (kbd "<escape>") 'keyboard-escape-quit)
+  (define-key minibuffer-local-isearch-map (kbd "<escape>") 'keyboard-escape-quit)
 #+END_SRC
 
+** a :: applications
+
+** b :: buffers
+#+BEGIN_SRC emacs-lisp
+  (ic/declare-prefix "b" "buffers")
+
+  (ic/set-leader-keys
+    "bb" 'helm-mini
+    "bd" 'kill-this-buffer
+    "bp" 'paste-clipboard-to-whole-buffer
+    "bR" 'safe-revert-buffer
+    "bs" 'switch-to-scratch-buffer
+    "bw" 'read-only-mode
+    "by" 'yank-whole-buffer-to-clipboard)
+#+END_SRC
+
+** B :: build
+
+** e :: errors
 ** E :: Emacs
 
 #+BEGIN_SRC emacs-lisp
   (ic/declare-prefix "E" "emacs")
 #+END_SRC
 
+** Ep :: Emacs profiler
 Profiler bindings.
 #+BEGIN_SRC emacs-lisp
   (ic/declare-prefix "Ep" "emacs profiler")
 
-  (ic/set-leader-keys "Epc" #'ic/start-cpu-profiler)
-  (ic/set-leader-keys "Epm" #'ic/start-mem-profiler)
-  (ic/set-leader-keys "Eps" #'profiler-stop)
-  (ic/set-leader-keys "Epr" #'profiler-report)
+  (ic/set-leader-keys
+    "Epc" #'ic/start-cpu-profiler
+    "Epm" #'ic/start-mem-profiler
+    "Eps" #'profiler-stop
+    "Epr" #'profiler-report)
 #+END_SRC
+
+** TODO f :: Files
+#+BEGIN_SRC emacs-lisp
+  (ic/declare-prefix "f" "files")
+  (ic/set-leader-keys
+    "fb" 'helm-filtered-bookmarks
+    "fc" 'copy-file
+    "fD" 'delete-current-buffer-file
+    "fE" 'sudo-edit
+    "ff" 'helm-find-files
+    "fl" 'find-file-literally
+    "fr" 'helm-recentf
+    "fR" 'rename-current-buffer-file
+    "fy" 'show-and-copy-buffer-filename)
+#+END_SRC
+
+** TODO fC :: Convert
+#+BEGIN_SRC emacs-lisp
+  (ic/declare-prefix "fC" "convert")
+  (ic/set-leader-keys
+    "fCd" 'unix-to-dos
+    "fCu" 'dos-to-unix)
+#+END_SRC
+
+** TODO fe :: Emacs
+#+BEGIN_SRC emacs-lisp
+  (ic/declare-prefix "fe" "emacs")
+  (ic/set-leader-keys
+    "fei" 'edit-init-file
+    "feo" 'edit-org-config
+    "fel" 'helm-locate-library)
+#+END_SRC
+
+** g :: git/vc
+
+** h :: help
+#+BEGIN_SRC emacs-lisp
+  (ic/declare-prefix "h" "help")
+  (ic/set-leader-keys
+    "hk" 'which-key-show-top-level
+    "hm" 'helm-man-woman)
+#+END_SRC
+
+** hd :: help describe
+#+BEGIN_SRC emacs-lisp
+  (ic/declare-prefix "hd" "describe")
+  (ic/set-leader-keys
+    "hdb" 'describe-bindings
+    "hdc" 'describe-char
+    "hdd" 'apropos
+    "hdF" 'helm-faces
+    "hdf" 'describe-function
+    "hdK" 'describe-keymap
+    "hdk" 'describe-key
+    "hdl" 'describe-last-keys
+    ;"hdm" 'describe-mode
+    "hdp" 'describe-package
+    "hds" 'describe-system-info
+    "hdt" 'describe-theme
+    "hdv" 'describe-variable)
+#+END_SRC
+
+** i :: insert
+
+** l :: layouts
+
+** m :: major mode
+
+** p :: projects
+
+** q :: quit
+
+** r :: registers
+
+** s :: search
+
+** t :: toggle
+
+** w :: windows
+
+** x :: text
