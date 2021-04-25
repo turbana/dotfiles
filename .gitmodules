@@ -4,3 +4,6 @@
 [submodule "spacemacs/private-layers/ian/local/themian-theme"]
 	path = spacemacs/private-layers/ian/local/themian-theme
 	url = git@github.com:turbana/themian.git
+[submodule "emacs"]
+	path = emacs
+	url = https://github.com/turbana/emacs-config
