@@ -16,11 +16,10 @@ if at_work; then
 
 	xsetroot -cursor_name left_ptr
 else
-    xrandr --dpi 94
+	xrandr --newmode "1920x1080_vbox"  173.00  1920 2048 2248 2576  1080 1083 1088 1120 -hsync +vsync
+	xrandr --addmode Virtual2 1920x1080_vbox
+	xrandr --output Virtual2 --mode 1920x1080_vbox --right-of Virtual1
 fi
-
-emacs &
-gnome-terminal &
 
 # xmonad config needs our hostname in $HOST
 HOST=$(hostname) exec xmonad
