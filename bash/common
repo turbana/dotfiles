@@ -36,10 +36,12 @@ export ALTERNATE_EDITOR=
 export GREP_COLOR='1;32'
 
 # setup gpg-agent for both gpg and ssh keys
-export GPG_TTY=$(tty)
-gpg-connect-agent updatestartuptty /bye > /dev/null
-export GPG_AGENT_INFO=$(gpgconf --list-dirs agent-socket):0:1
-if [ -n "$(gpgconf --list-options gpg-agent | \
+if [ $(which gpg-connect-agent 2> /dev/null) ]; then
+    export GPG_TTY=$(tty)
+    gpg-connect-agent updatestartuptty /bye > /dev/null
+    export GPG_AGENT_INFO=$(gpgconf --list-dirs agent-socket):0:1
+    if [ -n "$(gpgconf --list-options gpg-agent | \
       awk -F: '/^enable-ssh-support:/{ print $1 }')" ]; then
-    export SSH_AUTH_SOCK=$(gpgconf --list-dirs agent-ssh-socket)
+        export SSH_AUTH_SOCK=$(gpgconf --list-dirs agent-ssh-socket)
+    fi
 fi
