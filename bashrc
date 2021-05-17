@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # directory containing dotfiles
-export ETC=$HOME/.etc
+export ETC=$(dirname $(readlink -f ~/.bashrc))
 
 # add to the path, but only if it's not already there
 add_path() {
