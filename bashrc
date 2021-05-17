@@ -3,12 +3,15 @@
 # directory containing dotfiles
 export ETC=$(dirname $(readlink -f ~/.bashrc))
 
+# keep grep so 'add_path' can work without $PATH
+export _GREP=$(which grep)
+
 # add to the path, but only if it's not already there
 add_path() {
 	# NOTE: because we are setting $PATH, we shouldn't rely on it
 	[ $# -eq 1 ] || return 2
 	[ -d "$1" ] || return 1
-	if echo $PATH | /bin/grep -Evq "(^|:)${1}(:|$)"; then
+	if echo $PATH | $_GREP -Evq "(^|:)${1}(:|$)"; then
 		if [ -z "$PATH" ]; then
 			export PATH=$1
 		else
@@ -50,3 +53,5 @@ try_source $ETC/bash/interactive
 [ at_work ] && try_source $ETC/bash/work
 try_source $ETC/bash/$(hostname)
 try_source $ETC/bash/interactive.ps1
+
+unset _GREP
