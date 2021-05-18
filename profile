@@ -1,7 +1,7 @@
 # ~/.profile
 
 # check for auto starting guix profiles
-GUIX_AUTO_PROFILES=~/.config/guix/profiles/auto-start
+GUIX_AUTO_PROFILES=~/.config/guix/auto-start-profiles
 for profile in $GUIX_AUTO_PROFILES/*; do
     if [ -f "${profile}/etc/profile" ]; then
         GUIX_PROFILE=$profile ; source ${profile}/etc/profile
