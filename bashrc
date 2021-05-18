@@ -37,6 +37,12 @@ at_home() {
 	host_match $ETC/bash/hostnames.home
 }
 
+# are we running in a guix system?
+on_guix() {
+    # HACK just check for an /etc/guix directory
+    test -d /etc/guix
+}
+
 # source a file only if it exists
 try_source() {
 	[ $# -eq 1 ] || return 2

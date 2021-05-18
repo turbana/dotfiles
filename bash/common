@@ -1,25 +1,20 @@
 #!/bin/bash
 
-# setup PATH
-export PATH=
-add_path /bin
-add_path /sbin
-add_path /usr/bin
-add_path /usr/sbin
-add_path /usr/local/bin
-add_path /usr/local/sbin
-add_path /opt/ghc/bin
-add_path $HOME/apps/bin
-add_path $HOME/.local/bin
-add_path $ETC/bin
-add_path $HOME/bin
-
-# guix paths
-add_path /run/current-system/profile/sbin
-add_path /run/current-system/profile/bin
-add_path /home/ian/.guix-profile/bin
-add_path /home/ian/.config/guix/current/bin
-add_path /run/setuid-programs
+# setup PATH, but only on non-guix systems
+if [ ! on_guix ]; then
+    export PATH=
+    add_path /bin
+    add_path /sbin
+    add_path /usr/bin
+    add_path /usr/sbin
+    add_path /usr/local/bin
+    add_path /usr/local/sbin
+    add_path /opt/ghc/bin
+    add_path $HOME/apps/bin
+    add_path $HOME/.local/bin
+    add_path $ETC/bin
+    add_path $HOME/bin
+fi
 
 # by default I want files to be 0750.
 umask 0027
