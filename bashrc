@@ -43,6 +43,11 @@ on_guix() {
     test -d /etc/guix
 }
 
+# are we on a specific host?
+on_host() {
+    test "$1" = "$(hostname)"
+}
+
 # source a file only if it exists
 try_source() {
 	[ $# -eq 1 ] || return 2
