@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 SOURCE_DIRS=".etc as src .mail"
 #SOURCE_DIRS=".etc as"

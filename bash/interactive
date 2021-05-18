@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 # quit on non-interactive shell
 [ -z "$PS1" ] && return

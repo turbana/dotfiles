@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 
 EMACS_COLOR_THEME=~/.etc/spacemacs/private-layers/ian/local/themian-theme/themian-theme.el

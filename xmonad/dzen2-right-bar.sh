@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 # font="DejaVu Sans Mono-9"
 # font="Nimbus Sans L Regular-11"

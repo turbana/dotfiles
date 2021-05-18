@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 font="DejaVu Sans Mono-9"
 GC=$HOME/.etc/bin/getcolor

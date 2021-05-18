@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 COLOR_FILE=~/.etc/colors/current
 

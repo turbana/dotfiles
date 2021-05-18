@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 # setup PATH, but only on non-guix systems
 if [ ! on_guix ]; then

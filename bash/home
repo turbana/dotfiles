@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 add_path $HOME/apps/node-v10.15.3-linux-x64/bin
 export GOPATH=~/apps/go

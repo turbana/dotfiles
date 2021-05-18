@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 # directory containing dotfiles
 export ETC=$(dirname $(readlink -f ~/.bashrc))
