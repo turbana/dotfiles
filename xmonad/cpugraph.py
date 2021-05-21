@@ -39,7 +39,7 @@ TIME_CHECK_START  = datetime.time(hour=16, minute=0)
 TIME_CHECK_STALE  = 12
 
 BAR_WIDTH        = 500
-BAR_HEIGHT       = 20
+BAR_HEIGHT       = 24
 GRAPH_HEIGHT     = 16
 GRAPH_WIDTH      = 8
 SPACE_DEFAULT    = 6

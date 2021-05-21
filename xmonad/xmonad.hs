@@ -41,9 +41,9 @@ hostHome = "cyclone"
 myWorkspaces = Prelude.map show [1..9]
 
 myColorFile = "~/.etc/colors/current"
--- myFont = "DejaVu Sans Mono-9"
+myFont = "DejaVu Sans Mono-12"
 -- myFont = "Nimbus Sans L Regular-11"
-myFont = "Latin Modern Mono-12"
+-- myFont = "Latin Modern Mono-12"
 
 data Command = Editor | Dmenu | XMonad | LeftStatusBar | RightStatusBar | Calculator | OrgCapture
 command cmd colors = case cmd of
@@ -57,7 +57,7 @@ command cmd colors = case cmd of
   XMonad -> "if type restart-xmonad; then xmonad-restart; "
             ++ "else xmessage xmonad-restart not in \\$PATH: \"$PATH\"; fi"
   LeftStatusBar -> concat [
-    "dzen2 -y 1060 -x 0 -w 1420 -ta l -h 20 -xs 1 -dock"
+    "dzen2 -y 1060 -x 0 -w 1420 -ta l -h 24 -xs 1 -dock"
     , " -fg '", (colors ! "base+3"), "'"
     , " -bg '", (colors ! "base-3"), "'"
     , " -fn '", myFont, "'"]
@@ -185,5 +185,5 @@ logHooks h colors = dynamicLogWithPP . namedScratchpadFilterOutWorkspacePP $ def
     ignoreBg = wrap "^ib(1)" "^ib(0)"
     drawBorder =
       return $ Just $ dzenColor border bg $ ignoreBg
-      "^pa(0)^ro(1420x1-0-9)"
+      "^pa(0)^ro(1420x1-0-11)"
     underline = ignoreBg "^r(10x2-10+9)"
