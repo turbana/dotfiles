@@ -16,6 +16,9 @@ if [ ! on_guix ]; then
     add_path $HOME/bin
 fi
 
+add_path $HOME/src/etc/bin
+add_path $HOME/src/systemsetup/bin
+
 # by default I want files to be 0750.
 umask 0027
 
