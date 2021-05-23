@@ -7,6 +7,6 @@ GC=$HOME/.etc/bin/getcolor
 fg=$($GC base+3)
 bg=$($GC base-3)
 
-python ~/.xmonad/cpugraph.py | \
+python3 ~/.xmonad/cpugraph.py | \
 dzen2 -y 1060 -x 1420 -w 500 -ta r -sa l -h 24 -fg $fg -bg $bg -fn "$font" \
 	-l 16 -e 'button1=togglecollapse' -dock

@@ -119,8 +119,8 @@ def main(args):
             color(COLOR_NORMAL)
             pad(SPACE_DEFAULT)
             stats = list(cpu_stats())
-            usages = map(usage, zip(stats, prev_stats))
-            map(show_graph, usages)
+            for pair in zip(stats, prev_stats):
+                show_graph(usage(*pair))
 
             # show memory usages
             pad(SPACE_LARGE)
@@ -164,7 +164,7 @@ def main(args):
             sys.stdout.flush()
             prev_stats = stats
             time.sleep(DELAY)
-    except KeyboardInterrupt, e:
+    except KeyboardInterrupt as e:
         pass
 
 
@@ -310,7 +310,9 @@ def cpu_stats():
                 yield total, idle
 
 
-def usage(((total, idle), (prev_total, prev_idle)), _x=[0.0]):
+def usage(current, previous, _x=[0.0]):
+    (total, idle) = current
+    (prev_total, prev_idle) = previous
     d_total = float(total - prev_total)
     d_idle  = float(idle  - prev_idle)
     return (d_total - d_idle) / d_total if d_total else 0.0
@@ -359,7 +361,7 @@ def update_weather():
         proc = subprocess.Popen("weather -q %s | grep '^Temp'" % WEATHER_STATION, shell=True, stdout=subprocess.PIPE)
         stdout, stderr = proc.communicate()
         current_temp[0] = float(stdout.split(" ")[1])
-    except Exception, e:
+    except Exception as e:
         current_temp[0] = -100.0
 
 
@@ -370,7 +372,7 @@ def mail_failure():
         #proc = subprocess.Popen("grep -c 'Exception in thread' %s" % IMAP_LOG, shell=True, stdout=subprocess.PIPE)
         stdout, stderr = proc.communicate()
         return int(stdout) > 0
-    except Exception, e:
+    except Exception as e:
         return True
 
 
@@ -476,8 +478,8 @@ def parse_events(events_filename):
             room = ""
             time = " " * 5
         else:
-            print len(info), info
-            print "error", line
+            print(len(info), info)
+            print("error", line)
             # error parsing
             continue
         date = parse_date(date)
