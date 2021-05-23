@@ -1,7 +1,6 @@
 # come up with color scheme colors
 
 import argparse
-import gtk
 import os.path
 import StringIO
 import subprocess
@@ -201,6 +200,7 @@ def main(raw_args):
     args = parse_args()
     color_dir = os.path.expanduser(COLOR_DIR)
     if args.picker:
+        import gtk
         base_color = color_picker(current_blue())
         if not base_color:
             return 0
