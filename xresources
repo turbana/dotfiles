@@ -1,9 +1,9 @@
-Xft.dpi: 94
+! emacs uses XFT for font rendering
+Xft.dpi: 96
 Xft.lcdfilter: lcddefault
 Xft.antialias: true
 Xft.autohint: true
 Xft.hinting: true
-Xft.hintstyle: hintsfull
+Xft.hintstyle: hintfull
 Xft.rgba: rgb
 
-Emacs*font: DejaVu Sans Mono-10:pixelsize=12

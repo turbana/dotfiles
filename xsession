@@ -27,5 +27,7 @@ elif on_host "tornado"; then
 	xrandr --output Virtual-2 --mode 1920x1080_vbox --right-of Virtual-1
 fi
 
+xrdb -merge $HOME/.Xresources
+
 # xmonad config needs our hostname in $HOST
 HOST=$(hostname) exec xmonad
