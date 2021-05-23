@@ -2,7 +2,8 @@
 
 import argparse
 import os.path
-import StringIO
+import io
+from itertools import chain
 import subprocess
 import sys
 
@@ -103,15 +104,15 @@ def load_diffs(color, dark_lum, light_lum, step):
 def load_colors(base_color):
     def _load_color(c):
         return load_color(c, base_color)
-    gray_names = ["base%+d" % i for i in range(-5, 0) + range(1, 5)]
+    gray_names = ["base%+d" % i for i in (-5, -4, -3, -2, -1, 1, 2, 3, 4)]
     grays = list(load_grays())
-    half = len(grays) / 2
+    half = len(grays) // 2
     gray_dark = grays[:half]
     gray_light = grays[half:]
     main_names = list(MAIN_COLORS.keys())
     main_bg_names = [name+"-bg" for name in main_names]
-    main_dark = map(_load_color, main_names)
-    main_light = map(invert, main_dark)
+    main_dark = [_load_color(n) for n in main_names]
+    main_light = [invert(c) for c in main_dark]
     diff_names = ["diff-%d" % (i + 1) for i in range(4)]
     cyan = _load_color("cyan")
     diffs = list(load_diffs(cyan, DIFF_DARK, DIFF_LIGHT, DIFF_STEP))
@@ -127,14 +128,14 @@ def load_colors(base_color):
 
 def emit_simple(colors, filename):
     with open(filename, "w") as out:
-        for name, color in colors:
+        for name, color in sorted(colors):
             out.write("%s %s\n" % (name, color.hex_l))
 
 
 def emit_emacs(colors, filename):
-    buffer_head = StringIO.StringIO()
-    buffer_colors = StringIO.StringIO()
-    buffer_tail = StringIO.StringIO()
+    buffer_head = io.StringIO()
+    buffer_colors = io.StringIO()
+    buffer_tail = io.StringIO()
     # load color theme buffers
     with open(filename) as file:
         # read head
@@ -160,9 +161,8 @@ def emit_emacs(colors, filename):
     buffer_colors.seek(0)
     buffer_tail.seek(0)
     with open(filename, "w") as file:
-        map(file.write, buffer_head)
-        map(file.write, buffer_colors)
-        map(file.write, buffer_tail)
+        for line in chain(buffer_head, buffer_colors, buffer_tail):
+            file.write(line)
 
 
 def reload_theme():
@@ -207,8 +207,8 @@ def main(raw_args):
     else:
         base_color = BASE_BLUE
     colors = load_colors(base_color)
-    dark_colors = zip(colors["names"], colors["dark"])
-    light_colors = zip(colors["names"], colors["light"])
+    dark_colors = list(zip(colors["names"], colors["dark"]))
+    light_colors = list(zip(colors["names"], colors["light"]))
     emit_simple(dark_colors, os.path.join(color_dir, "dark"))
     emit_simple(light_colors, os.path.join(color_dir, "light"))
     emit_emacs(colors, os.path.expanduser(EMACS_COLOR_THEME))
