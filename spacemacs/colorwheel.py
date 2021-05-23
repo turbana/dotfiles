@@ -9,8 +9,8 @@ import sys
 import colour
 
 # directory where color files are exported to
-COLOR_DIR = "~/.etc/colors"
-EMACS_COLOR_THEME = "~/.etc/spacemacs/private-layers/themian/local/themian-theme/themian-theme.el"
+COLOR_DIR = "~/src/etc/colors"
+EMACS_COLOR_THEME = "~/src/themian/themian-theme.el"
 EMACS_COLOR_THEME_MARK = ";;;; THEMIAN-COLORS"
 
 
