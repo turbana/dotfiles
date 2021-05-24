@@ -1,11 +1,9 @@
 #!/usr/bin/env bash
 
-set -e
 
 if type xmonad > /dev/null; then
 	killall dzen2
-	xmonad --recompile
-	xmonad --restart
+	xmonad --recompile && xmonad --restart
 else
 	echo "xmonad not in \\$PATH: \"$PATH\""
 fi

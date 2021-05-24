@@ -5,8 +5,8 @@
 set -e
 
 ROUTERIP=192.168.1.1
-PYTHON=/usr/bin/python3
-EXPECT=/usr/bin/expect
+PYTHON=python3
+EXPECT=expect
 
 # find username and password from netrc
 VARS=$($PYTHON <<EOF
