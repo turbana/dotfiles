@@ -47,7 +47,7 @@ myFont = "DejaVu Sans Mono-12"
 
 data Command = Editor | Dmenu | XMonad | LeftStatusBar | RightStatusBar | Calculator | OrgCapture
 command cmd colors = case cmd of
-  Editor -> "emacsclient -c -a '' --eval '(spacemacs/home)'"
+  Editor -> "emacsclient -c -a ''"
   Dmenu  -> concat [
     "dmenu_run -b -p '>'"
     , " -nb '", (colors ! "base-4"), "'"
