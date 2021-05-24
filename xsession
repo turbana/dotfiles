@@ -25,6 +25,9 @@ elif on_host "tornado"; then
 	xrandr --addmode Virtual-2 1920x1080_vbox
 	xrandr --output Virtual-1 --mode 1920x1080_vbox
 	xrandr --output Virtual-2 --mode 1920x1080_vbox --right-of Virtual-1
+
+    # start gnu herd
+    shepherd
 fi
 
 xrdb -merge $HOME/.Xresources
