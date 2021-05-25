@@ -8,7 +8,8 @@ import subprocess
 import sys
 import time
 
-COLOR_FILE = os.path.expanduser("~/.etc/colors/current")
+COLOR_FILE = os.path.join(os.environ["ETC"],
+                          "colors/current")
 
 
 def color(c, _cache={}):

@@ -2,7 +2,7 @@
 
 [general]
 accounts = gmail-personal, gmail-professional
-pythonfile = ~/.etc/bin/secret
+pythonfile = $ETC/bin/secret
 fsync = True
 socktimeout = 60
 

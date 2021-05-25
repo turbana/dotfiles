@@ -40,7 +40,6 @@ hostHome = "cyclone"
 
 myWorkspaces = Prelude.map show [1..9]
 
-myColorFile = "~/.etc/colors/current"
 myFont = "DejaVu Sans Mono-12"
 -- myFont = "Nimbus Sans L Regular-11"
 -- myFont = "Latin Modern Mono-12"
@@ -75,7 +74,8 @@ loadColors filename = do
 
 
 main = do
-  colors <- loadColors myColorFile
+  etc <- getEnv "ETC"
+  colors <- loadColors $ etc ++ "/colors/current"
   writeFile "/dev/null" $ show colors -- XXX we have to expand colors for some reason
   dzenLeftBar <- spawnPipe $ command LeftStatusBar colors
   xmonad $ docks $ myConfig dzenLeftBar colors `additionalKeysP` myKeys colors
@@ -117,7 +117,7 @@ myKeys colors =
 
 
 myScratchPads = [
-  NS "calc" "gnome-terminal --role=calculator --title=calc -x ~/.etc/bin/calc"
+  NS "calc" "gnome-terminal --role=calculator --title=calc -x $ETC/bin/calc"
   (role =? "calculator")
   (customFloating $ W.RationalRect (3/8) (1/4) (1/4) (1/2)),
 

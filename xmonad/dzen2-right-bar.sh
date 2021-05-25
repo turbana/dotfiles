@@ -3,7 +3,7 @@
 font="DejaVu Sans Mono-12"
 # font="Nimbus Sans L Regular-11"
 # font="Latin Modern Mono-12"
-GC=$HOME/.etc/bin/getcolor
+GC=$ETC/bin/getcolor
 fg=$($GC base+3)
 bg=$($GC base-3)
 
