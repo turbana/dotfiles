@@ -172,7 +172,7 @@ logHooks h colors = dynamicLogWithPP . namedScratchpadFilterOutWorkspacePP $ def
                          ]
   ,ppWsSep             = " "
   ,ppSep               = dzenColor grey bg "  |  "
-  ,ppOutput            = hPutStrLn h
+  ,ppOutput            = hPutStrLn h . ("^p(5)" ++) -- put a padding on the left
   ,ppSort              = getSortByXineramaRule
 }
   where
