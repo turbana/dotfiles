@@ -159,7 +159,7 @@ def main(args):
             show_clock()
 
             pad(SPACE_DEFAULT)
-            draw_bar_highlight()
+            # draw_bar_highlight()
             sys.stdout.write("\n")
             sys.stdout.flush()
             prev_stats = stats

@@ -168,7 +168,8 @@ logHooks h colors = dynamicLogWithPP . namedScratchpadFilterOutWorkspacePP $ def
   ,ppUrgent            = dzenColor red bg
   ,ppTitle             = dzenColor fg bg . dzenEscape
   ,ppLayout            = const ""
-  ,ppExtras            = [drawBorder]
+  ,ppExtras            = [-- drawBorder
+                         ]
   ,ppWsSep             = " "
   ,ppSep               = dzenColor grey bg "  |  "
   ,ppOutput            = hPutStrLn h
@@ -181,9 +182,9 @@ logHooks h colors = dynamicLogWithPP . namedScratchpadFilterOutWorkspacePP $ def
     yellow = colors ! "yellow"
     grey   = colors ! "base+1"
     red    = colors ! "red"
-    border = colors ! "base-2"
+    -- border = colors ! "base-2"
     ignoreBg = wrap "^ib(1)" "^ib(0)"
-    drawBorder =
-      return $ Just $ dzenColor border bg $ ignoreBg
-      "^pa(0)^ro(1420x1-0-11)"
+    -- drawBorder =
+    --   return $ Just $ dzenColor border bg $ ignoreBg
+    --   "^pa(0)^ro(1420x1-0-11)"
     underline = ignoreBg "^r(10x2-10+9)"
