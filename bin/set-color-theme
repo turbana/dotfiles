@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
 
-EMACS_COLOR_THEME=~/.etc/spacemacs/private-layers/ian/local/themian-theme/themian-theme.el
+EMACS_COLOR_THEME=~/src/themian/themian-theme.el
 
 color=$1
 shift
@@ -18,7 +18,7 @@ if [[ -z "$color" ]]; then
 	color=$(basename $(readlink -f current))
 fi
 ln -sf $color current
-# emacsclient -e "(progn (load-file \"${EMACS_COLOR_THEME}\") (load-theme 'themian-${color} t))"
+emacsclient -e "(progn (load-file \"${EMACS_COLOR_THEME}\") (load-theme 'themian-${color} t))"
 restart-xmonad
 
 
