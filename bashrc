@@ -1,7 +1,17 @@
 #!/usr/bin/env bash
 
+# check if we're on a mac
+on_mac() {
+    # return [["$(uname -s)X" -eq "DarwinX"]] && 0 || 1
+    test "$(uname -s)X" = "DarwinX"
+}
+
 # directory containing dotfiles
-export ETC=$(dirname $(readlink -f ~/.bashrc))
+if on_mac; then
+    export ETC=$(dirname $(stat -f "%Y" ~/.bashrc))
+else
+    export ETC=$(dirname $(readlink -f ~/.bashrc))
+fi
 
 # keep grep so 'add_path' can work without $PATH
 export _GREP=$(which grep)
