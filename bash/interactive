@@ -18,12 +18,19 @@ fi
 # update terminal title
 case ${TERM} in
 	xterm*|rxvt*|Eterm|aterm|kterm|gnome)
-		PROMPT_COMMAND='echo -ne "\033]0;${USER}@${HOSTNAME%%.*}:${PWD/$HOME/~}\007"'
+		if [ -n "$INSIDE_EMACS" ]; then
+			# emacs doesn't support the ANSI codes needed to set the terminal's
+			# title, so disable it
+			PROMPT_COMMAND=
+		else
+			PROMPT_COMMAND='echo -ne "\033]0;${USER}@${HOSTNAME%%.*}:${PWD/$HOME/~}\007"'
+		fi
 		;;
 	screen*)
 		PROMPT_COMMAND='echo -ne "\033]0;${PWD/$HOME/~}\033\\"'
 		;;
 esac
+export PROMPT_COMMAND
 
 # turn off flow control
 stty -ixon
