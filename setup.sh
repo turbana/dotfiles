@@ -44,10 +44,10 @@ link bashrc			~/.bashrc
 link dir_colors		~/.dir_colors
 link profile		~/.profile
 link screenrc		~/.screenrc
-link vimrc			~/.vimrc
-link xsession		~/.xsession
+#link vimrc			~/.vimrc
+#link xsession		~/.xsession
 link xresources		~/.Xresources
 
-link_recursive mutt		~/.mutt
-link_recursive vim		~/.vim
-link_recursive xmonad	~/.xmonad
+#link_recursive mutt		~/.mutt
+#link_recursive vim		~/.vim
+#link_recursive xmonad	~/.xmonad
