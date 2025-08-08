@@ -31,7 +31,7 @@ export EDITOR='emacsclient -c -a ""'
 export ALTERNATE_EDITOR=
 
 # colorize grep's matches
-export GREP_COLOR='1;32'
+export GREP_COLORS='mt=1;32'
 
 # setup gpg-agent for both gpg and ssh keys
 if [ $(which gpg-connect-agent 2> /dev/null) ]; then
