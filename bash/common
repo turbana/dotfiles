@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
 # setup PATH, but only on non-guix systems
-if [ ! on_guix ]; then
+if [ ! $(on_guix) ]; then
     export PATH=
     add_path /bin
     add_path /sbin
