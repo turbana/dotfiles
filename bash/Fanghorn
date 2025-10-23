@@ -1,5 +1,0 @@
-# for VcXsrv
-export LIBGL_ALWAYS_INDIRECT=1
-export DISPLAY=$(cmd.exe /C netsh interface ip show addresses "vEthernet (WSL)" 2>/dev/null | grep "IP Address" | sed -e "s/\sIP Address:\s//g; s/\r//" | tr -d ' '):0
-# for tree-sitter in emacs
-export LD_LIBRARY_PATH=/usr/local/lib/
