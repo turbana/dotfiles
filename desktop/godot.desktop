@@ -1,0 +1,8 @@
+[Desktop Entry]
+Name=Godot (4.5.1)
+Version=4.5.1
+Encoding=UTF-8
+Type=Application
+Terminal=false
+Exec=/home/ian/apps/godot-4.5.1/godot
+Icon=/home/ian/apps/icons/godot.png

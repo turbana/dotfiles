@@ -1,0 +1,37 @@
+[Desktop Action new-private-window]
+Exec=env BAMF_DESKTOP_FILE_HINT=/var/lib/snapd/desktop/applications/firefox_firefox.desktop /snap/bin/firefox --private-window -P default %u
+Name=New Private Window
+X-SnapAppName=firefox
+
+[Desktop Action new-window]
+Exec=env BAMF_DESKTOP_FILE_HINT=/var/lib/snapd/desktop/applications/firefox_firefox.desktop /snap/bin/firefox -P default --new-window %u
+Name=New Window
+X-SnapAppName=firefox
+
+[Desktop Action open-profile-manager]
+Exec=env BAMF_DESKTOP_FILE_HINT=/var/lib/snapd/desktop/applications/firefox_firefox.desktop /snap/bin/firefox --ProfileManager
+Name=Open Profile Manager
+X-SnapAppName=firefox
+
+[Desktop Entry]
+Name=Firefox
+Actions=new-window;new-private-window;open-profile-manager;
+Categories=GNOME;GTK;Network;WebBrowser;
+Comment=Fast and private browser
+Exec=env BAMF_DESKTOP_FILE_HINT=/var/lib/snapd/desktop/applications/firefox_firefox.desktop /snap/bin/firefox -P default %u
+GenericName=Web Browser
+Icon=/snap/firefox/7084/default256.png
+Keywords=Internet;WWW;Browser;Web;Explorer;
+MimeType=video/webm;video/ogg;text/html;image/webp;image/svg+xml;image/png;image/jpeg;image/gif;image/avif;audio/webm;audio/ogg;audio/flac;application/xml;application/xml;application/xhtml+xml;application/x-xpinstall;application/rss+xml;application/rdf+xml;application/pdf;application/json;
+Path=
+StartupNotify=true
+StartupWMClass=firefox_firefox
+Terminal=false
+TerminalOptions=
+Type=Application
+Version=1.0
+X-KDE-RunOnDiscreteGpu=false
+X-KDE-SubstituteUID=false
+X-KDE-Username=
+X-SnapAppName=firefox
+X-SnapInstanceName=firefox
