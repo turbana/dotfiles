@@ -1,6 +1,9 @@
 (defcfg
- input (low-level-hook)
- output (send-event-sink)
+ input  (device-file "/dev/input/by-path/platform-i8042-serio-0-event-kbd" :ignore-missing true)
+ output (uinput-sink "My KMonad output"
+          ;; To understand the importance of the following line, see the section on
+          ;; Compose-key sequences at the near-bottom of this file.
+          "sleep 1 && setxkbmap -option compose:ralt")
  fallthrough true
  allow-cmd false
  )
@@ -13,7 +16,7 @@
  _    _    _    _    _    _    _    _    _    _    _    _    _    _              _    _    _    _
  _    _    _    _    _    _    _    _    _    _    _    _    _                   _    _    _    _    
  _    _    _    _    _    _    _    _    _    _    _    _    _                   _    _    _    _    
- _    _    _    _           _            _    _    _    _    _    _                   _    _    _    
+ _         _    _           _            _    _    _    _    _    _                   _    _        
 )
 |#
 
@@ -24,7 +27,7 @@
  tab  q    w    e    r    t    y    u    i    o    p    [    ]    \              kp7  kp8  kp9  kp-
  caps a    s    d    f    g    h    j    k    l    ;    '    ret                 kp4  kp5  kp6  kp+
  lsft z    x    c    v    b    n    m    ,    .    /    rsft up                  kp1  kp2  kp3  kprt
- lctl z    lmet lalt       space         ralt menu rctl left down right               kp0  kp.  kprt
+ lctl      lmet lalt       space         ralt menu rctl left down right               kp0  kp.  
  )
 
 (defalias
@@ -37,7 +40,7 @@
  _    _    _    _    _    _    _    _    _    _    _    _    _    _              _    _    _    _
  lctl _    _    _    _    _    _    _    _    _    _    _    _                   _    _    _    _    
  _    _    _    _    _    _    _    _    _    _    _    _    _                   _    _    _    _    
- @fl  _    _    _           _            _    _    _    _    _    _                   _    _    _    
+ @fl       _    _           _            _    _    _    _    _    _                   _    _        
 )
 
 (deflayer func
@@ -46,5 +49,5 @@
  _    mute vold volu _    _    end  pgdn pgup pause _   _    _    _              _    _    _    _
  _    _    _    _    _    _    left down up  right ins  del  _                   _    _    _    _    
  _    _    _    _    _    _    home _    _    _    _    _    _                   _    _    _    _    
- _    _    _    _           _            _    _    _    _    _    _                   _    _    _    
+ _         _    _           _            _    _    _    _    _    _                   _    _        
 )
