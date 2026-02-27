@@ -4,11 +4,15 @@ Version=1.1
 Comment=Game Engine
 Categories=Development;Building;
 Type=Application
-Actions=run-project-chaos;
+Actions=run-knorr;run-project-chaos;
 Terminal=false
 Exec=/home/ian/apps/godot/Godot_v4.6-stable_linux.x86_64
 Icon=/home/ian/apps/godot/godot.png
 Path=/home/ian/apps/godot
+
+[Desktop Action run-knorr]
+Exec=/home/ian/apps/godot/Godot_v4.6-stable_linux.x86_64 /home/ian/src/knorr/project.godot
+Name=Run Knorr
 
 [Desktop Action run-project-chaos]
 Exec=/home/ian/apps/godot/Godot_v4.6-stable_linux.x86_64 /home/ian/src/project-chaos/project.godot
