@@ -1,18 +1,3 @@
-[Desktop Action new-private-window]
-Exec=env BAMF_DESKTOP_FILE_HINT=/var/lib/snapd/desktop/applications/firefox_firefox.desktop /snap/bin/firefox --private-window -P default %u
-Name=New Private Window
-X-SnapAppName=firefox
-
-[Desktop Action new-window]
-Exec=env BAMF_DESKTOP_FILE_HINT=/var/lib/snapd/desktop/applications/firefox_firefox.desktop /snap/bin/firefox -P default --new-window %u
-Name=New Window
-X-SnapAppName=firefox
-
-[Desktop Action open-profile-manager]
-Exec=env BAMF_DESKTOP_FILE_HINT=/var/lib/snapd/desktop/applications/firefox_firefox.desktop /snap/bin/firefox --ProfileManager
-Name=Open Profile Manager
-X-SnapAppName=firefox
-
 [Desktop Entry]
 Name=Firefox
 Actions=new-window;new-private-window;open-profile-manager;
@@ -35,3 +20,18 @@ X-KDE-SubstituteUID=false
 X-KDE-Username=
 X-SnapAppName=firefox
 X-SnapInstanceName=firefox
+
+[Desktop Action new-private-window]
+Exec=env BAMF_DESKTOP_FILE_HINT=/var/lib/snapd/desktop/applications/firefox_firefox.desktop /snap/bin/firefox --private-window -P default %u
+Name=New Private Window
+X-SnapAppName=firefox
+
+[Desktop Action new-window]
+Exec=env BAMF_DESKTOP_FILE_HINT=/var/lib/snapd/desktop/applications/firefox_firefox.desktop /snap/bin/firefox -P default --new-window %u
+Name=New Window
+X-SnapAppName=firefox
+
+[Desktop Action open-profile-manager]
+Exec=env BAMF_DESKTOP_FILE_HINT=/var/lib/snapd/desktop/applications/firefox_firefox.desktop /snap/bin/firefox --ProfileManager
+Name=Open Profile Manager
+X-SnapAppName=firefox

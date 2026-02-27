@@ -1,0 +1,9 @@
+[Desktop Entry]
+Name=Conky
+Categories=System;Monitor;
+Keywords=System;
+Version=1.1
+Type=Application
+Terminal=false
+Exec=/usr/bin/conky -c conky.config
+Path=/home/ian/src/etc/conky
